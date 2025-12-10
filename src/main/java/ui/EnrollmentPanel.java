@@ -13,7 +13,6 @@ import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -142,68 +141,59 @@ public class EnrollmentPanel extends JPanel {
     }
 
     private void loadComboBoxes() {
-        try {
-            List<Student> students = studentDAO.getAll();
-            studentMap = students.stream().collect(Collectors.toMap(Student::getId, student -> student));
-            studentComboBox.removeAllItems();
-            for (Student student : students) {
-                studentComboBox.addItem(student);
-            }
+        List<Student> students = studentDAO.getAll();
+        studentMap = students.stream().collect(Collectors.toMap(Student::getId, student -> student));
+        studentComboBox.removeAllItems();
+        for (Student student : students) {
+            studentComboBox.addItem(student);
+        }
 
-            List<Course> courses = courseDAO.getAll();
-            courseMap = courses.stream().collect(Collectors.toMap(Course::getId, course -> course));
-            courseComboBox.removeAllItems();
-            for (Course course : courses) {
-                courseComboBox.addItem(course);
-            }
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error loading students or courses: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        List<Course> courses = courseDAO.getAll();
+        courseMap = courses.stream().collect(Collectors.toMap(Course::getId, course -> course));
+        courseComboBox.removeAllItems();
+        for (Course course : courses) {
+            courseComboBox.addItem(course);
         }
     }
 
     private void loadEnrollments() {
-        try {
-            List<Enrollment> enrollments = enrollmentDAO.getAll();
-            tableModel.setRowCount(0);
-            for (Enrollment enrollment : enrollments) {
-                Student student = studentMap.get(enrollment.getStudentId());
-                Course course = courseMap.get(enrollment.getCourseId());
-                tableModel.addRow(new Object[]{
-                        enrollment.getId(),
-                        student != null ? student : "N/A",
-                        course != null ? course : "N/A",
-                        enrollment.getAcademicYear(),
-                        enrollment.getTerm(),
-                        enrollment.getStatus()
-                });
-            }
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error loading enrollments: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        List<Enrollment> enrollments = enrollmentDAO.getAll();
+        tableModel.setRowCount(0);
+        for (Enrollment enrollment : enrollments) {
+            Student student = studentMap.get(enrollment.getStudentId());
+            Course course = courseMap.get(enrollment.getCourseId());
+            tableModel.addRow(new Object[]{
+                    enrollment.getId(),
+                    student != null ? student : "N/A",
+                    course != null ? course : "N/A",
+                    enrollment.getAcademicYear(),
+                    enrollment.getTerm(),
+                    enrollment.getStatus()
+            });
         }
     }
 
     private void addEnrollment() {
-        try {
-            Student selectedStudent = (Student) studentComboBox.getSelectedItem();
-            Course selectedCourse = (Course) courseComboBox.getSelectedItem();
-            if (selectedStudent == null || selectedCourse == null) {
-                JOptionPane.showMessageDialog(this, "Please select a student and a course.", "Warning", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
+        Student selectedStudent = (Student) studentComboBox.getSelectedItem();
+        Course selectedCourse = (Course) courseComboBox.getSelectedItem();
+        if (selectedStudent == null || selectedCourse == null) {
+            JOptionPane.showMessageDialog(this, "Please select a student and a course.", "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-            Enrollment enrollment = new Enrollment(
-                    selectedStudent.getId(),
-                    selectedCourse.getId(),
-                    academicYearField.getText(),
-                    termField.getText(),
-                    (String) statusComboBox.getSelectedItem()
-            );
-            enrollmentDAO.add(enrollment);
+        Enrollment enrollment = new Enrollment(
+                selectedStudent.getId(),
+                selectedCourse.getId(),
+                academicYearField.getText(),
+                termField.getText(),
+                (String) statusComboBox.getSelectedItem()
+        );
+        if (enrollmentDAO.add(enrollment)) {
             loadEnrollments();
             clearFields();
             JOptionPane.showMessageDialog(this, "Enrollment added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error adding enrollment: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "Error adding enrollment.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -214,28 +204,27 @@ public class EnrollmentPanel extends JPanel {
             return;
         }
 
-        try {
-            Student selectedStudent = (Student) studentComboBox.getSelectedItem();
-            Course selectedCourse = (Course) courseComboBox.getSelectedItem();
-            if (selectedStudent == null || selectedCourse == null) {
-                JOptionPane.showMessageDialog(this, "Please select a student and a course.", "Warning", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
+        Student selectedStudent = (Student) studentComboBox.getSelectedItem();
+        Course selectedCourse = (Course) courseComboBox.getSelectedItem();
+        if (selectedStudent == null || selectedCourse == null) {
+            JOptionPane.showMessageDialog(this, "Please select a student and a course.", "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-            Enrollment enrollment = new Enrollment(
-                    selectedStudent.getId(),
-                    selectedCourse.getId(),
-                    academicYearField.getText(),
-                    termField.getText(),
-                    (String) statusComboBox.getSelectedItem()
-            );
-            enrollment.setId((int) tableModel.getValueAt(enrollmentTable.convertRowIndexToModel(selectedRow), 0));
-            enrollmentDAO.update(enrollment);
+        Enrollment enrollment = new Enrollment(
+                selectedStudent.getId(),
+                selectedCourse.getId(),
+                academicYearField.getText(),
+                termField.getText(),
+                (String) statusComboBox.getSelectedItem()
+        );
+        enrollment.setId((int) tableModel.getValueAt(enrollmentTable.convertRowIndexToModel(selectedRow), 0));
+        if (enrollmentDAO.update(enrollment)) {
             loadEnrollments();
             clearFields();
             JOptionPane.showMessageDialog(this, "Enrollment updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error updating enrollment: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "Error updating enrollment.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -248,14 +237,13 @@ public class EnrollmentPanel extends JPanel {
 
         int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this enrollment?", "Confirm Deletion", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
-            try {
-                int id = (int) tableModel.getValueAt(enrollmentTable.convertRowIndexToModel(selectedRow), 0);
-                enrollmentDAO.delete(id);
+            int id = (int) tableModel.getValueAt(enrollmentTable.convertRowIndexToModel(selectedRow), 0);
+            if (enrollmentDAO.delete(id)) {
                 loadEnrollments();
                 clearFields();
                 JOptionPane.showMessageDialog(this, "Enrollment deleted successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
-            } catch (SQLException e) {
-                JOptionPane.showMessageDialog(this, "Error deleting enrollment: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Error deleting enrollment.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -312,3 +300,5 @@ public class EnrollmentPanel extends JPanel {
         }
     }
 }
+
+

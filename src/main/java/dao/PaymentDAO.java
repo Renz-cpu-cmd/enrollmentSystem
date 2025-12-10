@@ -11,16 +11,10 @@ import java.util.List;
  * Data Access Object for the Payment model.
  * Implements the DataAccessObject interface to provide standard CRUD operations.
  */
-public class PaymentDAO implements DataAccessObject<Payment> {
+public class PaymentDAO implements DataAccessObject<Payment, Integer> {
 
-    /**
-     * Adds a new payment to the database.
-     *
-     * @param payment The payment to add.
-     * @throws SQLException If a database access error occurs.
-     */
     @Override
-    public void add(Payment payment) throws SQLException {
+    public boolean add(Payment payment) {
         String sql = "INSERT INTO payments (enrollment_id, amount, payment_method, transaction_id, status) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -29,18 +23,15 @@ public class PaymentDAO implements DataAccessObject<Payment> {
             pstmt.setString(3, payment.getPaymentMethod());
             pstmt.setString(4, payment.getTransactionId());
             pstmt.setString(5, payment.getStatus());
-            pstmt.executeUpdate();
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
-    /**
-     * Updates an existing payment in the database.
-     *
-     * @param payment The payment to update.
-     * @throws SQLException If a database access error occurs.
-     */
     @Override
-    public void update(Payment payment) throws SQLException {
+    public boolean update(Payment payment) {
         String sql = "UPDATE payments SET enrollment_id = ?, amount = ?, payment_method = ?, transaction_id = ?, status = ? WHERE id = ?";
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -50,81 +41,68 @@ public class PaymentDAO implements DataAccessObject<Payment> {
             pstmt.setString(4, payment.getTransactionId());
             pstmt.setString(5, payment.getStatus());
             pstmt.setInt(6, payment.getId());
-            pstmt.executeUpdate();
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
-    /**
-     * Deletes a payment from the database by its ID.
-     *
-     * @param id The ID of the payment to delete.
-     * @throws SQLException If a database access error occurs.
-     */
     @Override
-    public void delete(int id) throws SQLException {
+    public boolean delete(Integer id) {
         String sql = "DELETE FROM payments WHERE id = ?";
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);
-            pstmt.executeUpdate();
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
-    /**
-     * Retrieves a payment from the database by its ID.
-     *
-     * @param id The ID of the payment to retrieve.
-     * @return The payment with the specified ID, or null if not found.
-     * @throws SQLException If a database access error occurs.
-     */
     @Override
-    public Payment getById(int id) throws SQLException {
+    public Payment getById(Integer id) {
         String sql = "SELECT * FROM payments WHERE id = ?";
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    Payment payment = new Payment();
-                    payment.setId(rs.getInt("id"));
-                    payment.setEnrollmentId(rs.getInt("enrollment_id"));
-                    payment.setAmount(rs.getBigDecimal("amount"));
-                    payment.setPaymentMethod(rs.getString("payment_method"));
-                    payment.setTransactionId(rs.getString("transaction_id"));
-                    payment.setStatus(rs.getString("status"));
-                    payment.setCreatedAt(rs.getString("created_at"));
-                    return payment;
+                    return extractPaymentFromResultSet(rs);
                 }
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return null;
     }
 
-    /**
-     * Retrieves all payments from the database.
-     *
-     * @return A list of all payments.
-     * @throws SQLException If a database access error occurs.
-     */
     @Override
-    public List<Payment> getAll() throws SQLException {
+    public List<Payment> getAll() {
         List<Payment> payments = new ArrayList<>();
         String sql = "SELECT * FROM payments";
         try (Connection conn = DBUtil.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                Payment payment = new Payment();
-                payment.setId(rs.getInt("id"));
-                payment.setEnrollmentId(rs.getInt("enrollment_id"));
-                payment.setAmount(rs.getBigDecimal("amount"));
-                payment.setPaymentMethod(rs.getString("payment_method"));
-                payment.setTransactionId(rs.getString("transaction_id"));
-                payment.setStatus(rs.getString("status"));
-                payment.setCreatedAt(rs.getString("created_at"));
-                payments.add(payment);
+                payments.add(extractPaymentFromResultSet(rs));
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return payments;
+    }
+
+    private Payment extractPaymentFromResultSet(ResultSet rs) throws SQLException {
+        Payment payment = new Payment();
+        payment.setId(rs.getInt("id"));
+        payment.setEnrollmentId(rs.getInt("enrollment_id"));
+        payment.setAmount(rs.getBigDecimal("amount"));
+        payment.setPaymentMethod(rs.getString("payment_method"));
+        payment.setTransactionId(rs.getString("transaction_id"));
+        payment.setStatus(rs.getString("status"));
+        payment.setCreatedAt(rs.getString("created_at"));
+        return payment;
     }
 }

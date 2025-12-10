@@ -1,3 +1,4 @@
+
 package dao;
 
 import model.Student;
@@ -9,142 +10,155 @@ import java.util.List;
 
 /**
  * Data Access Object for the Student model.
- * Implements the DataAccessObject interface to provide standard CRUD operations.
+ * Handles all database operations for students.
  */
-public class StudentDAO implements DataAccessObject<Student> {
+public class StudentDAO implements DataAccessObject<Student, Integer> {
 
-    /**
-     * Adds a new student to the database.
-     *
-     * @param student The student to add.
-     * @throws SQLException If a database access error occurs.
-     */
     @Override
-    public void add(Student student) throws SQLException {
-        String sql = "INSERT INTO students (student_id, first_name, last_name, contact_number, email, gender, address, course, year_level, block) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    public boolean add(Student student) {
+        String sql = "INSERT INTO students(student_id, password, last_name, first_name, middle_name, suffix, " +
+                     "birth_date, sex, mobile_number, email, home_address, guardian_name, guardian_mobile, " +
+                     "last_school_attended, shs_strand, college, program, year_level, block_section) " +
+                     "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, student.getStudentId());
-            pstmt.setString(2, student.getFirstName());
-            pstmt.setString(3, student.getLastName());
-            pstmt.setString(4, student.getContactNumber());
-            pstmt.setString(5, student.getEmail());
-            pstmt.setString(6, student.getGender());
-            pstmt.setString(7, student.getAddress());
-            pstmt.setString(8, student.getCourse());
-            pstmt.setInt(9, student.getYearLevel());
-            pstmt.setString(10, student.getBlock());
-            pstmt.executeUpdate();
+
+            mapStudentToStatement(student, pstmt);
+
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
-    /**
-     * Updates an existing student in the database.
-     *
-     * @param student The student to update.
-     * @throws SQLException If a database access error occurs.
-     */
     @Override
-    public void update(Student student) throws SQLException {
-        String sql = "UPDATE students SET student_id = ?, first_name = ?, last_name = ?, contact_number = ?, email = ?, gender = ?, address = ?, course = ?, year_level = ?, block = ? WHERE id = ?";
+    public boolean update(Student student) {
+        String sql = "UPDATE students SET student_id = ?, password = ?, last_name = ?, first_name = ?, middle_name = ?, " +
+                     "suffix = ?, birth_date = ?, sex = ?, mobile_number = ?, email = ?, home_address = ?, " +
+                     "guardian_name = ?, guardian_mobile = ?, last_school_attended = ?, shs_strand = ?, " +
+                     "college = ?, program = ?, year_level = ?, block_section = ? WHERE id = ?";
+
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, student.getStudentId());
-            pstmt.setString(2, student.getFirstName());
-            pstmt.setString(3, student.getLastName());
-            pstmt.setString(4, student.getContactNumber());
-            pstmt.setString(5, student.getEmail());
-            pstmt.setString(6, student.getGender());
-            pstmt.setString(7, student.getAddress());
-            pstmt.setString(8, student.getCourse());
-            pstmt.setInt(9, student.getYearLevel());
-            pstmt.setString(10, student.getBlock());
-            pstmt.setInt(11, student.getId());
-            pstmt.executeUpdate();
+
+            mapStudentToStatement(student, pstmt);
+            pstmt.setInt(20, student.getId()); // Set the ID for the WHERE clause
+
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
-    /**
-     * Deletes a student from the database by their ID.
-     *
-     * @param id The ID of the student to delete.
-     * @throws SQLException If a database access error occurs.
-     */
     @Override
-    public void delete(int id) throws SQLException {
+    public boolean delete(Integer id) {
         String sql = "DELETE FROM students WHERE id = ?";
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);
-            pstmt.executeUpdate();
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
-    /**
-     * Retrieves a student from the database by their ID.
-     *
-     * @param id The ID of the student to retrieve.
-     * @return The student with the specified ID, or null if not found.
-     * @throws SQLException If a database access error occurs.
-     */
     @Override
-    public Student getById(int id) throws SQLException {
+    public Student getById(Integer id) {
         String sql = "SELECT * FROM students WHERE id = ?";
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    Student student = new Student();
-                    student.setId(rs.getInt("id"));
-                    student.setStudentId(rs.getString("student_id"));
-                    student.setFirstName(rs.getString("first_name"));
-                    student.setLastName(rs.getString("last_name"));
-                    student.setContactNumber(rs.getString("contact_number"));
-                    student.setEmail(rs.getString("email"));
-                    student.setGender(rs.getString("gender"));
-                    student.setAddress(rs.getString("address"));
-                    student.setCourse(rs.getString("course"));
-                    student.setYearLevel(rs.getInt("year_level"));
-                    student.setBlock(rs.getString("block"));
-                    student.setCreatedAt(rs.getString("created_at"));
-                    return student;
+                    return mapResultSetToStudent(rs);
                 }
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return null;
     }
 
-    /**
-     * Retrieves all students from the database.
-     *
-     * @return A list of all students.
-     * @throws SQLException If a database access error occurs.
-     */
     @Override
-    public List<Student> getAll() throws SQLException {
+    public List<Student> getAll() {
         List<Student> students = new ArrayList<>();
         String sql = "SELECT * FROM students";
         try (Connection conn = DBUtil.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                Student student = new Student();
-                student.setId(rs.getInt("id"));
-                student.setStudentId(rs.getString("student_id"));
-                student.setFirstName(rs.getString("first_name"));
-                student.setLastName(rs.getString("last_name"));
-                student.setContactNumber(rs.getString("contact_number"));
-                student.setEmail(rs.getString("email"));
-                student.setGender(rs.getString("gender"));
-                student.setAddress(rs.getString("address"));
-                student.setCourse(rs.getString("course"));
-                student.setYearLevel(rs.getInt("year_level"));
-                student.setBlock(rs.getString("block"));
-                student.setCreatedAt(rs.getString("created_at"));
-                students.add(student);
+                students.add(mapResultSetToStudent(rs));
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return students;
+    }
+
+    public Student getStudentByStudentId(String studentId) {
+        String sql = "SELECT * FROM students WHERE student_id = ?";
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, studentId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapResultSetToStudent(rs);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private Student mapResultSetToStudent(ResultSet rs) throws SQLException {
+        Student student = new Student();
+        student.setId(rs.getInt("id"));
+        student.setStudentId(rs.getString("student_id"));
+        student.setPassword(rs.getString("password"));
+        student.setLastName(rs.getString("last_name"));
+        student.setFirstName(rs.getString("first_name"));
+        student.setMiddleName(rs.getString("middle_name"));
+        student.setSuffix(rs.getString("suffix"));
+        student.setBirthDate(rs.getString("birth_date"));
+        student.setSex(rs.getString("sex"));
+        student.setMobileNumber(rs.getString("mobile_number"));
+        student.setEmail(rs.getString("email"));
+        student.setHomeAddress(rs.getString("home_address"));
+        student.setGuardianName(rs.getString("guardian_name"));
+        student.setGuardianMobile(rs.getString("guardian_mobile"));
+        student.setLastSchoolAttended(rs.getString("last_school_attended"));
+        student.setShsStrand(rs.getString("shs_strand"));
+        student.setCollege(rs.getString("college"));
+        student.setProgram(rs.getString("program"));
+        student.setYearLevel(rs.getInt("year_level"));
+        student.setBlockSection(rs.getString("block_section"));
+        return student;
+    }
+
+    private void mapStudentToStatement(Student student, PreparedStatement pstmt) throws SQLException {
+        pstmt.setString(1, student.getStudentId());
+        pstmt.setString(2, student.getPassword());
+        pstmt.setString(3, student.getLastName());
+        pstmt.setString(4, student.getFirstName());
+        pstmt.setString(5, student.getMiddleName());
+        pstmt.setString(6, student.getSuffix());
+        pstmt.setString(7, student.getBirthDate());
+        pstmt.setString(8, student.getSex());
+        pstmt.setString(9, student.getMobileNumber());
+        pstmt.setString(10, student.getEmail());
+        pstmt.setString(11, student.getHomeAddress());
+        pstmt.setString(12, student.getGuardianName());
+        pstmt.setString(13, student.getGuardianMobile());
+        pstmt.setString(14, student.getLastSchoolAttended());
+        pstmt.setString(15, student.getShsStrand());
+        pstmt.setString(16, student.getCollege());
+        pstmt.setString(17, student.getProgram());
+        pstmt.setInt(18, student.getYearLevel());
+        pstmt.setString(19, student.getBlockSection());
     }
 }

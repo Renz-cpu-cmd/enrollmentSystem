@@ -16,6 +16,22 @@ public class Student {
     private String block;
     private String createdAt;
 
+    // Added fields from compilation errors
+    private String password;
+    private String middleName;
+    private String suffix;
+    private String birthDate;
+    private String sex;
+    private String mobileNumber;
+    private String homeAddress;
+    private String guardianName;
+    private String guardianMobile;
+    private String lastSchoolAttended;
+    private String shsStrand;
+    private String college;
+    private String program;
+    private String blockSection;
+
     public Student() {}
 
     public Student(String studentId, String firstName, String lastName, String contactNumber, String email, String gender, String address, String course, int yearLevel, String block) {
@@ -125,6 +141,119 @@ public class Student {
 
     public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
+    }
+
+    // Added getters and setters
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
+    }
+
+    public String getSuffix() {
+        return suffix;
+    }
+
+    public void setSuffix(String suffix) {
+        this.suffix = suffix;
+    }
+
+    public String getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(String birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
+
+    public String getMobileNumber() {
+        return mobileNumber;
+    }
+
+    public void setMobileNumber(String mobileNumber) {
+        this.mobileNumber = mobileNumber;
+    }
+
+    public String getHomeAddress() {
+        return homeAddress;
+    }
+
+    public void setHomeAddress(String homeAddress) {
+        this.homeAddress = homeAddress;
+    }
+
+    public String getGuardianName() {
+        return guardianName;
+    }
+
+    public void setGuardianName(String guardianName) {
+        this.guardianName = guardianName;
+    }
+
+    public String getGuardianMobile() {
+        return guardianMobile;
+    }
+
+    public void setGuardianMobile(String guardianMobile) {
+        this.guardianMobile = guardianMobile;
+    }
+
+    public String getLastSchoolAttended() {
+        return lastSchoolAttended;
+    }
+
+    public void setLastSchoolAttended(String lastSchoolAttended) {
+        this.lastSchoolAttended = lastSchoolAttended;
+    }
+
+    public String getShsStrand() {
+        return shsStrand;
+    }
+
+    public void setShsStrand(String shsStrand) {
+        this.shsStrand = shsStrand;
+    }
+
+    public String getCollege() {
+        return college;
+    }
+
+    public void setCollege(String college) {
+        this.college = college;
+    }
+
+    public String getProgram() {
+        return program;
+    }
+
+    public void setProgram(String program) {
+        this.program = program;
+    }
+
+    public String getBlockSection() {
+        return blockSection;
+    }
+
+    public void setBlockSection(String blockSection) {
+        this.blockSection = blockSection;
     }
 
     @Override

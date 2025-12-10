@@ -5,7 +5,6 @@ import dao.StudentDAO;
 
 import javax.swing.*;
 import java.awt.*;
-import java.sql.SQLException;
 
 /**
  * A dashboard panel that displays key statistics of the enrollment system.
@@ -24,16 +23,11 @@ public class DashboardPanel extends JPanel {
         setLayout(new GridLayout(1, 2, 20, 20));
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        try {
-            int studentCount = studentDAO.getAll().size();
-            int courseCount = courseDAO.getAll().size();
+        int studentCount = studentDAO.getAll().size();
+        int courseCount = courseDAO.getAll().size();
 
-            add(createStatPanel("Total Students", String.valueOf(studentCount)));
-            add(createStatPanel("Total Courses", String.valueOf(courseCount)));
-        } catch (SQLException e) {
-            e.printStackTrace();
-            add(new JLabel("Error loading data: " + e.getMessage()));
-        }
+        add(createStatPanel("Total Students", String.valueOf(studentCount)));
+        add(createStatPanel("Total Courses", String.valueOf(courseCount)));
     }
 
     private JPanel createStatPanel(String title, String value) {

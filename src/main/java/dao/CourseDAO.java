@@ -11,16 +11,10 @@ import java.util.List;
  * Data Access Object for the Course model.
  * Implements the DataAccessObject interface to provide standard CRUD operations.
  */
-public class CourseDAO implements DataAccessObject<Course> {
+public class CourseDAO implements DataAccessObject<Course, Integer> {
 
-    /**
-     * Adds a new course to the database.
-     *
-     * @param course The course to add.
-     * @throws SQLException If a database access error occurs.
-     */
     @Override
-    public void add(Course course) throws SQLException {
+    public boolean add(Course course) {
         String sql = "INSERT INTO courses (code, name, description, units) VALUES (?, ?, ?, ?)";
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -28,18 +22,15 @@ public class CourseDAO implements DataAccessObject<Course> {
             pstmt.setString(2, course.getName());
             pstmt.setString(3, course.getDescription());
             pstmt.setInt(4, course.getUnits());
-            pstmt.executeUpdate();
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
-    /**
-     * Updates an existing course in the database.
-     *
-     * @param course The course to update.
-     * @throws SQLException If a database access error occurs.
-     */
     @Override
-    public void update(Course course) throws SQLException {
+    public boolean update(Course course) {
         String sql = "UPDATE courses SET code = ?, name = ?, description = ?, units = ? WHERE id = ?";
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -48,77 +39,66 @@ public class CourseDAO implements DataAccessObject<Course> {
             pstmt.setString(3, course.getDescription());
             pstmt.setInt(4, course.getUnits());
             pstmt.setInt(5, course.getId());
-            pstmt.executeUpdate();
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
-    /**
-     * Deletes a course from the database by its ID.
-     *
-     * @param id The ID of the course to delete.
-     * @throws SQLException If a database access error occurs.
-     */
     @Override
-    public void delete(int id) throws SQLException {
+    public boolean delete(Integer id) {
         String sql = "DELETE FROM courses WHERE id = ?";
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);
-            pstmt.executeUpdate();
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
-    /**
-     * Retrieves a course from the database by its ID.
-     *
-     * @param id The ID of the course to retrieve.
-     * @return The course with the specified ID, or null if not found.
-     * @throws SQLException If a database access error occurs.
-     */
     @Override
-    public Course getById(int id) throws SQLException {
+    public Course getById(Integer id) {
         String sql = "SELECT * FROM courses WHERE id = ?";
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    Course course = new Course();
-                    course.setId(rs.getInt("id"));
-                    course.setCode(rs.getString("code"));
-                    course.setName(rs.getString("name"));
-                    course.setDescription(rs.getString("description"));
-                    course.setUnits(rs.getInt("units"));
-                    return course;
+                    return extractCourseFromResultSet(rs);
                 }
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return null;
     }
 
-    /**
-     * Retrieves all courses from the database.
-     *
-     * @return A list of all courses.
-     * @throws SQLException If a database access error occurs.
-     */
     @Override
-    public List<Course> getAll() throws SQLException {
+    public List<Course> getAll() {
         List<Course> courses = new ArrayList<>();
         String sql = "SELECT * FROM courses";
         try (Connection conn = DBUtil.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                Course course = new Course();
-                course.setId(rs.getInt("id"));
-                course.setCode(rs.getString("code"));
-                course.setName(rs.getString("name"));
-                course.setDescription(rs.getString("description"));
-                course.setUnits(rs.getInt("units"));
-                courses.add(course);
+                courses.add(extractCourseFromResultSet(rs));
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return courses;
+    }
+
+    private Course extractCourseFromResultSet(ResultSet rs) throws SQLException {
+        Course course = new Course();
+        course.setId(rs.getInt("id"));
+        course.setCode(rs.getString("code"));
+        course.setName(rs.getString("name"));
+        course.setDescription(rs.getString("description"));
+        course.setUnits(rs.getInt("units"));
+        return course;
     }
 }

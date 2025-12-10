@@ -9,7 +9,6 @@ import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
-import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -153,26 +152,22 @@ public class StudentPanel extends JPanel {
     }
 
     private void loadStudents() {
-        try {
-            List<Student> students = studentDAO.getAll();
-            tableModel.setRowCount(0);
-            for (Student student : students) {
-                tableModel.addRow(new Object[]{
-                        student.getId(),
-                        student.getStudentId(),
-                        student.getFirstName(),
-                        student.getLastName(),
-                        student.getContactNumber(),
-                        student.getEmail(),
-                        student.getGender(),
-                        student.getAddress(),
-                        student.getCourse(),
-                        student.getYearLevel(),
-                        student.getBlock()
-                });
-            }
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error loading students: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        List<Student> students = studentDAO.getAll();
+        tableModel.setRowCount(0);
+        for (Student student : students) {
+            tableModel.addRow(new Object[]{
+                    student.getId(),
+                    student.getStudentId(),
+                    student.getFirstName(),
+                    student.getLastName(),
+                    student.getContactNumber(),
+                    student.getEmail(),
+                    student.getGender(),
+                    student.getAddress(),
+                    student.getCourse(),
+                    student.getYearLevel(),
+                    student.getBlock()
+            });
         }
     }
 
@@ -190,14 +185,15 @@ public class StudentPanel extends JPanel {
                     Integer.parseInt(yearLevelField.getText()),
                     blockField.getText()
             );
-            studentDAO.add(student);
-            loadStudents();
-            clearFields();
-            JOptionPane.showMessageDialog(this, "Student added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            if (studentDAO.add(student)) {
+                loadStudents();
+                clearFields();
+                JOptionPane.showMessageDialog(this, "Student added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Error adding student.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "Invalid year level. Please enter a number.", "Error", JOptionPane.ERROR_MESSAGE);
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error adding student: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -222,14 +218,15 @@ public class StudentPanel extends JPanel {
                     blockField.getText()
             );
             student.setId((int) tableModel.getValueAt(studentTable.convertRowIndexToModel(selectedRow), 0));
-            studentDAO.update(student);
-            loadStudents();
-            clearFields();
-            JOptionPane.showMessageDialog(this, "Student updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            if (studentDAO.update(student)) {
+                loadStudents();
+                clearFields();
+                JOptionPane.showMessageDialog(this, "Student updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Error updating student.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "Invalid year level. Please enter a number.", "Error", JOptionPane.ERROR_MESSAGE);
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error updating student: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -242,14 +239,13 @@ public class StudentPanel extends JPanel {
 
         int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this student?", "Confirm Deletion", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
-            try {
-                int id = (int) tableModel.getValueAt(studentTable.convertRowIndexToModel(selectedRow), 0);
-                studentDAO.delete(id);
+            int id = (int) tableModel.getValueAt(studentTable.convertRowIndexToModel(selectedRow), 0);
+            if (studentDAO.delete(id)) {
                 loadStudents();
                 clearFields();
                 JOptionPane.showMessageDialog(this, "Student deleted successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
-            } catch (SQLException e) {
-                JOptionPane.showMessageDialog(this, "Error deleting student: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Error deleting student.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }

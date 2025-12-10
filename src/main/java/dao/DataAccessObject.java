@@ -1,54 +1,52 @@
 package dao;
 
-import java.sql.SQLException;
 import java.util.List;
 
 /**
- * A generic Data Access Object (DAO) interface that defines the standard CRUD
- * (Create, Read, Update, Delete) operations for a given model type.
+ * A generic interface for Data Access Objects (DAOs).
+ * It defines the standard CRUD (Create, Read, Update, Delete) operations.
  *
- * @param <T> The model type for which the DAO will be implemented.
+ * @param <T> The type of the model class this DAO works with.
+ * @param <K> The type of the primary key of the model class.
  */
-public interface DataAccessObject<T> {
+public interface DataAccessObject<T, K> {
 
     /**
-     * Adds a new entity to the database.
+     * Retrieves a single object by its primary key.
      *
-     * @param t The entity to add.
-     * @throws SQLException If a database access error occurs.
+     * @param id The primary key of the object to retrieve.
+     * @return The object if found, otherwise null.
      */
-    void add(T t) throws SQLException;
+    T getById(K id);
 
     /**
-     * Updates an existing entity in the database.
+     * Retrieves all objects of this type from the data source.
      *
-     * @param t The entity to update.
-     * @throws SQLException If a database access error occurs.
+     * @return A list of all objects.
      */
-    void update(T t) throws SQLException;
+    List<T> getAll();
 
     /**
-     * Deletes an entity from the database by its ID.
+     * Saves a new object to the data source.
      *
-     * @param id The ID of the entity to delete.
-     * @throws SQLException If a database access error occurs.
+     * @param t The object to save.
+     * @return true if the operation was successful, false otherwise.
      */
-    void delete(int id) throws SQLException;
+    boolean add(T t);
 
     /**
-     * Retrieves an entity from the database by its ID.
+     * Updates an existing object in the data source.
      *
-     * @param id The ID of the entity to retrieve.
-     * @return The entity with the specified ID, or null if not found.
-     * @throws SQLException If a database access error occurs.
+     * @param t The object to update.
+     * @return true if the operation was successful, false otherwise.
      */
-    T getById(int id) throws SQLException;
+    boolean update(T t);
 
     /**
-     * Retrieves all entities of this type from the database.
+     * Deletes an object from the data source by its primary key.
      *
-     * @return A list of all entities.
-     * @throws SQLException If a database access error occurs.
+     * @param id The primary key of the object to delete.
+     * @return true if the operation was successful, false otherwise.
      */
-    List<T> getAll() throws SQLException;
+    boolean delete(K id);
 }

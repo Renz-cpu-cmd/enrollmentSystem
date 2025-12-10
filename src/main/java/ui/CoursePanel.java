@@ -12,7 +12,6 @@ import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
-import java.sql.SQLException;
 import java.util.List;
 
 public class CoursePanel extends JPanel {
@@ -173,22 +172,17 @@ public class CoursePanel extends JPanel {
         }
     }
 
-    // ... (rest of the methods remain the same)
     private void loadCourses() {
-        try {
-            List<Course> courses = courseDAO.getAll();
-            tableModel.setRowCount(0);
-            for (Course course : courses) {
-                tableModel.addRow(new Object[]{
-                        course.getId(),
-                        course.getCode(),
-                        course.getName(),
-                        course.getDescription(),
-                        course.getUnits()
-                });
-            }
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error loading courses: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        List<Course> courses = courseDAO.getAll();
+        tableModel.setRowCount(0);
+        for (Course course : courses) {
+            tableModel.addRow(new Object[]{
+                    course.getId(),
+                    course.getCode(),
+                    course.getName(),
+                    course.getDescription(),
+                    course.getUnits()
+            });
         }
     }
 
@@ -200,14 +194,15 @@ public class CoursePanel extends JPanel {
                     descriptionField.getText(),
                     Integer.parseInt(unitsField.getText())
             );
-            courseDAO.add(course);
-            loadCourses();
-            clearFields();
-            JOptionPane.showMessageDialog(this, "Course added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            if (courseDAO.add(course)) {
+                loadCourses();
+                clearFields();
+                JOptionPane.showMessageDialog(this, "Course added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Error adding course.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "Invalid units. Please enter a number.", "Error", JOptionPane.ERROR_MESSAGE);
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error adding course: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -226,14 +221,15 @@ public class CoursePanel extends JPanel {
                     Integer.parseInt(unitsField.getText())
             );
             course.setId((int) tableModel.getValueAt(courseTable.convertRowIndexToModel(selectedRow), 0));
-            courseDAO.update(course);
-            loadCourses();
-            clearFields();
-            JOptionPane.showMessageDialog(this, "Course updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            if (courseDAO.update(course)) {
+                loadCourses();
+                clearFields();
+                JOptionPane.showMessageDialog(this, "Course updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Error updating course.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "Invalid units. Please enter a number.", "Error", JOptionPane.ERROR_MESSAGE);
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error updating course: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -246,14 +242,13 @@ public class CoursePanel extends JPanel {
 
         int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this course?", "Confirm Deletion", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
-            try {
-                int id = (int) tableModel.getValueAt(courseTable.convertRowIndexToModel(selectedRow), 0);
-                courseDAO.delete(id);
+            int id = (int) tableModel.getValueAt(courseTable.convertRowIndexToModel(selectedRow), 0);
+            if (courseDAO.delete(id)) {
                 loadCourses();
                 clearFields();
                 JOptionPane.showMessageDialog(this, "Course deleted successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
-            } catch (SQLException e) {
-                JOptionPane.showMessageDialog(this, "Error deleting course: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Error deleting course.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
