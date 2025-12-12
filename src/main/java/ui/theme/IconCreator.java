@@ -1,8 +1,9 @@
-
 package ui.theme;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.swing.*;
-import java.awt.*;
 import java.util.Base64;
 
 /**
@@ -11,15 +12,34 @@ import java.util.Base64;
  */
 public class IconCreator {
 
-    // Base64 Encoded Strings for PNG Icons
-    private static final String DASHBOARD_ICON_STRING = "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAACgdz34AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAAsQAAALEBJsbbMAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAADdSURBVEiJ7ZSxCYAwEEW/N28hNlY2fgzS2goG3sB4A621jZ29iT2Ab2AwYgM2dgH3gB54AAt8gI+gB2xAHjADlsAFuAAnuF/wD/LzZt69dy6UUn8MyCo1gOISGAkUomwCo2QEx9AImyB5YgS8oO/Zk3oTQVgGFf0g/4EVcPoJoK8Y4JGIWgE/YqI/+AifYqIBeCqifwAbaN4fAcUIfAXs0UIJdFfhE0AlREMR3wFNtFJCFD1xAgI/oH4DXmAA3AJ2wA24A2bAAHga3Q5c/8E/ADd+S3gFW3gGAAAAAElFTkSuQmCC";
-    private static final String COURSES_ICON_STRING = "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAACgdz34AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAAsQAAALEBJsbbMAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAADpSURBVEiJ7ZQxCsJAEEX/dhe7VYsLttrYWFp7Kx/CKwsfwwmWsLWGgi2VBYXcB0jwBfICFjgCG/AGXMAX8AYW+AI+gB+QA/ZAi8VKSY0+CH8I/pD87ph5954Q0j9G8hIYgRNwAjbAByxAIWxAGjRAChxBrz9/eAPy+gdI0B9E/oCvP2GgBgzQBWfgCRwF/wFfwDk4AefgDfwH/AEX4AFs0AI2wAV4A5fAIWwA9ugAOmgBF+ADfAJvwAnYgAewABagD/gEH4Bf8AsYgR2wgw3wBgZAHfiFfgM2gA9wA94AD3zAr58/fAEt/4XgFXgYiwAAAABJRU5ErkJggg==";
-    private static final String AI_ASSISTANT_ICON_STRING = "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAACgdz34AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAAsQAAALEBJsbbMAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAEeSURBVEiJ7ZQ/S8NAGMW/e4lEEAsFRMGuoOAgKI4O4uAiuHgSxB/g5OAncHIRtDo7+DkUHBwEHSpYBH+Biy4KguBsb/fYA3qSll5x+HDvuffl3XvfDSH0j/E8AAbABvgAb+AFfMAOfAFf4Bf8AnvQDnfgBtywAnbAFbABN+AO3IAPcAMOQK+SKAUh+wbwA3pADSgBNaB6qYlqYArgAXYAD+BNo9EGPAAbYDcQrwWWYDdIbwM+gB0xaggk8A1s0b4bAi1gi1l02wBfpCaKzRzYBHfAAbgC2F8CnsAmuB4sAA/gI6QADeAB3IAV2IAH2IAX2IDX4C2sAAvQBjvgBEyAM/AFbAVP4Cq8gjM4A2fgPHyAN7AFduANbAF7oBN0g/5gGjQAbcAG+AR+A//CH/gL/gI9wBc4A4fgAx6AG/AB/sB78AnWwev1AS4KhzU5n0YtAAAAAElFTkSuQmCC";
+    private static final Logger LOGGER = LoggerFactory.getLogger(IconCreator.class);
 
+    // Base64 Encoded Strings for SVG Icons (white fill)
+    private static final String DASHBOARD_ICON_STRING = "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjRweCIgdmll" +
+            "d0JveD0iMCAwIDI0IDI0IiB3aWR0aD0iMjRweCIgZmlsbD0iI0ZGRkZGRiI+PHBhdGggZD0iTTAg" +
+            "MGgyNHYyNEgwVjB6IiBmaWxsPSJub25lIi8+PHBhdGggZD0iTTE5IDNINWMtMS4xMSAwLTIgLjkt" +
+            "MiAydjE0YzAgMS4xLjg5IDIgMiAyaDE0YzEuMSAwIDItLjkgMi0yVjVjMC0xLjEtLjktMi0yLTJ6" +
+            "bTAgMTZINVY1aDE0djE0ek03IDEwaDJ2N0g3em00LTNoMnYxMGgtMnptNCA2aDJ2NGgtMnoiLz48" +
+            "L3N2Zz4=";
+    private static final String COURSES_ICON_STRING = "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdC" +
+            "b3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBmaWxsPSIjRkZGRkZGIj48cGF0aCBkPSJNMTggMkg2" +
+            "Yy0xLjEgMC0yIC45LTIgMnYxNmMwIDEuMS45IDIgMiAyaDEyYzEuMSAwIDItLjkgMi0yVjRjMC0x" +
+            "LjEtLjktMi0yLTJ6bTAgMThINlY0aDEydjE2ek05IDdoNnYySDlWN3ptMCA0aDZ2Mkg5di0yem0w" +
+            "IDRoNnYySDl2LTJ6Ii8+PC9zdmc+";
+    private static final String AI_ASSISTANT_ICON_STRING = "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdC" +
+            "b3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBmaWxsPSIjRkZGRkZGIj48cGF0aCBkPSJNMTkgOWgt" +
+            "NFYzSDl2Nkg1bDcgNyA3LTd6TTUgMTh2MmgxNHYtMkg1eiIvPjwvc3ZnPg==";
+    private static final String PERSON_ADD_ICON_STRING = "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjRweCIgdmlld0JveD0iMCAwIDI0IDI0IiB3aWR0aD0iMjRweCIgZmlsbD0iIzAwMDAwMCI+PHBhdGggZD0iTTAgMGgyNHYyNEgwVjB6IiBmaWxsPSJub25lIi8+PHBhdGggZD0iTTE1IDEyYyAyLjIxIDAgNC0xLjc5IDQtNHMtMS43OS00LTQtNC00IDEuNzktNCA0IDEuNzkgNCA0IDR6bS05LTJWN0g0djNIMXYyaDN2M2gydi0zaDN2LTJINnptOSA0Yy0yLjY3IDAtOCA1LjMzLTggNHYySDE2di0yYzAtMi42Ni01LjMzLTQtOC00eiIvPjwvc3ZnPg==";
+    private static final String MOVE_RIGHT_ICON_STRING = "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0Ij4KICAgIDxwYXRoIGQ9Ik0xMCAxN2w1LTUtNS01djEweiIvPgo8L3N2Zz4=";
+    private static final String LOGIN_ICON_STRING = "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjRweCIgdmlld0JveD0iMCAwIDI0IDI0IiB3aWR0aD0iMjRweCIgZmlsbD0iIzAwMDAwMCI+PHBhdGggZD0iTTAgMGgyNHYyNEgwVjB6IiBmaWxsPSJub25lIi8+PHBhdGggZD0iTTExIDdMOS42IDguNGwyLjYgMi42SDJ2MmwxMC4yLTIuNmwtMi42IDIuNkwxMSAxN2w1LTUtNS01em05IDEyaC04djJoOGMxLjEgMCAyLS45IDItMlY1YzAtMS4xLS45LTItMi0ySDEydjJoOHYxNHoiLz48L3N2Zz4=";
+    
     // Publicly accessible ImageIcon instances
     public static final ImageIcon DASHBOARD_ICON = createImageIcon(DASHBOARD_ICON_STRING);
     public static final ImageIcon COURSES_ICON = createImageIcon(COURSES_ICON_STRING);
     public static final ImageIcon AI_ASSISTANT_ICON = createImageIcon(AI_ASSISTANT_ICON_STRING);
+    public static final ImageIcon PERSON_ADD_ICON = createImageIcon(PERSON_ADD_ICON_STRING);
+    public static final ImageIcon MOVE_RIGHT_ICON = createImageIcon(MOVE_RIGHT_ICON_STRING);
+    public static final ImageIcon LOGIN_ICON = createImageIcon(LOGIN_ICON_STRING);
 
     /**
      * Creates an ImageIcon from a Base64 encoded string.
@@ -32,7 +52,7 @@ public class IconCreator {
             byte[] imageBytes = Base64.getDecoder().decode(base64String);
             return new ImageIcon(imageBytes);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Failed to create ImageIcon from Base64 string", e);
             return null;
         }
     }

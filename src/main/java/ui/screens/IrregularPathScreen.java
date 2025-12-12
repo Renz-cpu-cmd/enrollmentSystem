@@ -1,7 +1,7 @@
-
 package ui.screens;
 
 import ui.MobileFrame;
+import ui.Screen;
 import util.SessionManager;
 
 import javax.swing.*;
@@ -75,7 +75,7 @@ public class IrregularPathScreen extends JPanel {
             JOptionPane.showMessageDialog(this, "Schedule Validated! Proceeding to Assessment.");
             MobileFrame frame = (MobileFrame) SwingUtilities.getWindowAncestor(this);
             if (frame != null) {
-                frame.showScreen("AssessmentOfFees");
+                frame.showScreen(Screen.ASSESSMENT_OF_FEES, true);
             }
         });
     }

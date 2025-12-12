@@ -1,12 +1,16 @@
-
 import ui.MobileFrame;
+import ui.Screen;
 import ui.theme.Theme;
+import util.GlobalExceptionHandler;
 
 import javax.swing.*;
 
 public class Main {
 
     public static void main(String[] args) {
+        // Set the global exception handler
+        Thread.setDefaultUncaughtExceptionHandler(new GlobalExceptionHandler());
+        
         // Set up the entire application's look and feel
         Theme.setupTheme();
 
@@ -15,14 +19,12 @@ public class Main {
             MobileFrame frame = new MobileFrame();
             frame.setVisible(true);
 
-            // Show splash screen for a few seconds
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            frame.showScreen("PortalGateway");
+            // Use a Timer to switch from the splash screen
+            Timer timer = new Timer(3000, e -> {
+                frame.showScreen(Screen.PORTAL_GATEWAY, true);
+            });
+            timer.setRepeats(false); // Only run once
+            timer.start();
         });
     }
 }

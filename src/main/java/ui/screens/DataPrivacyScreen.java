@@ -1,7 +1,7 @@
-
 package ui.screens;
 
 import ui.MobileFrame;
+import ui.Screen;
 import ui.theme.Theme;
 
 import javax.swing.*;
@@ -66,7 +66,7 @@ public class DataPrivacyScreen extends JPanel {
         nextButton.addActionListener(e -> {
             MobileFrame frame = (MobileFrame) SwingUtilities.getWindowAncestor(this);
             if (frame != null) {
-                frame.showScreen("BioData");
+                frame.showScreen(Screen.BIO_DATA, true);
             }
         });
 

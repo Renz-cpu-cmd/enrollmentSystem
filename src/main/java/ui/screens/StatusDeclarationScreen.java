@@ -1,7 +1,7 @@
-
 package ui.screens;
 
 import ui.MobileFrame;
+import ui.Screen;
 
 import javax.swing.*;
 import java.awt.*;
@@ -56,9 +56,9 @@ public class StatusDeclarationScreen extends JPanel {
             MobileFrame frame = (MobileFrame) SwingUtilities.getWindowAncestor(this);
             if (frame != null) {
                 if (regularButton.isSelected()) {
-                    frame.showScreen("RegularPath"); // Screen C-4A
+                    frame.showScreen(Screen.REGULAR_PATH, true); // Screen C-4A
                 } else if (irregularButton.isSelected()) {
-                    frame.showScreen("IrregularPath"); // Screen C-4B
+                    frame.showScreen(Screen.IRREGULAR_PATH, true); // Screen C-4B
                 } else {
                     JOptionPane.showMessageDialog(this, "Please declare your status.");
                 }
@@ -66,4 +66,3 @@ public class StatusDeclarationScreen extends JPanel {
         });
     }
 }
-

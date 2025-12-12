@@ -1,7 +1,7 @@
-
 package ui.screens;
 
 import ui.MobileFrame;
+import ui.Screen;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -71,7 +71,7 @@ public class ProgramSelectionScreen extends JPanel {
             MobileFrame frame = (MobileFrame) SwingUtilities.getWindowAncestor(this);
             if (frame != null) {
                 // This will navigate to BlockSectioningScreen once it's created
-                frame.showScreen("BlockSectioning"); 
+                frame.showScreen(Screen.BLOCK_SECTIONING, true);
             }
         });
 

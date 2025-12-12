@@ -1,20 +1,25 @@
-
 package ui.screens;
 
 import com.toedter.calendar.JDateChooser;
-import dao.StudentDAO;
 import model.Student;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import service.EnrollmentService;
 import ui.MobileFrame;
-import ui.theme.AccordionPanel;
-import ui.theme.ProgressStepper;
-import ui.theme.Theme;
-import ui.theme.Toast;
+import ui.Screen;
+import ui.theme.*;
+import util.Validator;
 
 import javax.swing.*;
 import java.awt.*;
 import java.text.SimpleDateFormat;
+import java.util.concurrent.ExecutionException;
 
 public class BioDataScreen extends JPanel {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(BioDataScreen.class);
+
+    private final EnrollmentService enrollmentService;
 
     // Form Components
     private JTextField lastNameField, firstNameField, middleNameField;
@@ -25,8 +30,11 @@ public class BioDataScreen extends JPanel {
     private JTextField guardianNameField, guardianMobileField;
     private JTextField lastSchoolAttendedField;
     private JComboBox<String> strandComboBox;
+    private JButton proceedButton;
 
-    public BioDataScreen() {
+    public BioDataScreen(EnrollmentService enrollmentService) {
+        this.enrollmentService = enrollmentService;
+
         setLayout(new BorderLayout(0, 15));
         setBackground(Theme.BACKGROUND_COLOR);
         setBorder(Theme.PADDING_BORDER);
@@ -41,6 +49,7 @@ public class BioDataScreen extends JPanel {
         setupButtonPanel();
     }
 
+    // ... (rest of the setup methods remain the same)
     private void setupHeader() {
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setBackground(Theme.BACKGROUND_COLOR);
@@ -101,9 +110,9 @@ public class BioDataScreen extends JPanel {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         buttonPanel.setBackground(Theme.BACKGROUND_COLOR);
 
-        JButton backButton = new JButton("Back");
-        JButton clearButton = new JButton("Clear");
-        JButton proceedButton = new JButton("Save and Proceed");
+        JButton backButton = new RippleButton("Back");
+        JButton clearButton = new RippleButton("Clear");
+        proceedButton = new RippleButton("Save and Proceed");
 
         // Style buttons using theme properties
         // (Secondary button styling might need a custom method if needed frequently)
@@ -238,51 +247,77 @@ public class BioDataScreen extends JPanel {
     }
 
 
-    // -- Data Handling and Navigation --
-
     private void saveStudentData() {
-        if (lastNameField.getText().trim().isEmpty() || firstNameField.getText().trim().isEmpty() || birthdateChooser.getDate() == null) {
-            Toast.makeText(this, "Please fill in required fields (Last Name, First Name, Birthdate).", Toast.Type.WARNING, Toast.LENGTH_LONG);
+        // --- Input Validation ---
+        if (!Validator.isNotNullOrEmpty(lastNameField.getText(), firstNameField.getText())) {
+            Toast.makeText(this, "Last Name and First Name are required.", Toast.Type.WARNING, Toast.LENGTH_LONG);
+            return;
+        }
+        if (birthdateChooser.getDate() == null) {
+            Toast.makeText(this, "Birthdate is required.", Toast.Type.WARNING, Toast.LENGTH_LONG);
+            return;
+        }
+        if (!Validator.isValidEmail(emailField.getText())) {
+            Toast.makeText(this, "Please enter a valid email address.", Toast.Type.WARNING, Toast.LENGTH_LONG);
+            return;
+        }
+        if (!Validator.isValidPhilippineMobileNumber(mobileNumberField.getText())) {
+            Toast.makeText(this, "Please enter a valid Philippine mobile number (e.g., 09xxxxxxxxx or +639xxxxxxxxx).", Toast.Type.WARNING, Toast.LENGTH_LONG);
             return;
         }
 
-        Student newStudent = new Student();
-        newStudent.setLastName(lastNameField.getText().trim());
-        newStudent.setFirstName(firstNameField.getText().trim());
-        newStudent.setMiddleName(middleNameField.getText().trim());
-        newStudent.setSuffix((String) suffixComboBox.getSelectedItem());
+        proceedButton.setEnabled(false);
+        proceedButton.setText("Saving...");
+
+        // Create a student object from the form data
+        Student studentToRegister = new Student();
+        studentToRegister.setLastName(lastNameField.getText().trim());
+        studentToRegister.setFirstName(firstNameField.getText().trim());
+        studentToRegister.setMiddleName(middleNameField.getText().trim());
+        studentToRegister.setSuffix((String) suffixComboBox.getSelectedItem());
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        newStudent.setBirthDate(sdf.format(birthdateChooser.getDate()));
+        studentToRegister.setBirthDate(sdf.format(birthdateChooser.getDate()));
 
-        newStudent.setSex((String) sexComboBox.getSelectedItem());
-        newStudent.setMobileNumber(mobileNumberField.getText().trim());
-        newStudent.setEmail(emailField.getText().trim());
-        newStudent.setHomeAddress(homeAddressArea.getText().trim());
-        newStudent.setGuardianName(guardianNameField.getText().trim());
-        newStudent.setGuardianMobile(guardianMobileField.getText().trim());
-        newStudent.setLastSchoolAttended(lastSchoolAttendedField.getText().trim());
-        newStudent.setShsStrand((String) strandComboBox.getSelectedItem());
+        studentToRegister.setSex((String) sexComboBox.getSelectedItem());
+        studentToRegister.setMobileNumber(mobileNumberField.getText().trim());
+        studentToRegister.setEmail(emailField.getText().trim());
+        studentToRegister.setHomeAddress(homeAddressArea.getText().trim());
+        studentToRegister.setGuardianName(guardianNameField.getText().trim());
+        studentToRegister.setGuardianMobile(guardianMobileField.getText().trim());
+        studentToRegister.setLastSchoolAttended(lastSchoolAttendedField.getText().trim());
+        studentToRegister.setShsStrand((String) strandComboBox.getSelectedItem());
 
-        if (!"STEM".equals(newStudent.getShsStrand()) && !"TVL-ICT".equals(newStudent.getShsStrand())) {
+        if (!"STEM".equals(studentToRegister.getShsStrand()) && !"TVL-ICT".equals(studentToRegister.getShsStrand())) {
             Toast.makeText(this, "Note: Bridging subjects will be added to your curriculum.", Toast.Type.INFO, Toast.LENGTH_LONG);
         }
 
-        String tempStudentId = "TEMP-" + System.currentTimeMillis();
-        String tempPassword = "password123";
-        newStudent.setStudentId(tempStudentId);
-        newStudent.setPassword(tempPassword);
-
-        StudentDAO studentDAO = new StudentDAO();
-        if (studentDAO.add(newStudent)) {
-            Toast.makeText(this, "Student data saved! Your ID: " + tempStudentId, Toast.Type.SUCCESS, Toast.LENGTH_LONG);
-            MobileFrame frame = (MobileFrame) SwingUtilities.getWindowAncestor(this);
-            if (frame != null) {
-                frame.showScreen("ProgramSelection");
+        SwingWorker<Student, Void> worker = new SwingWorker<>() {
+            @Override
+            protected Student doInBackground() throws Exception {
+                return enrollmentService.registerNewStudent(studentToRegister);
             }
-        } else {
-            Toast.makeText(this, "Error saving student data.", Toast.Type.ERROR, Toast.LENGTH_SHORT);
-        }
+
+            @Override
+            protected void done() {
+                try {
+                    Student registeredStudent = get();
+                    Toast.makeText(BioDataScreen.this, "Student data saved! Your ID: " + registeredStudent.getStudentId(), Toast.Type.SUCCESS, Toast.LENGTH_LONG);
+                    MobileFrame frame = (MobileFrame) SwingUtilities.getWindowAncestor(BioDataScreen.this);
+                    if (frame != null) {
+                        frame.showScreen(Screen.PROGRAM_SELECTION, true);
+                    }
+                } catch (InterruptedException | ExecutionException e) {
+                    LOGGER.error("Error saving student data", e.getCause());
+                    Toast.makeText(BioDataScreen.this, "Error saving student data: " + e.getCause().getMessage(), Toast.Type.ERROR, Toast.LENGTH_SHORT);
+                } finally {
+                    proceedButton.setEnabled(true);
+                    proceedButton.setText("Save and Proceed");
+                }
+            }
+        };
+
+        worker.execute();
     }
 
     private void clearForm() {
@@ -305,7 +340,7 @@ public class BioDataScreen extends JPanel {
     private void navigateBack() {
         MobileFrame frame = (MobileFrame) SwingUtilities.getWindowAncestor(this);
         if (frame != null) {
-            frame.showScreen("DataPrivacy");
+            frame.showScreen(Screen.DATA_PRIVACY, true);
         }
     }
 }

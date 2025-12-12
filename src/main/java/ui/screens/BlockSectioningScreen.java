@@ -1,7 +1,7 @@
-
 package ui.screens;
 
 import ui.MobileFrame;
+import ui.Screen;
 
 import javax.swing.*;
 import java.awt.*;
@@ -42,7 +42,7 @@ public class BlockSectioningScreen extends JPanel {
             MobileFrame frame = (MobileFrame) SwingUtilities.getWindowAncestor(this);
             if (frame != null) {
                 // Placeholder for the next screen
-                frame.showScreen("AssessmentOfFees"); 
+                frame.showScreen(Screen.ASSESSMENT_OF_FEES, true);
             }
         });
     }

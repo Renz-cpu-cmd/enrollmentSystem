@@ -1,26 +1,60 @@
-
 package ui.theme;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class ProgressStepper extends JPanel {
     private final String[] steps;
-    private int currentStep;
+    private int targetStep;
+    private float animatedStep; // Used for smooth animation
 
     public ProgressStepper(String[] steps) {
         this.steps = steps;
-        this.currentStep = 0;
+        this.targetStep = 0;
+        this.animatedStep = 0f;
         setBackground(Theme.BACKGROUND_COLOR);
-        setPreferredSize(new Dimension(400, 50)); // Set a default preferred size
+        setPreferredSize(new Dimension(400, 70)); // Adjusted height for labels
     }
 
-    public void setCurrentStep(int currentStep) {
-        if (currentStep >= 0 && currentStep < steps.length) {
-            this.currentStep = currentStep;
-            repaint();
+    public void setCurrentStep(int newStep) {
+        if (newStep >= 0 && newStep < steps.length) {
+            this.targetStep = newStep;
+            animateStep(this.targetStep);
         }
     }
+
+    private void animateStep(int newTargetStep) {
+        int animationDuration = 300; // milliseconds
+        Timer timer = new Timer(10, new ActionListener() {
+            long startTime = -1;
+            float startAnimatedStep = animatedStep;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (startTime < 0) {
+                    startTime = System.currentTimeMillis();
+                }
+                long now = System.currentTimeMillis();
+                long elapsed = now - startTime;
+                double progress = (double) elapsed / animationDuration;
+
+                if (progress >= 1.0) {
+                    progress = 1.0;
+                    animatedStep = newTargetStep;
+                    ((Timer) e.getSource()).stop();
+                } else {
+                    animatedStep = (float) (startAnimatedStep + (newTargetStep - startAnimatedStep) * progress);
+                }
+                repaint();
+            }
+        });
+        timer.setRepeats(true);
+        timer.setCoalesce(true);
+        timer.start();
+    }
+
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -36,35 +70,36 @@ public class ProgressStepper extends JPanel {
         for (int i = 0; i < stepCount; i++) {
             int x = i * stepWidth;
             int circleDiameter = 20;
-            int circleX = x + (stepWidth / 2) - (circleDiameter / 2);
-            int circleY = (height / 2) - (circleDiameter / 2);
+            int circleY = (height / 2) - (circleDiameter / 2) - 10; // Adjusted for label space
 
             // Draw the line connecting circles
             if (i > 0) {
-                g2d.setColor(i <= currentStep ? Theme.PRIMARY_COLOR : Theme.BORDER_COLOR);
+                g2d.setColor(i <= animatedStep ? Theme.PRIMARY_COLOR : Theme.BORDER_COLOR);
                 g2d.setStroke(new BasicStroke(2));
-                int prevCircleX = (i - 1) * stepWidth + (stepWidth / 2);
-                g2d.drawLine(prevCircleX, height / 2, circleX, height / 2);
+                int prevCircleCenterX = (i - 1) * stepWidth + (stepWidth / 2);
+                int currentCircleCenterX = x + (stepWidth / 2);
+                g2d.drawLine(prevCircleCenterX, circleY + circleDiameter / 2, currentCircleCenterX, circleY + circleDiameter / 2);
             }
 
             // Draw the circle
-            if (i <= currentStep) {
+            int currentCircleX = x + (stepWidth / 2) - (circleDiameter / 2);
+            if (i <= animatedStep) {
                 g2d.setColor(Theme.PRIMARY_COLOR);
-                g2d.fillOval(circleX, circleY, circleDiameter, circleDiameter);
+                g2d.fillOval(currentCircleX, circleY, circleDiameter, circleDiameter);
                 g2d.setColor(Color.WHITE);
                 g2d.setFont(Theme.LABEL_FONT.deriveFont(Font.BOLD));
                 String stepNumber = String.valueOf(i + 1);
                 FontMetrics fm = g2d.getFontMetrics();
-                int textX = circleX + (circleDiameter - fm.stringWidth(stepNumber)) / 2;
+                int textX = currentCircleX + (circleDiameter - fm.stringWidth(stepNumber)) / 2;
                 int textY = circleY + ((circleDiameter - fm.getHeight()) / 2) + fm.getAscent();
                 g2d.drawString(stepNumber, textX, textY);
             } else {
                 g2d.setColor(Theme.BORDER_COLOR);
-                g2d.fillOval(circleX, circleY, circleDiameter, circleDiameter);
+                g2d.fillOval(currentCircleX, circleY, circleDiameter, circleDiameter);
             }
 
             // Draw the step label
-            g2d.setColor(i == currentStep ? Theme.TEXT_PRIMARY_COLOR : Theme.TEXT_SECONDARY_COLOR);
+            g2d.setColor(i <= animatedStep ? Theme.TEXT_PRIMARY_COLOR : Theme.TEXT_SECONDARY_COLOR);
             g2d.setFont(Theme.LABEL_FONT);
             FontMetrics fm = g2d.getFontMetrics();
             int labelWidth = fm.stringWidth(steps[i]);

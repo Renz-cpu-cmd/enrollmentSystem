@@ -1,23 +1,25 @@
-
 package ui.screens;
 
-import dao.StudentDAO;
-import model.Student;
+import service.LoginService;
 import ui.MobileFrame;
+import ui.Screen;
 import ui.theme.CardPanel;
+import ui.theme.RippleButton;
 import ui.theme.Theme;
 import ui.theme.Toast;
-import util.SessionManager;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class StudentLoginScreen extends JPanel {
 
+    private final LoginService loginService;
     private JTextField studentIdField;
     private JPasswordField passwordField;
 
-    public StudentLoginScreen() {
+    public StudentLoginScreen(LoginService loginService) {
+        this.loginService = loginService;
+
         super(new GridBagLayout());
         setBackground(Theme.BACKGROUND_COLOR);
         setBorder(Theme.PADDING_BORDER);
@@ -66,8 +68,8 @@ public class StudentLoginScreen extends JPanel {
         contentPanel.add(loginCard, gbc);
 
         // Buttons
-        JButton loginButton = new JButton("Login");
-        JButton backButton = new JButton("Back");
+        JButton loginButton = new RippleButton("Login");
+        JButton backButton = new RippleButton("Back");
 
         // Secondary button style
         backButton.setBackground(Theme.SURFACE_COLOR);
@@ -89,7 +91,7 @@ public class StudentLoginScreen extends JPanel {
         backButton.addActionListener(e -> {
             MobileFrame frame = (MobileFrame) SwingUtilities.getWindowAncestor(this);
             if (frame != null) {
-                frame.showScreen("PortalGateway"); // Go back to the main portal screen
+                frame.showScreen(Screen.PORTAL_GATEWAY, true); // Go back to the main portal screen
             }
         });
     }
@@ -103,14 +105,10 @@ public class StudentLoginScreen extends JPanel {
             return;
         }
 
-        StudentDAO studentDAO = new StudentDAO();
-        Student student = studentDAO.getStudentByStudentId(studentId);
-
-        if (student != null && student.getPassword().equals(password)) {
-            SessionManager.getInstance().setCurrentStudent(student);
+        if (loginService.login(studentId, password)) {
             MobileFrame frame = (MobileFrame) SwingUtilities.getWindowAncestor(this);
             if (frame != null) {
-                frame.showScreen("Dashboard");
+                frame.showScreen(Screen.DASHBOARD, true);
             }
         } else {
             Toast.makeText(this, "Invalid Student ID or Password.", Toast.Type.ERROR, Toast.LENGTH_SHORT);

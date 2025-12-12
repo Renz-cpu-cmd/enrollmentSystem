@@ -1,9 +1,9 @@
-
 package ui.screens;
 
 import fixtures.CourseFixtures;
 import model.Course;
 import ui.MobileFrame;
+import ui.Screen;
 import util.SessionManager;
 
 import javax.swing.*;
@@ -85,7 +85,7 @@ public class AssessmentOfFeesScreen extends JPanel {
                 saveFeesToSession();
                 MobileFrame frame = (MobileFrame) SwingUtilities.getWindowAncestor(this);
                 if (frame != null) {
-                    frame.showScreen("DigitalCOR");
+                    frame.showScreen(Screen.DIGITAL_COR, true);
                 }
             }
         });

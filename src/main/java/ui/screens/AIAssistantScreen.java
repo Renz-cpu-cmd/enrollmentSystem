@@ -1,10 +1,11 @@
-
 package ui.screens;
 
 import com.google.cloud.vertexai.VertexAI;
 import com.google.cloud.vertexai.generativeai.ChatSession;
 import com.google.cloud.vertexai.generativeai.GenerativeModel;
 import com.google.cloud.vertexai.generativeai.ResponseHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ui.theme.Theme;
 
 import javax.swing.*;
@@ -12,8 +13,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class AIAssistantScreen extends JFrame {
+public class AIAssistantScreen extends JPanel {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AIAssistantScreen.class);
     private final JTextArea chatArea;
     private final JTextField inputField;
     private final JButton sendButton;
@@ -21,11 +23,8 @@ public class AIAssistantScreen extends JFrame {
     private ChatSession chatSession;
 
     public AIAssistantScreen() {
-        setTitle("AI Assistant");
-        setSize(400, 600);
         setLayout(new BorderLayout());
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        getContentPane().setBackground(Theme.BACKGROUND_COLOR);
+        setBackground(Theme.BACKGROUND_COLOR);
 
         // Chat display area
         chatArea = new JTextArea();
@@ -73,8 +72,8 @@ public class AIAssistantScreen extends JFrame {
             GenerativeModel model = new GenerativeModel(modelName, vertexAI);
             chatSession = new ChatSession(model);
         } catch (Exception e) { // Catch a more general exception
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error initializing AI model: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            LOGGER.error("Error initializing AI model", e);
+            JOptionPane.showMessageDialog(null, "Error initializing AI model: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -102,7 +101,7 @@ public class AIAssistantScreen extends JFrame {
                             String response = get();
                             chatArea.append("AI: " + response + "\n");
                         } catch (Exception ex) {
-                            ex.printStackTrace();
+                            LOGGER.error("Error getting AI response", ex);
                             chatArea.append("AI: Error - " + ex.getMessage() + "\n");
                         } finally {
                             setThinking(false);

@@ -1,7 +1,8 @@
 package dao;
 
 import model.Payment;
-import util.DBUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -13,58 +14,126 @@ import java.util.List;
  */
 public class PaymentDAO implements DataAccessObject<Payment, Integer> {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(PaymentDAO.class);
+
     @Override
     public boolean add(Payment payment) {
         String sql = "INSERT INTO payments (enrollment_id, amount, payment_method, transaction_id, status) VALUES (?, ?, ?, ?, ?)";
-        try (Connection conn = DBUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, payment.getEnrollmentId());
-            pstmt.setBigDecimal(2, payment.getAmount());
-            pstmt.setString(3, payment.getPaymentMethod());
-            pstmt.setString(4, payment.getTransactionId());
-            pstmt.setString(5, payment.getStatus());
-            return pstmt.executeUpdate() > 0;
+        Connection conn = null;
+        try {
+            conn = DatabaseManager.getConnection();
+            conn.setAutoCommit(false);
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setInt(1, payment.getEnrollmentId());
+                pstmt.setBigDecimal(2, payment.getAmount());
+                pstmt.setString(3, payment.getPaymentMethod());
+                pstmt.setString(4, payment.getTransactionId());
+                pstmt.setString(5, payment.getStatus());
+                boolean result = pstmt.executeUpdate() > 0;
+                conn.commit();
+                return result;
+            }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error("Error adding payment for enrollment id: " + payment.getEnrollmentId(), e);
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                } catch (SQLException ex) {
+                    LOGGER.error("Error rolling back transaction", ex);
+                }
+            }
             return false;
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                } catch (SQLException e) {
+                    LOGGER.error("Error closing connection", e);
+                }
+            }
         }
     }
 
     @Override
     public boolean update(Payment payment) {
         String sql = "UPDATE payments SET enrollment_id = ?, amount = ?, payment_method = ?, transaction_id = ?, status = ? WHERE id = ?";
-        try (Connection conn = DBUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, payment.getEnrollmentId());
-            pstmt.setBigDecimal(2, payment.getAmount());
-            pstmt.setString(3, payment.getPaymentMethod());
-            pstmt.setString(4, payment.getTransactionId());
-            pstmt.setString(5, payment.getStatus());
-            pstmt.setInt(6, payment.getId());
-            return pstmt.executeUpdate() > 0;
+        Connection conn = null;
+        try {
+            conn = DatabaseManager.getConnection();
+            conn.setAutoCommit(false);
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setInt(1, payment.getEnrollmentId());
+                pstmt.setBigDecimal(2, payment.getAmount());
+                pstmt.setString(3, payment.getPaymentMethod());
+                pstmt.setString(4, payment.getTransactionId());
+                pstmt.setString(5, payment.getStatus());
+                pstmt.setInt(6, payment.getId());
+                boolean result = pstmt.executeUpdate() > 0;
+                conn.commit();
+                return result;
+            }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error("Error updating payment with id: " + payment.getId(), e);
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                } catch (SQLException ex) {
+                    LOGGER.error("Error rolling back transaction", ex);
+                }
+            }
             return false;
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                } catch (SQLException e) {
+                    LOGGER.error("Error closing connection", e);
+                }
+            }
         }
     }
 
     @Override
     public boolean delete(Integer id) {
         String sql = "DELETE FROM payments WHERE id = ?";
-        try (Connection conn = DBUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, id);
-            return pstmt.executeUpdate() > 0;
+        Connection conn = null;
+        try {
+            conn = DatabaseManager.getConnection();
+            conn.setAutoCommit(false);
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setInt(1, id);
+                boolean result = pstmt.executeUpdate() > 0;
+                conn.commit();
+                return result;
+            }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error("Error deleting payment with id: " + id, e);
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                } catch (SQLException ex) {
+                    LOGGER.error("Error rolling back transaction", ex);
+                }
+            }
             return false;
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                } catch (SQLException e) {
+                    LOGGER.error("Error closing connection", e);
+                }
+            }
         }
     }
 
     @Override
     public Payment getById(Integer id) {
         String sql = "SELECT * FROM payments WHERE id = ?";
-        try (Connection conn = DBUtil.getConnection();
+        try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);
             try (ResultSet rs = pstmt.executeQuery()) {
@@ -73,7 +142,7 @@ public class PaymentDAO implements DataAccessObject<Payment, Integer> {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error("Error retrieving payment with id: " + id, e);
         }
         return null;
     }
@@ -82,14 +151,14 @@ public class PaymentDAO implements DataAccessObject<Payment, Integer> {
     public List<Payment> getAll() {
         List<Payment> payments = new ArrayList<>();
         String sql = "SELECT * FROM payments";
-        try (Connection conn = DBUtil.getConnection();
+        try (Connection conn = DatabaseManager.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 payments.add(extractPaymentFromResultSet(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error("Error retrieving all payments", e);
         }
         return payments;
     }

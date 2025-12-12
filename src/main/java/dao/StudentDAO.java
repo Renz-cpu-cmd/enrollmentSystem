@@ -1,8 +1,8 @@
-
 package dao;
 
 import model.Student;
-import util.DBUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -14,6 +14,8 @@ import java.util.List;
  */
 public class StudentDAO implements DataAccessObject<Student, Integer> {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(StudentDAO.class);
+
     @Override
     public boolean add(Student student) {
         String sql = "INSERT INTO students(student_id, password, last_name, first_name, middle_name, suffix, " +
@@ -21,15 +23,35 @@ public class StudentDAO implements DataAccessObject<Student, Integer> {
                      "last_school_attended, shs_strand, college, program, year_level, block_section) " +
                      "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = DBUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            mapStudentToStatement(student, pstmt);
-
-            return pstmt.executeUpdate() > 0;
+        Connection conn = null;
+        try {
+            conn = DatabaseManager.getConnection();
+            conn.setAutoCommit(false);
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                mapStudentToStatement(student, pstmt);
+                boolean result = pstmt.executeUpdate() > 0;
+                conn.commit();
+                return result;
+            }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error("Error adding student: " + student.getFirstName() + " " + student.getLastName(), e);
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                } catch (SQLException ex) {
+                    LOGGER.error("Error rolling back transaction", ex);
+                }
+            }
             return false;
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                } catch (SQLException e) {
+                    LOGGER.error("Error closing connection", e);
+                }
+            }
         }
     }
 
@@ -40,36 +62,78 @@ public class StudentDAO implements DataAccessObject<Student, Integer> {
                      "guardian_name = ?, guardian_mobile = ?, last_school_attended = ?, shs_strand = ?, " +
                      "college = ?, program = ?, year_level = ?, block_section = ? WHERE id = ?";
 
-        try (Connection conn = DBUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            mapStudentToStatement(student, pstmt);
-            pstmt.setInt(20, student.getId()); // Set the ID for the WHERE clause
-
-            return pstmt.executeUpdate() > 0;
+        Connection conn = null;
+        try {
+            conn = DatabaseManager.getConnection();
+            conn.setAutoCommit(false);
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                mapStudentToStatement(student, pstmt);
+                pstmt.setInt(20, student.getId()); // Set the ID for the WHERE clause
+                boolean result = pstmt.executeUpdate() > 0;
+                conn.commit();
+                return result;
+            }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error("Error updating student with id: " + student.getId(), e);
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                } catch (SQLException ex) {
+                    LOGGER.error("Error rolling back transaction", ex);
+                }
+            }
             return false;
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                } catch (SQLException e) {
+                    LOGGER.error("Error closing connection", e);
+                }
+            }
         }
     }
 
     @Override
     public boolean delete(Integer id) {
         String sql = "DELETE FROM students WHERE id = ?";
-        try (Connection conn = DBUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, id);
-            return pstmt.executeUpdate() > 0;
+        Connection conn = null;
+        try {
+            conn = DatabaseManager.getConnection();
+            conn.setAutoCommit(false);
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setInt(1, id);
+                boolean result = pstmt.executeUpdate() > 0;
+                conn.commit();
+                return result;
+            }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error("Error deleting student with id: " + id, e);
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                } catch (SQLException ex) {
+                    LOGGER.error("Error rolling back transaction", ex);
+                }
+            }
             return false;
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                } catch (SQLException e) {
+                    LOGGER.error("Error closing connection", e);
+                }
+            }
         }
     }
 
     @Override
     public Student getById(Integer id) {
         String sql = "SELECT * FROM students WHERE id = ?";
-        try (Connection conn = DBUtil.getConnection();
+        try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);
             try (ResultSet rs = pstmt.executeQuery()) {
@@ -78,7 +142,7 @@ public class StudentDAO implements DataAccessObject<Student, Integer> {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error("Error retrieving student with id: " + id, e);
         }
         return null;
     }
@@ -87,21 +151,21 @@ public class StudentDAO implements DataAccessObject<Student, Integer> {
     public List<Student> getAll() {
         List<Student> students = new ArrayList<>();
         String sql = "SELECT * FROM students";
-        try (Connection conn = DBUtil.getConnection();
+        try (Connection conn = DatabaseManager.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 students.add(mapResultSetToStudent(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error("Error retrieving all students", e);
         }
         return students;
     }
 
     public Student getStudentByStudentId(String studentId) {
         String sql = "SELECT * FROM students WHERE student_id = ?";
-        try (Connection conn = DBUtil.getConnection();
+        try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, studentId);
             try (ResultSet rs = pstmt.executeQuery()) {
@@ -110,7 +174,7 @@ public class StudentDAO implements DataAccessObject<Student, Integer> {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error("Error retrieving student with studentId: " + studentId, e);
         }
         return null;
     }

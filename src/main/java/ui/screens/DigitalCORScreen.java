@@ -1,8 +1,8 @@
-
 package ui.screens;
 
 import model.Student;
 import ui.MobileFrame;
+import ui.Screen;
 import util.SessionManager;
 
 import javax.swing.*;
@@ -81,7 +81,7 @@ public class DigitalCORScreen extends JPanel {
             // Go back to the portal gateway
             MobileFrame frame = (MobileFrame) SwingUtilities.getWindowAncestor(this);
             if (frame != null) {
-                frame.showScreen("PortalGateway");
+                frame.showScreen(Screen.PORTAL_GATEWAY, true);
             }
         });
     }
@@ -116,4 +116,3 @@ public class DigitalCORScreen extends JPanel {
         return titleLabel;
     }
 }
-

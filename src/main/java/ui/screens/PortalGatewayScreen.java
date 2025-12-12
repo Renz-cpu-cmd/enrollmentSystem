@@ -1,11 +1,15 @@
-
 package ui.screens;
 
 import ui.MobileFrame;
+import ui.Screen;
+import ui.theme.CardPanel;
+import ui.theme.IconCreator;
 import ui.theme.Theme;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class PortalGatewayScreen extends JPanel {
 
@@ -44,21 +48,24 @@ public class PortalGatewayScreen extends JPanel {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
 
-        JButton freshmanButton = new JButton("Incoming Freshman");
-        JButton transfereeButton = new JButton("Transferee");
-        JButton studentPortalButton = new JButton("Student Portal");
+        CardPanel newStudentButton = createGatewayButton("New/Continuing Student", "Start or continue your application.", IconCreator.PERSON_ADD_ICON, e -> {
+            MobileFrame frame = (MobileFrame) SwingUtilities.getWindowAncestor(this);
+            if (frame != null) {
+                frame.showScreen(Screen.DATA_PRIVACY, true); // Flow A
+            }
+        });
 
-        transfereeButton.setBackground(Theme.SURFACE_COLOR);
-        transfereeButton.setForeground(Theme.TEXT_SECONDARY_COLOR);
+        CardPanel studentPortalButton = createGatewayButton("Returning Student (Portal)", "Access your student account.", IconCreator.LOGIN_ICON, e -> {
+            MobileFrame frame = (MobileFrame) SwingUtilities.getWindowAncestor(this);
+            if (frame != null) {
+                frame.showScreen(Screen.STUDENT_LOGIN, true); // Flow C
+            }
+        });
 
         gbc.gridy = 0;
-        buttonPanel.add(freshmanButton, gbc);
+        buttonPanel.add(newStudentButton, gbc);
 
         gbc.gridy = 1;
-        buttonPanel.add(transfereeButton, gbc);
-
-        gbc.gridy = 2;
-        gbc.insets = new Insets(30, 50, 10, 50); // Add extra top margin
         buttonPanel.add(studentPortalButton, gbc);
 
         add(buttonPanel, BorderLayout.CENTER);
@@ -68,28 +75,28 @@ public class PortalGatewayScreen extends JPanel {
         footerLabel.setFont(Theme.LABEL_FONT);
         footerLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
         add(footerLabel, BorderLayout.SOUTH);
+    }
 
-        // Action Listeners
-        freshmanButton.addActionListener(e -> {
-            MobileFrame frame = (MobileFrame) SwingUtilities.getWindowAncestor(this);
-            if (frame != null) {
-                frame.showScreen("DataPrivacy"); // Flow A
+    private CardPanel createGatewayButton(String title, String description, ImageIcon icon, java.awt.event.ActionListener actionListener) {
+        CardPanel card = new CardPanel();
+        card.setLayout(new BorderLayout(10, 0));
+        card.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        JLabel textContainer = new JLabel("<html><b>" + title + "</b><br><p style='width:200px;'>" + description + "</p></html>");
+        textContainer.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        JLabel iconLabel = new JLabel(icon);
+        iconLabel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+
+        card.add(iconLabel, BorderLayout.WEST);
+        card.add(textContainer, BorderLayout.CENTER);
+
+        card.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
+                actionListener.actionPerformed(new java.awt.event.ActionEvent(evt.getSource(), java.awt.event.ActionEvent.ACTION_PERFORMED, null));
             }
         });
 
-        transfereeButton.addActionListener(e -> {
-            MobileFrame frame = (MobileFrame) SwingUtilities.getWindowAncestor(this);
-            if (frame != null) {
-                // Flow B is similar to Flow A
-                frame.showScreen("DataPrivacy");
-            }
-        });
-
-        studentPortalButton.addActionListener(e -> {
-            MobileFrame frame = (MobileFrame) SwingUtilities.getWindowAncestor(this);
-            if (frame != null) {
-                frame.showScreen("StudentLogin"); // Flow C
-            }
-        });
+        return card;
     }
 }

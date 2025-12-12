@@ -6,6 +6,8 @@ import com.google.cloud.vertexai.generativeai.ChatSession;
 import com.google.cloud.vertexai.generativeai.GenerativeModel;
 import dao.MessageDAO;
 import model.Message;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,6 +17,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class AiAssistantPanel extends JPanel {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AiAssistantPanel.class);
 
     private JTextArea chatArea;
     private JTextField inputBox;
@@ -77,8 +81,8 @@ public class AiAssistantPanel extends JPanel {
             chatSession = new ChatSession(model);
             chatArea.setText("AI Assistant is ready. How can I help you?\n");
         } catch (Exception e) {
+            LOGGER.error("Error initializing AI Assistant", e);
             chatArea.setText("Error initializing AI Assistant: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
@@ -89,6 +93,7 @@ public class AiAssistantPanel extends JPanel {
                 chatArea.append(message.getSender() + ": " + message.getMessage() + "\n");
             }
         } catch (SQLException e) {
+            LOGGER.error("Error loading chat history", e);
             chatArea.append("Error loading chat history: " + e.getMessage() + "\n");
         }
     }
@@ -109,8 +114,8 @@ public class AiAssistantPanel extends JPanel {
             chatArea.append("AI: " + responseText + "\n");
             messageDAO.addMessage(new Message(SESSION_ID, "AI", responseText));
         } catch (Exception e) {
+            LOGGER.error("Error sending message to AI", e);
             chatArea.append("Error sending message: " + e.getMessage() + "\n");
-            e.printStackTrace();
         }
     }
 }

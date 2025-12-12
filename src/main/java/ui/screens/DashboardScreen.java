@@ -1,8 +1,8 @@
-
 package ui.screens;
 
 import model.Student;
 import ui.MobileFrame;
+import ui.Screen;
 import util.SessionManager;
 
 import javax.swing.*;
@@ -50,7 +50,7 @@ public class DashboardScreen extends JPanel {
         enrollButton.addActionListener(e -> {
             MobileFrame frame = (MobileFrame) SwingUtilities.getWindowAncestor(this);
             if (frame != null) {
-                frame.showScreen("StatusDeclaration");
+                frame.showScreen(Screen.STATUS_DECLARATION, true);
             }
         });
     }

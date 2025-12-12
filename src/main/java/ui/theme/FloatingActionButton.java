@@ -12,12 +12,10 @@ import java.awt.event.MouseEvent;
  */
 public class FloatingActionButton extends JButton {
 
-    private Color hoverColor;
+    private int shadowSize = 5;
 
     public FloatingActionButton(Icon icon) {
         super(icon);
-        this.hoverColor = Theme.PRIMARY_COLOR.darker();
-
         applyStyle();
     }
 
@@ -27,7 +25,7 @@ public class FloatingActionButton extends JButton {
         setFocusPainted(false);
         setBorderPainted(false);
         setCursor(new Cursor(Cursor.HAND_CURSOR));
-        setBackground(Theme.PRIMARY_COLOR);
+        setBackground(Theme.ACCENT_COLOR);
 
         // Set a fixed size for the circular button
         int size = 56;
@@ -53,22 +51,26 @@ public class FloatingActionButton extends JButton {
         Graphics2D g2 = (Graphics2D) g.create();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
+        // Draw shadow
+        g2.setColor(Theme.SHADOW_COLOR);
+        g2.fillOval(shadowSize, shadowSize, getWidth() - shadowSize, getHeight() - shadowSize);
+
         // Determine the color based on the button's state
         if (getModel().isPressed()) {
-            g2.setColor(Theme.PRIMARY_COLOR.darker().darker()); // Darkest for pressed
+            g2.setColor(Theme.ACCENT_PRESSED_COLOR);
         } else if (getModel().isRollover()) {
-            g2.setColor(Theme.PRIMARY_COLOR.darker()); // Darker for hover
+            g2.setColor(Theme.ACCENT_HOVER_COLOR);
         } else {
-            g2.setColor(getBackground()); // Normal color
+            g2.setColor(getBackground());
         }
 
-        g2.fillOval(0, 0, getWidth(), getHeight());
+        g2.fillOval(0, 0, getWidth() - shadowSize, getHeight() - shadowSize);
 
         // Paint the icon in the center
         Icon icon = getIcon();
         if (icon != null) {
-            int x = (getWidth() - icon.getIconWidth()) / 2;
-            int y = (getHeight() - icon.getIconHeight()) / 2;
+            int x = (getWidth() - shadowSize - icon.getIconWidth()) / 2;
+            int y = (getHeight() - shadowSize - icon.getIconHeight()) / 2;
             icon.paintIcon(this, g2, x, y);
         }
 
