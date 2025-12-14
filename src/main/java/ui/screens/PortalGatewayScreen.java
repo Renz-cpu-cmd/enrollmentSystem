@@ -1,102 +1,154 @@
 package ui.screens;
 
-import ui.MobileFrame;
+import com.formdev.flatlaf.FlatClientProperties;
+import com.formdev.flatlaf.ui.FlatDropShadowBorder;
+import com.formdev.flatlaf.ui.FlatRoundBorder;
+import ui.NavigationContext;
 import ui.Screen;
-import ui.theme.CardPanel;
+import ui.ScreenView;
 import ui.theme.IconCreator;
 import ui.theme.Theme;
+import util.Navigation;
 
 import javax.swing.*;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class PortalGatewayScreen extends JPanel {
+public class PortalGatewayScreen extends JPanel implements ScreenView {
 
     public PortalGatewayScreen() {
-        setLayout(new BorderLayout());
+        setLayout(new GridBagLayout());
+        setOpaque(true);
         setBackground(Theme.BACKGROUND_COLOR);
 
-        // Header (Logo and Welcome Text)
-        JPanel headerPanel = new JPanel();
-        headerPanel.setBackground(Theme.BACKGROUND_COLOR);
-        headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
-        headerPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        headerPanel.setBorder(BorderFactory.createEmptyBorder(50, 0, 50, 0));
+        JPanel container = new JPanel(new BorderLayout(0, 24));
+        container.setOpaque(false);
+        container.setBorder(new EmptyBorder(48, 48, 48, 48));
 
-        JLabel logoLabel = new JLabel("[SCHOOL LOGO]"); // Placeholder for logo
-        logoLabel.setFont(Theme.HEADING_FONT);
-        logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        container.add(createHeader(), BorderLayout.NORTH);
+        container.add(createCardRow(), BorderLayout.CENTER);
 
-        JLabel welcomeLabel = new JLabel("Welcome to the Enrollment System");
-        welcomeLabel.setFont(Theme.BODY_FONT);
-        welcomeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        headerPanel.add(logoLabel);
-        headerPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        headerPanel.add(welcomeLabel);
-
-        add(headerPanel, BorderLayout.NORTH);
-
-        // UI Components (Buttons)
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setBackground(Theme.BACKGROUND_COLOR);
-        buttonPanel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 50, 10, 50);
         gbc.gridx = 0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1.0;
-
-        CardPanel newStudentButton = createGatewayButton("New/Continuing Student", "Start or continue your application.", IconCreator.PERSON_ADD_ICON, e -> {
-            MobileFrame frame = (MobileFrame) SwingUtilities.getWindowAncestor(this);
-            if (frame != null) {
-                frame.showScreen(Screen.DATA_PRIVACY, true); // Flow A
-            }
-        });
-
-        CardPanel studentPortalButton = createGatewayButton("Returning Student (Portal)", "Access your student account.", IconCreator.LOGIN_ICON, e -> {
-            MobileFrame frame = (MobileFrame) SwingUtilities.getWindowAncestor(this);
-            if (frame != null) {
-                frame.showScreen(Screen.STUDENT_LOGIN, true); // Flow C
-            }
-        });
-
         gbc.gridy = 0;
-        buttonPanel.add(newStudentButton, gbc);
-
-        gbc.gridy = 1;
-        buttonPanel.add(studentPortalButton, gbc);
-
-        add(buttonPanel, BorderLayout.CENTER);
-
-        // Footer
-        JLabel footerLabel = new JLabel("School Academic Year 2025-2026", SwingConstants.CENTER);
-        footerLabel.setFont(Theme.LABEL_FONT);
-        footerLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
-        add(footerLabel, BorderLayout.SOUTH);
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.fill = GridBagConstraints.BOTH;
+        add(container, gbc);
     }
 
-    private CardPanel createGatewayButton(String title, String description, ImageIcon icon, java.awt.event.ActionListener actionListener) {
-        CardPanel card = new CardPanel();
-        card.setLayout(new BorderLayout(10, 0));
-        card.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    private JComponent createHeader() {
+        JPanel header = new JPanel();
+        header.setOpaque(false);
+        header.setLayout(new BoxLayout(header, BoxLayout.Y_AXIS));
 
-        JLabel textContainer = new JLabel("<html><b>" + title + "</b><br><p style='width:200px;'>" + description + "</p></html>");
-        textContainer.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        JLabel title = new JLabel("Enrollment Gateway");
+        title.setForeground(Theme.TEXT_PRIMARY_COLOR);
+        title.setAlignmentX(Component.CENTER_ALIGNMENT);
+        title.setFont(title.getFont().deriveFont(Font.BOLD, 28f));
+
+        JLabel subtitle = new JLabel("Choose how you want to continue");
+        subtitle.setForeground(new Color(110, 117, 130));
+        subtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        header.add(title);
+        header.add(Box.createVerticalStrut(8));
+        header.add(subtitle);
+        return header;
+    }
+
+    private JComponent createCardRow() {
+        JPanel row = new JPanel(new GridBagLayout());
+        row.setOpaque(false);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(0, 12, 0, 12);
+
+        gbc.gridx = 0;
+        row.add(createPortalCard(
+            "Freshman Applicant",
+            "Start a new application or finish your submission.",
+            IconCreator.PERSON_ADD_ICON,
+            e -> Navigation.to(this, Screen.DATA_PRIVACY)
+        ), gbc);
+
+        gbc.gridx = 1;
+        row.add(createPortalCard(
+            "Returning Student",
+            "Log in to your existing student account.",
+            IconCreator.LOGIN_ICON,
+            e -> Navigation.to(this, Screen.STUDENT_LOGIN)
+        ), gbc);
+
+        return row;
+    }
+
+    private JPanel createPortalCard(String title, String description, Icon icon, ActionListener action) {
+        JPanel card = new JPanel();
+        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+        card.setOpaque(true);
+        card.setBackground(Color.WHITE);
+        card.setBorder(new CompoundBorder(
+            new FlatDropShadowBorder(),
+            new CompoundBorder(new FlatRoundBorder(), new EmptyBorder(24, 24, 24, 24))
+        ));
+        card.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        card.setPreferredSize(new Dimension(280, 280));
 
         JLabel iconLabel = new JLabel(icon);
-        iconLabel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+        iconLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        iconLabel.setBorder(new EmptyBorder(0, 0, 16, 0));
 
-        card.add(iconLabel, BorderLayout.WEST);
-        card.add(textContainer, BorderLayout.CENTER);
+        JLabel titleLabel = new JLabel(title);
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        titleLabel.setForeground(Theme.TEXT_PRIMARY_COLOR);
+        titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD, 18f));
+
+        JLabel descLabel = new JLabel("<html><div style='text-align:center;width:180px;'>" + description + "</div></html>");
+        descLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        descLabel.setForeground(new Color(110, 117, 130));
+        descLabel.setFont(descLabel.getFont().deriveFont(Font.PLAIN, 13f));
+        descLabel.setBorder(new EmptyBorder(12, 0, 0, 0));
+
+        card.add(iconLabel);
+        card.add(titleLabel);
+        card.add(descLabel);
 
         card.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent evt) {
-                actionListener.actionPerformed(new java.awt.event.ActionEvent(evt.getSource(), java.awt.event.ActionEvent.ACTION_PERFORMED, null));
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (action != null) {
+                    action.actionPerformed(new ActionEvent(card, ActionEvent.ACTION_PERFORMED, title));
+                }
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                card.putClientProperty(FlatClientProperties.STYLE, "background:#F6F9FF");
+                card.setBackground(new Color(246, 249, 255));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                card.putClientProperty(FlatClientProperties.STYLE, null);
+                card.setBackground(Color.WHITE);
             }
         });
 
         return card;
+    }
+
+    @Override
+    public void onEnter(NavigationContext context) {
+        // No prep needed yet.
+    }
+
+    @Override
+    public void onLeave() {
+        // No teardown necessary.
     }
 }

@@ -1,4 +1,4 @@
-package ui;
+package ui.components;
 
 import com.google.cloud.vertexai.api.GenerateContentResponse;
 import com.google.cloud.vertexai.generativeai.GenerativeModel;
@@ -173,7 +173,7 @@ public class CoursePanel extends JPanel {
     }
 
     private void loadCourses() {
-        List<Course> courses = courseDAO.getAll();
+        List<Course> courses = courseDAO.getAllPaged(200, 0);
         tableModel.setRowCount(0);
         for (Course course : courses) {
             tableModel.addRow(new Object[]{

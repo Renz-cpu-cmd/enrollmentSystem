@@ -1,68 +1,111 @@
 package ui.screens;
 
-import ui.MobileFrame;
+import ui.NavigationContext;
 import ui.Screen;
+import ui.ScreenView;
+import ui.components.SelectionCard;
+import ui.theme.Theme;
+import util.Navigation;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
-public class StatusDeclarationScreen extends JPanel {
+public class StatusDeclarationScreen extends JPanel implements ScreenView {
+
+    private final SelectionCard regularCard;
+    private final SelectionCard irregularCard;
+    private final JButton proceedButton;
+    private Boolean isRegular;
 
     public StatusDeclarationScreen() {
-        setLayout(new BorderLayout(10, 10));
-        setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        setBackground(Theme.BACKGROUND_COLOR);
+        setLayout(new GridBagLayout());
 
-        // Main content panel
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        JPanel column = new JPanel();
+        column.setOpaque(false);
+        column.setLayout(new BoxLayout(column, BoxLayout.Y_AXIS));
+        column.setBorder(new EmptyBorder(24, 24, 24, 24));
+        column.setMaximumSize(new Dimension(540, Integer.MAX_VALUE));
 
-        // --- Year Level & Semester Confirmation ---
-        mainPanel.add(new JLabel("You are eligible to enroll for:"));
-        mainPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        JLabel header = new JLabel("Confirm Your Status");
+        header.setFont(Theme.HEADING_FONT);
+        header.setForeground(Theme.TEXT_HEADER);
+        header.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        // Year Level
-        mainPanel.add(new JLabel("Year Level:"));
-        JComboBox<String> yearLevelComboBox = new JComboBox<>(new String[]{"2nd Year (Retained)", "3rd Year (Promoted)"});
-        // In a real app, this would be auto-selected
-        mainPanel.add(yearLevelComboBox);
-        mainPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        JLabel subtext = new JLabel("Select your academic standing for the 2nd Semester.");
+        subtext.setFont(Theme.BODY_FONT);
+        subtext.setForeground(Theme.TEXT_BODY);
+        subtext.setAlignmentX(Component.LEFT_ALIGNMENT);
+        subtext.setBorder(new EmptyBorder(8, 0, 16, 0));
 
-        // Semester
-        mainPanel.add(new JLabel("Semester:"));
-        JTextField semesterField = new JTextField("1st Semester");
-        semesterField.setEditable(false);
-        mainPanel.add(semesterField);
-        mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+        JPanel cardsRow = new JPanel();
+        cardsRow.setOpaque(false);
+        cardsRow.setLayout(new GridLayout(1, 2, 16, 0));
+        cardsRow.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        // --- Status Declaration ---
-        mainPanel.add(new JLabel("Declare Your Status:"));
-        JRadioButton regularButton = new JRadioButton("Regular (I passed all my subjects)");
-        JRadioButton irregularButton = new JRadioButton("Irregular (I have failed/dropped subjects)");
-        ButtonGroup statusGroup = new ButtonGroup();
-        statusGroup.add(regularButton);
-        statusGroup.add(irregularButton);
+        regularCard = new SelectionCard("Regular Status", "Pre-loaded block schedule.", Theme.ICON_BG_GREEN);
+        irregularCard = new SelectionCard("Irregular Status", "Custom schedule selection.", Theme.ICON_BG_RED);
 
-        mainPanel.add(regularButton);
-        mainPanel.add(irregularButton);
+        regularCard.addActionListener(e -> selectStatus(true));
+        irregularCard.addActionListener(e -> selectStatus(false));
 
-        add(mainPanel, BorderLayout.CENTER);
+        cardsRow.add(regularCard);
+        cardsRow.add(irregularCard);
 
-        // Load Subjects Button
-        JButton loadSubjectsButton = new JButton("Load Subjects");
-        add(loadSubjectsButton, BorderLayout.SOUTH);
+        proceedButton = new JButton("Proceed");
+        proceedButton.setFont(Theme.SUBHEADING_FONT);
+        proceedButton.setBackground(Theme.PRIMARY);
+        proceedButton.setForeground(Color.WHITE);
+        proceedButton.setFocusPainted(false);
+        proceedButton.setBorder(BorderFactory.createEmptyBorder(12, 24, 12, 24));
+        proceedButton.setEnabled(false);
+        proceedButton.addActionListener(e -> navigateNext());
 
-        // Action Listener for the button
-        loadSubjectsButton.addActionListener(e -> {
-            MobileFrame frame = (MobileFrame) SwingUtilities.getWindowAncestor(this);
-            if (frame != null) {
-                if (regularButton.isSelected()) {
-                    frame.showScreen(Screen.REGULAR_PATH, true); // Screen C-4A
-                } else if (irregularButton.isSelected()) {
-                    frame.showScreen(Screen.IRREGULAR_PATH, true); // Screen C-4B
-                } else {
-                    JOptionPane.showMessageDialog(this, "Please declare your status.");
-                }
-            }
-        });
+        JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        footer.setOpaque(false);
+        footer.setBorder(new EmptyBorder(24, 0, 0, 0));
+        footer.add(proceedButton);
+
+        column.add(header);
+        column.add(subtext);
+        column.add(cardsRow);
+        column.add(footer);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        add(column, gbc);
+    }
+
+    private void selectStatus(boolean regular) {
+        this.isRegular = regular;
+        regularCard.setSelectedState(regular);
+        irregularCard.setSelectedState(!regular);
+        proceedButton.setEnabled(true);
+    }
+
+    private void navigateNext() {
+        if (isRegular == null) {
+            JOptionPane.showMessageDialog(this, "Please select your status.");
+            return;
+        }
+
+        Screen target = isRegular ? Screen.REGULAR_PATH : Screen.IRREGULAR_PATH;
+        Navigation.to(this, target);
+    }
+
+    @Override
+    public void onEnter(NavigationContext context) {
+        isRegular = null;
+        regularCard.setSelectedState(false);
+        irregularCard.setSelectedState(false);
+        proceedButton.setEnabled(false);
+    }
+
+    @Override
+    public void onLeave() {
+        // No teardown required.
     }
 }

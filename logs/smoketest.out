@@ -1,0 +1,6 @@
+2025-12-13 06:39:37.859 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:sqlite:enrollment.db (SQLite 3.39)
+2025-12-13 06:39:37.904 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 5 migrations (execution time 00:00.023s)
+2025-12-13 06:39:37.913 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "main": 4
+2025-12-13 06:39:37.917 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "main" is up to date. No migration necessary.
+2025-12-13 06:39:37.926 [main] INFO  util.DatabaseMigrator - Flyway migration complete. Applied: 0
+2025-12-13 06:39:38.086 [AWT-EventQueue-0] WARN  util.GeminiClient - Gemini client disabled: missing projectId/location. Configure gemini.projectId and gemini.location via env or config.properties.

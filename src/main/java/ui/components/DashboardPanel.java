@@ -1,4 +1,4 @@
-package ui;
+package ui.components;
 
 import dao.CourseDAO;
 import dao.StudentDAO;
@@ -23,8 +23,8 @@ public class DashboardPanel extends JPanel {
         setLayout(new GridLayout(1, 2, 20, 20));
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        int studentCount = studentDAO.getAll().size();
-        int courseCount = courseDAO.getAll().size();
+        int studentCount = studentDAO.countAll();
+        int courseCount = courseDAO.countAll();
 
         add(createStatPanel("Total Students", String.valueOf(studentCount)));
         add(createStatPanel("Total Courses", String.valueOf(courseCount)));

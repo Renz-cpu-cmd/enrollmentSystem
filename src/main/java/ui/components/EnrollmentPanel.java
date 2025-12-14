@@ -1,4 +1,4 @@
-package ui;
+package ui.components;
 
 import dao.CourseDAO;
 import dao.EnrollmentDAO;
@@ -141,14 +141,14 @@ public class EnrollmentPanel extends JPanel {
     }
 
     private void loadComboBoxes() {
-        List<Student> students = studentDAO.getAll();
+        List<Student> students = studentDAO.getAllPaged(200, 0);
         studentMap = students.stream().collect(Collectors.toMap(Student::getId, student -> student));
         studentComboBox.removeAllItems();
         for (Student student : students) {
             studentComboBox.addItem(student);
         }
 
-        List<Course> courses = courseDAO.getAll();
+        List<Course> courses = courseDAO.getAllPaged(200, 0);
         courseMap = courses.stream().collect(Collectors.toMap(Course::getId, course -> course));
         courseComboBox.removeAllItems();
         for (Course course : courses) {
@@ -157,7 +157,7 @@ public class EnrollmentPanel extends JPanel {
     }
 
     private void loadEnrollments() {
-        List<Enrollment> enrollments = enrollmentDAO.getAll();
+        List<Enrollment> enrollments = enrollmentDAO.getAllPaged(200, 0);
         tableModel.setRowCount(0);
         for (Enrollment enrollment : enrollments) {
             Student student = studentMap.get(enrollment.getStudentId());

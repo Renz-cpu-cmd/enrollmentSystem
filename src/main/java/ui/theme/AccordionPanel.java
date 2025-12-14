@@ -65,7 +65,7 @@ public class AccordionPanel extends JPanel {
 
         int startHeight = contentWrapper.getHeight();
         // Calculate target height by temporarily setting actual content visible and getting its preferred size
-        int targetHeight = 0;
+        final int targetHeight;
         if (expanded) {
             contentWrapper.setVisible(true);
             contentWrapper.add(actualContent, BorderLayout.CENTER); // Ensure actual content is added for preferred size calculation
@@ -73,9 +73,10 @@ public class AccordionPanel extends JPanel {
             contentWrapper.revalidate();
             targetHeight = actualContent.getPreferredSize().height + (contentWrapper.getBorder().getBorderInsets(contentWrapper).top + contentWrapper.getBorder().getBorderInsets(contentWrapper).bottom);
         } else {
-             actualContent.setVisible(false); // Hide actual content when collapsing
+            actualContent.setVisible(false); // Hide actual content when collapsing
+            targetHeight = 0;
         }
-        
+
         int animationDuration = 200; // milliseconds
         Timer timer = new Timer(10, null);
         timer.addActionListener(new AbstractAction() {

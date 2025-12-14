@@ -1,7 +1,9 @@
-import ui.MobileFrame;
+import ui.MainFrame;
 import ui.Screen;
-import ui.theme.Theme;
+import ui.UIConfig;
 import util.GlobalExceptionHandler;
+import context.ApplicationContext;
+import util.DatabaseMigrator;
 
 import javax.swing.*;
 
@@ -10,21 +12,21 @@ public class Main {
     public static void main(String[] args) {
         // Set the global exception handler
         Thread.setDefaultUncaughtExceptionHandler(new GlobalExceptionHandler());
-        
-        // Set up the entire application's look and feel
-        Theme.setupTheme();
+
+        // Choose light or dark FlatLaf via system property: -Dapp.theme=dark
+        boolean useDark = "dark".equalsIgnoreCase(System.getProperty("app.theme", "light"));
+        UIConfig.initialize(useDark);
+
+        ApplicationContext applicationContext = new ApplicationContext();
+
+        // Ensure DB schema is present/updated (idempotent)
+        DatabaseMigrator.runMigrations();
 
         // Run the UI on the Event Dispatch Thread
         SwingUtilities.invokeLater(() -> {
-            MobileFrame frame = new MobileFrame();
+            MainFrame frame = new MainFrame(applicationContext);
             frame.setVisible(true);
-
-            // Use a Timer to switch from the splash screen
-            Timer timer = new Timer(3000, e -> {
-                frame.showScreen(Screen.PORTAL_GATEWAY, true);
-            });
-            timer.setRepeats(false); // Only run once
-            timer.start();
+            frame.showScreen(Screen.SPLASH);
         });
     }
 }

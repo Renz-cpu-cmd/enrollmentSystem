@@ -27,4 +27,20 @@ public class Config {
     public static String getProperty(String key) {
         return properties.getProperty(key);
     }
+
+    public static String getEnvOrProperty(String key, String defaultValue) {
+        String env = System.getenv(toEnvKey(key));
+        if (env != null && !env.isBlank()) {
+            return env;
+        }
+        String prop = properties.getProperty(key);
+        if (prop != null && !prop.isBlank()) {
+            return prop;
+        }
+        return defaultValue;
+    }
+
+    private static String toEnvKey(String key) {
+        return key.toUpperCase().replace('.', '_');
+    }
 }

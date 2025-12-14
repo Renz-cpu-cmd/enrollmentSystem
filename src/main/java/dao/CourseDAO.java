@@ -18,113 +18,77 @@ public class CourseDAO implements DataAccessObject<Course, Integer> {
 
     @Override
     public boolean add(Course course) {
+        return addWithConnection(course, null);
+    }
+
+    public boolean addWithConnection(Course course, Connection connection) {
         String sql = "INSERT INTO courses (code, name, description, units) VALUES (?, ?, ?, ?)";
-        Connection conn = null;
         try {
-            conn = DatabaseManager.getConnection();
-            conn.setAutoCommit(false);
+            Connection conn = connection != null ? connection : DatabaseManager.getConnection();
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setString(1, course.getCode());
                 pstmt.setString(2, course.getName());
                 pstmt.setString(3, course.getDescription());
                 pstmt.setInt(4, course.getUnits());
-                boolean result = pstmt.executeUpdate() > 0;
-                conn.commit();
-                return result;
+                return pstmt.executeUpdate() > 0;
+            } finally {
+                if (connection == null) {
+                    conn.close();
+                }
             }
         } catch (SQLException e) {
             LOGGER.error("Error adding course: " + course.getName(), e);
-            if (conn != null) {
-                try {
-                    conn.rollback();
-                } catch (SQLException ex) {
-                    LOGGER.error("Error rolling back transaction", ex);
-                }
-            }
             return false;
-        } finally {
-            if (conn != null) {
-                try {
-                    conn.setAutoCommit(true);
-                    conn.close();
-                } catch (SQLException e) {
-                    LOGGER.error("Error closing connection", e);
-                }
-            }
         }
     }
 
     @Override
     public boolean update(Course course) {
+        return updateWithConnection(course, null);
+    }
+
+    public boolean updateWithConnection(Course course, Connection connection) {
         String sql = "UPDATE courses SET code = ?, name = ?, description = ?, units = ? WHERE id = ?";
-        Connection conn = null;
         try {
-            conn = DatabaseManager.getConnection();
-            conn.setAutoCommit(false);
+            Connection conn = connection != null ? connection : DatabaseManager.getConnection();
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setString(1, course.getCode());
                 pstmt.setString(2, course.getName());
                 pstmt.setString(3, course.getDescription());
                 pstmt.setInt(4, course.getUnits());
                 pstmt.setInt(5, course.getId());
-                boolean result = pstmt.executeUpdate() > 0;
-                conn.commit();
-                return result;
+                return pstmt.executeUpdate() > 0;
+            } finally {
+                if (connection == null) {
+                    conn.close();
+                }
             }
         } catch (SQLException e) {
             LOGGER.error("Error updating course with id: " + course.getId(), e);
-            if (conn != null) {
-                try {
-                    conn.rollback();
-                } catch (SQLException ex) {
-                    LOGGER.error("Error rolling back transaction", ex);
-                }
-            }
             return false;
-        } finally {
-            if (conn != null) {
-                try {
-                    conn.setAutoCommit(true);
-                    conn.close();
-                } catch (SQLException e) {
-                    LOGGER.error("Error closing connection", e);
-                }
-            }
         }
     }
 
     @Override
     public boolean delete(Integer id) {
+        return deleteWithConnection(id, null);
+    }
+
+    public boolean deleteWithConnection(Integer id, Connection connection) {
         String sql = "DELETE FROM courses WHERE id = ?";
-        Connection conn = null;
         try {
-            conn = DatabaseManager.getConnection();
-            conn.setAutoCommit(false);
+            Connection conn = connection != null ? connection : DatabaseManager.getConnection();
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setInt(1, id);
-                boolean result = pstmt.executeUpdate() > 0;
-                conn.commit();
-                return result;
+                return pstmt.executeUpdate() > 0;
+            } finally {
+                if (connection == null) {
+                    conn.close();
+                }
             }
         } catch (SQLException e) {
             LOGGER.error("Error deleting course with id: " + id, e);
-            if (conn != null) {
-                try {
-                    conn.rollback();
-                } catch (SQLException ex) {
-                    LOGGER.error("Error rolling back transaction", ex);
-                }
-            }
             return false;
-        } finally {
-            if (conn != null) {
-                try {
-                    conn.setAutoCommit(true);
-                    conn.close();
-                } catch (SQLException e) {
-                    LOGGER.error("Error closing connection", e);
-                }
-            }
         }
     }
 
@@ -147,18 +111,39 @@ public class CourseDAO implements DataAccessObject<Course, Integer> {
 
     @Override
     public List<Course> getAll() {
+        return getAllPaged(200, 0);
+    }
+
+    public List<Course> getAllPaged(int limit, int offset) {
         List<Course> courses = new ArrayList<>();
-        String sql = "SELECT * FROM courses";
+        String sql = "SELECT id, code, name, description, units FROM courses ORDER BY id LIMIT ? OFFSET ?";
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, limit);
+            pstmt.setInt(2, offset);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    courses.add(extractCourseFromResultSet(rs));
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Error retrieving courses (paged)", e);
+        }
+        return courses;
+    }
+
+    public int countAll() {
+        String sql = "SELECT COUNT(1) FROM courses";
         try (Connection conn = DatabaseManager.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                courses.add(extractCourseFromResultSet(rs));
+            if (rs.next()) {
+                return rs.getInt(1);
             }
         } catch (SQLException e) {
-            LOGGER.error("Error retrieving all courses", e);
+            LOGGER.error("Error counting courses", e);
         }
-        return courses;
+        return 0;
     }
 
     private Course extractCourseFromResultSet(ResultSet rs) throws SQLException {

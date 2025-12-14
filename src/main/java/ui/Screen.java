@@ -9,16 +9,18 @@ public enum Screen {
     PORTAL_GATEWAY("PortalGateway", PortalGatewayScreen.class),
     DATA_PRIVACY("DataPrivacy", DataPrivacyScreen.class),
     BIO_DATA("BioData", BioDataScreen.class),
+    DOCUMENTS("Documents", DocumentsScreen.class),
     PROGRAM_SELECTION("ProgramSelection", ProgramSelectionScreen.class),
     BLOCK_SECTIONING("BlockSectioning", BlockSectioningScreen.class),
     STUDENT_LOGIN("StudentLogin", StudentLoginScreen.class),
     DASHBOARD("Dashboard", DashboardScreen.class),
-    STATUS_DECLARATION("StatusDeclaration", StatusDeclarationScreen.class),
     REGULAR_PATH("RegularPath", RegularPathScreen.class),
+    REGULAR_SCHEDULE("RegularSchedule", RegularScheduleScreen.class),
+    IRREGULAR_SCHEDULE("IrregularSchedule", IrregularScheduleScreen.class),
     IRREGULAR_PATH("IrregularPath", IrregularPathScreen.class),
-    ASSESSMENT_OF_FEES("AssessmentOfFees", AssessmentOfFeesScreen.class),
+    ASSESSMENT("Assessment", AssessmentScreen.class),
     DIGITAL_COR("DigitalCOR", DigitalCORScreen.class),
-    AI_ASSISTANT("AIAssistant", AIAssistantScreen.class);
+    AI_ASSISTANT("AIAssistant", ui.screens.AIAssistantScreen.class);
 
     private final String name;
     private final Class<? extends JPanel> screenClass;
@@ -28,7 +30,7 @@ public enum Screen {
         this.screenClass = screenClass;
     }
 
-    public StringgetName() {
+    public String getName() {
         return name;
     }
 

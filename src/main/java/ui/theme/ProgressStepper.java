@@ -6,12 +6,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class ProgressStepper extends JPanel {
+    public static final String[] STEPS = {"Bio-Data", "Docs", "Program", "Block"};
+
     private final String[] steps;
     private int targetStep;
     private float animatedStep; // Used for smooth animation
 
+    public ProgressStepper() {
+        this(STEPS);
+    }
+
     public ProgressStepper(String[] steps) {
-        this.steps = steps;
+        this.steps = steps.clone();
         this.targetStep = 0;
         this.animatedStep = 0f;
         setBackground(Theme.BACKGROUND_COLOR);

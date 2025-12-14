@@ -6,6 +6,8 @@ import com.google.cloud.vertexai.generativeai.GenerativeModel;
 import com.google.cloud.vertexai.generativeai.ResponseHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ui.NavigationContext;
+import ui.ScreenView;
 import ui.theme.Theme;
 
 import javax.swing.*;
@@ -13,7 +15,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class AIAssistantScreen extends JPanel {
+public class AIAssistantScreen extends JPanel implements ScreenView {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AIAssistantScreen.class);
     private final JTextArea chatArea;
@@ -116,5 +118,15 @@ public class AIAssistantScreen extends JPanel {
         thinkingLabel.setVisible(thinking);
         sendButton.setEnabled(!thinking);
         inputField.setEnabled(!thinking);
+    }
+
+    @Override
+    public void onEnter(NavigationContext context) {
+        // No-op: AI session already initialized on construction.
+    }
+
+    @Override
+    public void onLeave() {
+        // No-op: nothing additional to clean up when leaving yet.
     }
 }

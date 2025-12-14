@@ -1,101 +1,108 @@
 package ui;
 
 import context.ApplicationContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import ui.screens.BioDataScreen;
-import ui.screens.StudentLoginScreen;
 import ui.theme.FloatingActionButton;
 import ui.theme.IconCreator;
-import ui.util.Animator;
+import ui.theme.Theme;
+import util.GeminiClient;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.util.EnumMap;
+import java.util.Map;
 
 public class MobileFrame extends JFrame {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(MobileFrame.class);
     private final JLayeredPane layeredPane;
     private final FloatingActionButton aiButton;
-    private JComponent currentScreen;
+    private final CardLayout cardLayout;
+    private final JPanel screenContainer;
+    private final Map<Screen, JPanel> registeredPanels = new EnumMap<>(Screen.class);
+    private final NavigationController navigationController;
 
-    public MobileFrame() {
+    public MobileFrame(ApplicationContext applicationContext) {
+        ScreenFactory screenFactory = new ScreenFactory(applicationContext);
+        this.navigationController = new NavigationController(screenFactory);
+        this.navigationController.addNavigationListener(this::handleNavigationEvent);
         setTitle("Enrollment System");
-        setSize(400, 700);
+        setSize(Theme.MOBILE_WIDTH, Theme.MOBILE_HEIGHT);
+        setPreferredSize(new Dimension(Theme.MOBILE_WIDTH, Theme.MOBILE_HEIGHT));
+        setMinimumSize(new Dimension(Theme.MOBILE_WIDTH, Theme.MOBILE_HEIGHT));
+        setMaximumSize(new Dimension(Theme.MOBILE_WIDTH, Theme.MOBILE_HEIGHT));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
         setResizable(false);
+        setLocationRelativeTo(null);
 
         layeredPane = new JLayeredPane();
         layeredPane.setBackground(Color.BLACK); // To see gaps if any
 
+        cardLayout = new CardLayout();
+        screenContainer = new JPanel(cardLayout);
+        screenContainer.setOpaque(true);
+        screenContainer.setBackground(Color.BLACK);
+        screenContainer.setBounds(0, 0, getWidth(), getHeight());
+        layeredPane.add(screenContainer, JLayeredPane.DEFAULT_LAYER);
+
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                screenContainer.setBounds(0, 0, getWidth(), getHeight());
+                positionFloatingActionButton();
+            }
+        });
+
         // Create and add the Floating Action Button for the AI Assistant
         aiButton = new FloatingActionButton(IconCreator.AI_ASSISTANT_ICON);
-        aiButton.setBounds(320, 600, 56, 56); // Position in the bottom-right
         layeredPane.add(aiButton, JLayeredPane.PALETTE_LAYER);
-        aiButton.addActionListener(e -> showScreen(Screen.AI_ASSISTANT, true));
+        if (GeminiClient.isAvailable()) {
+            aiButton.addActionListener(e -> navigationController.navigateTo(Screen.AI_ASSISTANT));
+        } else {
+            aiButton.setVisible(false);
+        }
 
         setContentPane(layeredPane);
+        positionFloatingActionButton();
 
-        // Show the initial splash screen without animation
-        showScreen(Screen.SPLASH, false);
+        // Initial screen selection handled by the entry point while testing specific flows.
+        // showScreen(Screen.SPLASH, false);
+    }
+
+    private void positionFloatingActionButton() {
+        if (aiButton == null) {
+            return;
+        }
+        int margin = 16;
+        int size = 56;
+        int x = Math.max(margin, getWidth() - size - margin);
+        int y = Math.max(margin, getHeight() - size - 48);
+        aiButton.setBounds(x, y, size, size);
     }
 
     public void showScreen(Screen screen, boolean animate) {
-        JComponent newScreen = createScreen(screen);
-        if (newScreen == null) {
-            LOGGER.error("Could not create screen: " + screen.getName());
-            return;
-        }
-
-        newScreen.setSize(getWidth(), getHeight());
-
-        JComponent oldScreen = this.currentScreen;
-        this.currentScreen = newScreen;
-
-        if (oldScreen == null || !animate) {
-            // If there's no old screen or animation is disabled, just show the new screen
-            layeredPane.add(newScreen, JLayeredPane.DEFAULT_LAYER);
-            if (oldScreen != null) {
-                layeredPane.remove(oldScreen);
-            }
-            layeredPane.repaint();
-            layeredPane.revalidate();
-            return;
-        }
-
-        // --- Animation Logic ---
-        layeredPane.add(newScreen, JLayeredPane.DEFAULT_LAYER);
-
-        // New screen slides in from the right
-        Point newScreenStart = new Point(getWidth(), 0);
-        Point newScreenEnd = new Point(0, 0);
-        newScreen.setLocation(newScreenStart);
-        Animator.slide(newScreen, newScreenStart, newScreenEnd, 300, null);
-
-        // Old screen slides out to the left
-        Point oldScreenStart = new Point(0, 0);
-        Point oldScreenEnd = new Point(-getWidth(), 0);
-        Animator.slide(oldScreen, oldScreenStart, oldScreenEnd, 300, () -> {
-            // When animation is finished, remove the old screen
-            layeredPane.remove(oldScreen);
-            layeredPane.repaint();
-            layeredPane.revalidate();
-        });
+        showScreen(screen);
     }
 
-    private JComponent createScreen(Screen screen) {
-        try {
-            if (screen == Screen.BIO_DATA) {
-                return new BioDataScreen(ApplicationContext.getEnrollmentService());
-            } else if (screen == Screen.STUDENT_LOGIN) {
-                return new StudentLoginScreen(ApplicationContext.getLoginService());
-            } else {
-                return screen.getScreenClass().getDeclaredConstructor().newInstance();
-            }
-        } catch (Exception e) {
-            LOGGER.error("Error instantiating screen: " + screen.getName(), e);
-            return null;
+    public void showScreen(Screen screen) {
+        showScreen(screen, new NavigationContext());
+    }
+
+    public void showScreen(Screen screen, NavigationContext context) {
+        navigationController.navigateTo(screen, context);
+    }
+
+    public NavigationController getNavigationController() {
+        return navigationController;
+    }
+
+    private void handleNavigationEvent(NavigationController.NavigationEvent event) {
+        Screen screen = event.getScreen();
+        ScreenView view = event.getScreenView();
+        JPanel panel = view.getPanel();
+        if (!registeredPanels.containsKey(screen)) {
+            screenContainer.add(panel, screen.name());
+            registeredPanels.put(screen, panel);
         }
+        cardLayout.show(screenContainer, screen.name());
     }
 }

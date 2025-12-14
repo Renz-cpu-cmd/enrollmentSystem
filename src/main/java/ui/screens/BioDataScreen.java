@@ -1,346 +1,579 @@
 package ui.screens;
 
-import com.toedter.calendar.JDateChooser;
-import model.Student;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.formdev.flatlaf.FlatClientProperties;
+import com.formdev.flatlaf.ui.FlatDropShadowBorder;
+import com.formdev.flatlaf.ui.FlatRoundBorder;
 import service.EnrollmentService;
-import ui.MobileFrame;
+import service.EnrollmentService.EnrollStudentCommand;
+import service.EnrollmentService.EnrollmentResult;
+import service.EnrollmentService.ServiceResult;
+import ui.NavigationContext;
 import ui.Screen;
-import ui.theme.*;
-import util.Validator;
+import ui.ScreenView;
+import ui.theme.Theme;
+import util.Navigation;
+import util.SessionManager;
 
 import javax.swing.*;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.text.JTextComponent;
 import java.awt.*;
-import java.text.SimpleDateFormat;
-import java.util.concurrent.ExecutionException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Supplier;
 
-public class BioDataScreen extends JPanel {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(BioDataScreen.class);
+public class BioDataScreen extends JPanel implements ScreenView {
 
     private final EnrollmentService enrollmentService;
+    private final List<ValidatorEntry> requiredFields = new ArrayList<>();
 
-    // Form Components
-    private JTextField lastNameField, firstNameField, middleNameField;
-    private JComboBox<String> suffixComboBox, sexComboBox;
-    private JDateChooser birthdateChooser;
-    private JTextField mobileNumberField, emailField;
-    private JTextArea homeAddressArea;
-    private JTextField guardianNameField, guardianMobileField;
-    private JTextField lastSchoolAttendedField;
-    private JComboBox<String> strandComboBox;
-    private JButton proceedButton;
+    private JTextField lastNameField;
+    private JTextField firstNameField;
+    private JTextField middleNameField;
+    private JTextField extensionField;
+    private JTextField placeOfBirthField;
+    private JTextField citizenshipField;
+    private JTextField religionField;
+    private JComboBox<String> civilStatusCombo;
+    private JComboBox<String> genderCombo;
+    private JSpinner birthDateSpinner;
+
+    private JTextField mobileField;
+    private JTextField emailField;
+    private JTextField facebookField;
+
+    private JTextField streetField;
+    private JTextField barangayField;
+    private JTextField cityField;
+    private JTextField provinceField;
+
+    private JTextField guardianNameField;
+    private JTextField guardianRelationshipField;
+    private JTextField guardianContactField;
+    private JTextField guardianOccupationField;
+    private JTextField guardianCompanyField;
+    private JTextField guardianOfficePhoneField;
+
+    private JCheckBox guardianEmergencyCheckbox;
+    private JPanel emergencyPanel;
+    private JTextField emergencyNameField;
+    private JTextField emergencyContactField;
+    private JTextField emergencyRelationshipField;
+
+    private JLabel toastLabel;
 
     public BioDataScreen(EnrollmentService enrollmentService) {
-        this.enrollmentService = enrollmentService;
+        this.enrollmentService = Objects.requireNonNull(enrollmentService, "EnrollmentService is required");
+        setLayout(new BorderLayout());
+        setBackground(new Color(244, 247, 254));
+        setBorder(new EmptyBorder(24, 24, 24, 24));
 
-        setLayout(new BorderLayout(0, 15));
-        setBackground(Theme.BACKGROUND_COLOR);
-        setBorder(Theme.PADDING_BORDER);
+        add(createHeroHeader(), BorderLayout.NORTH);
 
-        // Header
-        setupHeader();
+        JPanel content = new JPanel();
+        content.setOpaque(false);
+        content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
+        content.add(Box.createVerticalStrut(24));
+        content.add(createSectionCard("Section A: Personal Information", buildPersonalInformationSection()));
+        content.add(Box.createVerticalStrut(16));
+        content.add(createSectionCard("Section B: Contact Details", buildContactSection()));
+        content.add(Box.createVerticalStrut(16));
+        content.add(createSectionCard("Section C: Permanent Address", buildAddressSection()));
+        content.add(Box.createVerticalStrut(16));
+        content.add(createSectionCard("Section D: Guardian Information", buildGuardianSection()));
+        content.add(Box.createVerticalStrut(8));
 
-        // Main Content (Scrollable)
-        setupMainContent();
-
-        // Footer (Button Panel)
-        setupButtonPanel();
-    }
-
-    // ... (rest of the setup methods remain the same)
-    private void setupHeader() {
-        JPanel headerPanel = new JPanel(new BorderLayout());
-        headerPanel.setBackground(Theme.BACKGROUND_COLOR);
-
-        // Progress Stepper
-        String[] steps = {"Bio-Data", "Documents", "Block", "Finish"};
-        ProgressStepper stepper = new ProgressStepper(steps);
-        stepper.setCurrentStep(0);
-        headerPanel.add(stepper, BorderLayout.NORTH);
-
-        // Title
-        JLabel titleLabel = new JLabel("Student Biodata Form", SwingConstants.CENTER);
-        titleLabel.setFont(Theme.HEADING_FONT);
-        titleLabel.setForeground(Theme.TEXT_PRIMARY_COLOR);
-        titleLabel.setBorder(BorderFactory.createEmptyBorder(15, 0, 15, 0));
-        headerPanel.add(titleLabel, BorderLayout.CENTER);
-
-        add(headerPanel, BorderLayout.NORTH);
-    }
-
-    private void setupMainContent() {
-        JPanel accordionContainer = new JPanel();
-        accordionContainer.setLayout(new BoxLayout(accordionContainer, BoxLayout.Y_AXIS));
-        accordionContainer.setBackground(Theme.BACKGROUND_COLOR);
-
-        // Create and Add Accordion Panels (Cards)
-        createAccordions(accordionContainer);
-
-        JScrollPane scrollPane = new JScrollPane(accordionContainer);
-        scrollPane.setBorder(null);
-        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        JScrollPane scrollPane = new JScrollPane(content);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        scrollPane.getViewport().setOpaque(false);
+        scrollPane.setOpaque(false);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(18);
         add(scrollPane, BorderLayout.CENTER);
+
+        add(buildFooter(), BorderLayout.SOUTH);
     }
 
-    private void createAccordions(JPanel container) {
-        AccordionPanel personalInfoAccordion = new AccordionPanel("Personal Information");
-        personalInfoAccordion.setContent(createPersonalInfoPanel());
-        personalInfoAccordion.setExpanded(true);
-        container.add(personalInfoAccordion);
-        container.add(Box.createVerticalStrut(10));
+    private JComponent createHeroHeader() {
+        GradientHeaderPanel header = new GradientHeaderPanel();
+        header.setLayout(new BorderLayout());
+        header.setBorder(new EmptyBorder(24, 32, 16, 32));
 
-        AccordionPanel contactInfoAccordion = new AccordionPanel("Contact Information");
-        contactInfoAccordion.setContent(createContactInfoPanel());
-        container.add(contactInfoAccordion);
-        container.add(Box.createVerticalStrut(10));
+        JPanel textRow = new JPanel(new BorderLayout());
+        textRow.setOpaque(false);
 
-        AccordionPanel familyAccordion = new AccordionPanel("Family Background");
-        familyAccordion.setContent(createFamilyBackgroundPanel());
-        container.add(familyAccordion);
-        container.add(Box.createVerticalStrut(10));
+        JPanel textBlock = new JPanel();
+        textBlock.setOpaque(false);
+        textBlock.setLayout(new BoxLayout(textBlock, BoxLayout.Y_AXIS));
 
-        AccordionPanel educationAccordion = new AccordionPanel("Educational History");
-        educationAccordion.setContent(createEducationalHistoryPanel());
-        container.add(educationAccordion);
+        JLabel title = new JLabel("New Student Enrollment");
+        title.putClientProperty(FlatClientProperties.STYLE, "font:+6; font:bold; foreground:#FFFFFF;");
+        JLabel subtitle = new JLabel("Academic Year 2025-2026");
+        subtitle.putClientProperty(FlatClientProperties.STYLE, "font:+1; foreground:rgba(255,255,255,0.85);");
+        textBlock.add(title);
+        textBlock.add(Box.createVerticalStrut(4));
+        textBlock.add(subtitle);
+
+        JLabel watermark = new JLabel("UNE");
+        watermark.putClientProperty(FlatClientProperties.STYLE,
+            "font:+12; font:bold; foreground:rgba(255,255,255,0.25);");
+
+        textRow.add(textBlock, BorderLayout.WEST);
+        textRow.add(watermark, BorderLayout.EAST);
+
+        JPanel stepperWrapper = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        stepperWrapper.setOpaque(false);
+        stepperWrapper.setBorder(new EmptyBorder(24, 0, 0, 0));
+        stepperWrapper.add(buildStepper());
+
+        header.add(textRow, BorderLayout.CENTER);
+        header.add(stepperWrapper, BorderLayout.SOUTH);
+        return header;
     }
 
-    private void setupButtonPanel() {
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-        buttonPanel.setBackground(Theme.BACKGROUND_COLOR);
+    private JComponent buildStepper() {
+        JPanel stepper = new JPanel();
+        stepper.setOpaque(false);
+        stepper.setLayout(new BoxLayout(stepper, BoxLayout.X_AXIS));
 
-        JButton backButton = new RippleButton("Back");
-        JButton clearButton = new RippleButton("Clear");
-        proceedButton = new RippleButton("Save and Proceed");
-
-        // Style buttons using theme properties
-        // (Secondary button styling might need a custom method if needed frequently)
-        clearButton.setBackground(Theme.SURFACE_COLOR);
-        clearButton.setForeground(Theme.TEXT_SECONDARY_COLOR);
-
-        buttonPanel.add(backButton);
-        buttonPanel.add(clearButton);
-        buttonPanel.add(proceedButton);
-        add(buttonPanel, BorderLayout.SOUTH);
-
-        backButton.addActionListener(e -> navigateBack());
-        clearButton.addActionListener(e -> clearForm());
-        proceedButton.addActionListener(e -> saveStudentData());
+        stepper.add(createStepPill(1, "Bio-Data", true));
+        stepper.add(createStepSeparator());
+        stepper.add(createStepPill(2, "Documents", false));
+        stepper.add(createStepSeparator());
+        stepper.add(createStepPill(3, "Program", false));
+        stepper.add(createStepSeparator());
+        stepper.add(createStepPill(4, "Schedule", false));
+        stepper.setAlignmentX(Component.LEFT_ALIGNMENT);
+        return stepper;
     }
 
-    // -- Panel Creation Methods for Accordion Content --
+    private Component createStepSeparator() {
+        JLabel separator = new JLabel("->");
+        separator.setBorder(new EmptyBorder(0, 12, 0, 12));
+        separator.setForeground(new Color(210, 224, 247));
+        separator.setFont(Theme.BODY_FONT);
+        return separator;
+    }
 
-    private JPanel createFormSectionPanel() {
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBackground(Theme.SURFACE_COLOR);
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+    private JPanel createStepPill(int stepNumber, String label, boolean active) {
+        JPanel container = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 4));
+        container.setOpaque(false);
+
+        JLabel index = new JLabel(String.format("%02d", stepNumber));
+        index.putClientProperty(FlatClientProperties.STYLE,
+            active
+                ? "font:+2; font:bold; foreground:#FFFFFF;"
+                : "font:+1; foreground:#B7C6E6;");
+
+        JLabel text = new JLabel(label);
+        text.putClientProperty(FlatClientProperties.STYLE,
+            active
+                ? "font:+2; font:bold; foreground:#FFFFFF;"
+                : "font:+1; foreground:#CFDAF4;");
+
+        container.add(index);
+        container.add(text);
+        return container;
+    }
+
+    private JComponent createSectionCard(String title, JComponent bodyContent) {
+        JPanel wrapper = new JPanel(new BorderLayout());
+        wrapper.setOpaque(false);
+        JPanel card = new JPanel(new BorderLayout(0, 16));
+        card.setBackground(Color.WHITE);
+        card.setBorder(new CompoundBorder(
+            new FlatDropShadowBorder(),
+            new CompoundBorder(new FlatRoundBorder(), new EmptyBorder(24, 28, 24, 28))
+        ));
+
+        JLabel heading = new JLabel(title);
+        heading.setFont(Theme.SUBHEADER_FONT);
+        heading.setForeground(Theme.TEXT_HEADER);
+        card.add(heading, BorderLayout.NORTH);
+        card.add(bodyContent, BorderLayout.CENTER);
+
+        wrapper.add(card, BorderLayout.CENTER);
+        wrapper.setAlignmentX(Component.LEFT_ALIGNMENT);
+        return wrapper;
+    }
+
+    private JComponent buildPersonalInformationSection() {
+        JPanel body = createSectionBody();
+
+        lastNameField = createTextField(true);
+        firstNameField = createTextField(true);
+        middleNameField = createTextField(false);
+        extensionField = createTextField(false);
+        body.add(createFieldRow(
+            createLabeledComponent("Last Name", lastNameField, true),
+            createLabeledComponent("First Name", firstNameField, true),
+            createLabeledComponent("Middle Name", middleNameField, false),
+            createLabeledComponent("Extension", extensionField, false)
+        ));
+
+        placeOfBirthField = createTextField(true);
+        citizenshipField = createTextField(true);
+        body.add(Box.createVerticalStrut(12));
+        body.add(createFieldRow(
+            createLabeledComponent("Date of Birth", createBirthDatePicker(), true),
+            createLabeledComponent("Place of Birth", placeOfBirthField, true),
+            createLabeledComponent("Citizenship", citizenshipField, true)
+        ));
+
+        religionField = createTextField(true);
+        genderCombo = createComboBox(new String[]{"", "Male", "Female", "Prefer not to say"}, true);
+        civilStatusCombo = createComboBox(new String[]{"", "Single", "Married", "Widowed", "Separated"}, true);
+        body.add(Box.createVerticalStrut(12));
+        body.add(createFieldRow(
+            createLabeledComponent("Gender", genderCombo, true),
+            createLabeledComponent("Civil Status", civilStatusCombo, true),
+            createLabeledComponent("Religion", religionField, true)
+        ));
+
+        return body;
+    }
+
+    private JComponent buildContactSection() {
+        JPanel body = createSectionBody();
+
+        mobileField = createTextField(true);
+        mobileField.setText("+63");
+        emailField = createTextField(true);
+        body.add(createFieldRow(
+            createLabeledComponent("Mobile Number", mobileField, true),
+            createLabeledComponent("Email Address", emailField, true)
+        ));
+
+        facebookField = createTextField(false);
+        body.add(Box.createVerticalStrut(12));
+        body.add(createFieldRow(
+            createLabeledComponent("Facebook Profile", facebookField, false)
+        ));
+
+        return body;
+    }
+
+    private JComponent buildAddressSection() {
+        JPanel body = createSectionBody();
+
+        streetField = createTextField(true);
+        barangayField = createTextField(true);
+        body.add(createFieldRow(
+            createLabeledComponent("Street / House No.", streetField, true),
+            createLabeledComponent("Barangay", barangayField, true)
+        ));
+
+        cityField = createTextField(true);
+        provinceField = createTextField(true);
+        body.add(Box.createVerticalStrut(12));
+        body.add(createFieldRow(
+            createLabeledComponent("City / Municipality", cityField, true),
+            createLabeledComponent("Province", provinceField, true)
+        ));
+
+        return body;
+    }
+
+    private JComponent buildGuardianSection() {
+        JPanel body = createSectionBody();
+
+        guardianNameField = createTextField(true);
+        guardianRelationshipField = createTextField(true);
+        guardianContactField = createTextField(true);
+        guardianOccupationField = createTextField(true);
+        guardianCompanyField = createTextField(true);
+        guardianOfficePhoneField = createTextField(true);
+
+        body.add(createFieldRow(
+            createLabeledComponent("Guardian Name", guardianNameField, true),
+            createLabeledComponent("Relationship", guardianRelationshipField, true),
+            createLabeledComponent("Contact Number", guardianContactField, true)
+        ));
+
+        body.add(Box.createVerticalStrut(12));
+        body.add(createFieldRow(
+            createLabeledComponent("Occupation", guardianOccupationField, true),
+            createLabeledComponent("Company/Employer", guardianCompanyField, true),
+            createLabeledComponent("Office Phone", guardianOfficePhoneField, true)
+        ));
+
+        body.add(Box.createVerticalStrut(12));
+        guardianEmergencyCheckbox = new JCheckBox("Is this the primary contact for emergencies?");
+        guardianEmergencyCheckbox.setOpaque(false);
+        guardianEmergencyCheckbox.setSelected(true);
+        guardianEmergencyCheckbox.setFont(Theme.BODY_FONT);
+        guardianEmergencyCheckbox.setForeground(Theme.TEXT_HEADER);
+        guardianEmergencyCheckbox.addActionListener(e -> toggleEmergencyPanel());
+        body.add(guardianEmergencyCheckbox);
+
+        body.add(Box.createVerticalStrut(12));
+        emergencyPanel = buildEmergencyPanel();
+        body.add(emergencyPanel);
+        toggleEmergencyPanel();
+
+        return body;
+    }
+
+    private JPanel buildEmergencyPanel() {
+        JPanel panel = new JPanel();
+        panel.setOpaque(false);
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBorder(new EmptyBorder(0, 16, 0, 16));
+
+        JLabel label = new JLabel("Emergency Contact (if different)");
+        label.setFont(Theme.SUBHEADER_FONT);
+        label.setForeground(Theme.TEXT_SECONDARY_COLOR);
+        panel.add(label);
+        panel.add(Box.createVerticalStrut(12));
+
+        emergencyNameField = createTextField(false);
+        emergencyContactField = createTextField(false);
+        emergencyRelationshipField = createTextField(false);
+
+        registerConditionalField(emergencyNameField, this::isEmergencyPanelRequired);
+        registerConditionalField(emergencyContactField, this::isEmergencyPanelRequired);
+        registerConditionalField(emergencyRelationshipField, this::isEmergencyPanelRequired);
+
+        panel.add(createFieldRow(
+            createLabeledComponent("Name", emergencyNameField, true),
+            createLabeledComponent("Contact Number", emergencyContactField, true),
+            createLabeledComponent("Relationship", emergencyRelationshipField, true)
+        ));
+
         return panel;
     }
 
-    private GridBagConstraints createGbc() {
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1.0;
-        return gbc;
+    private void toggleEmergencyPanel() {
+        boolean show = isEmergencyPanelRequired();
+        emergencyPanel.setVisible(show);
+        if (!show) {
+            setErrorOutline(emergencyNameField, false);
+            setErrorOutline(emergencyContactField, false);
+            setErrorOutline(emergencyRelationshipField, false);
+        }
+        revalidate();
+        repaint();
     }
 
-    // -- Field Creation Helper Methods --
-
-    private JLabel createFieldLabel(String text) {
-        JLabel label = new JLabel(text);
-        label.setFont(Theme.LABEL_FONT);
-        label.setForeground(Theme.TEXT_SECONDARY_COLOR);
-        return label;
+    private boolean isEmergencyPanelRequired() {
+        return guardianEmergencyCheckbox != null && !guardianEmergencyCheckbox.isSelected();
     }
 
-    private JTextField addTextField(JPanel panel, String labelText, GridBagConstraints gbc, int y) {
-        gbc.gridy = y;
-        gbc.gridx = 0;
-        panel.add(createFieldLabel(labelText), gbc);
-
-        gbc.gridx = 1;
-        JTextField textField = new JTextField();
-        panel.add(textField, gbc);
-        return textField;
+    private JPanel createSectionBody() {
+        JPanel body = new JPanel();
+        body.setOpaque(false);
+        body.setLayout(new BoxLayout(body, BoxLayout.Y_AXIS));
+        return body;
     }
 
-    private JComboBox<String> addComboBox(JPanel panel, String labelText, String[] items, GridBagConstraints gbc, int y) {
-        gbc.gridy = y;
-        gbc.gridx = 0;
-        panel.add(createFieldLabel(labelText), gbc);
+    private JPanel buildFooter() {
+        JPanel footer = new JPanel(new BorderLayout());
+        footer.setOpaque(false);
+        footer.setBorder(new EmptyBorder(16, 0, 0, 0));
 
-        gbc.gridx = 1;
-        JComboBox<String> comboBox = new JComboBox<>(items);
-        panel.add(comboBox, gbc);
+        toastLabel = new JLabel(" ");
+        toastLabel.setFont(Theme.BODY_FONT);
+        toastLabel.setForeground(new Color(196, 53, 53));
+        footer.add(toastLabel, BorderLayout.WEST);
+
+        JButton nextButton = new JButton("Next: Documents");
+        nextButton.setFont(Theme.SUBHEADER_FONT);
+        nextButton.setBackground(Theme.PRIMARY);
+        nextButton.setForeground(Color.WHITE);
+        nextButton.setBorder(new EmptyBorder(12, 32, 12, 32));
+        nextButton.addActionListener(e -> handleEnrollmentSubmission());
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        buttonPanel.setOpaque(false);
+        buttonPanel.add(nextButton);
+        footer.add(buttonPanel, BorderLayout.EAST);
+
+        return footer;
+    }
+
+    private void handleEnrollmentSubmission() {
+        if (!validateRequiredFields()) {
+            toastLabel.setText("Please fill in all required fields.");
+            return;
+        }
+        toastLabel.setText(" ");
+
+        EnrollStudentCommand command = EnrollStudentCommand.builder()
+            .firstName(textOf(firstNameField))
+            .lastName(textOf(lastNameField))
+            .email(textOf(emailField))
+            .mobileNumber(textOf(mobileField))
+            .rawPassword(null)
+            .build();
+
+        ServiceResult<EnrollmentResult> result = enrollmentService.registerNewStudent(command);
+
+        if (result.isSuccess()) {
+            EnrollmentResult data = result.getData();
+            StringBuilder message = new StringBuilder("Student registered successfully.");
+            if (data != null && data.hasGeneratedPassword()) {
+                message.append("\nGenerated password: ").append(data.getGeneratedPassword());
+            }
+            JOptionPane.showMessageDialog(
+                this,
+                message.toString(),
+                "Enrollment Successful",
+                JOptionPane.INFORMATION_MESSAGE
+            );
+            SessionManager.getInstance().setShsStrand("HUMSS");
+            Navigation.to(this, Screen.PROGRAM_SELECTION);
+        } else {
+            JOptionPane.showMessageDialog(
+                this,
+                result.getMessage(),
+                "Enrollment Failed",
+                JOptionPane.WARNING_MESSAGE
+            );
+        }
+    }
+
+    private boolean validateRequiredFields() {
+        boolean allValid = true;
+        for (ValidatorEntry entry : requiredFields) {
+            boolean valid = entry.validator().get();
+            setErrorOutline(entry.component(), !valid);
+            if (!valid) {
+                allValid = false;
+            }
+        }
+        return allValid;
+    }
+
+    private void setErrorOutline(JComponent component, boolean error) {
+        component.putClientProperty("JComponent.outline", error ? "error" : null);
+        if (component instanceof JSpinner spinner) {
+            JComponent editor = spinner.getEditor();
+            if (editor instanceof JSpinner.DefaultEditor defaultEditor) {
+                defaultEditor.getTextField().putClientProperty("JComponent.outline", error ? "error" : null);
+            }
+        }
+    }
+
+    private String textOf(JTextComponent component) {
+        return component == null ? null : component.getText().trim();
+    }
+
+    private JTextField createTextField(boolean required) {
+        JTextField field = new JTextField();
+        field.setFont(Theme.BODY_FONT);
+        field.setMaximumSize(new Dimension(Integer.MAX_VALUE, 42));
+        field.setAlignmentX(Component.LEFT_ALIGNMENT);
+        field.putClientProperty(FlatClientProperties.STYLE, "arc:16; focusWidth:1");
+        if (required) {
+            registerRequiredField(field);
+        }
+        return field;
+    }
+
+    private JComboBox<String> createComboBox(String[] options, boolean required) {
+        JComboBox<String> comboBox = new JComboBox<>(options);
+        comboBox.setFont(Theme.BODY_FONT);
+        comboBox.setMaximumSize(new Dimension(Integer.MAX_VALUE, 42));
+        comboBox.setAlignmentX(Component.LEFT_ALIGNMENT);
+        comboBox.putClientProperty(FlatClientProperties.STYLE, "buttonType:roundRect; focusWidth:1");
+        if (required) {
+            registerRequiredCombo(comboBox);
+        }
         return comboBox;
     }
 
-    private JDateChooser addDateChooser(JPanel panel, String labelText, GridBagConstraints gbc, int y) {
-        gbc.gridy = y;
-        gbc.gridx = 0;
-        panel.add(createFieldLabel(labelText), gbc);
-
-        gbc.gridx = 1;
-        JDateChooser dateChooser = new JDateChooser();
-        dateChooser.setDateFormatString("yyyy-MM-dd");
-        panel.add(dateChooser, gbc);
-        return dateChooser;
+    private JComponent createBirthDatePicker() {
+        birthDateSpinner = new JSpinner(new SpinnerDateModel(new Date(), null, new Date(), Calendar.DAY_OF_MONTH));
+        birthDateSpinner.setFont(Theme.BODY_FONT);
+        JSpinner.DateEditor editor = new JSpinner.DateEditor(birthDateSpinner, "yyyy-MM-dd");
+        editor.getTextField().setEditable(false);
+        editor.getTextField().setBorder(new EmptyBorder(0, 8, 0, 8));
+        birthDateSpinner.setEditor(editor);
+        birthDateSpinner.putClientProperty(FlatClientProperties.STYLE, "focusWidth:1");
+        registerRequiredSpinner(birthDateSpinner);
+        return birthDateSpinner;
     }
 
-    private JTextArea addTextArea(JPanel panel, String labelText, GridBagConstraints gbc, int y) {
-        gbc.gridy = y;
-        gbc.gridx = 0;
-        panel.add(createFieldLabel(labelText), gbc);
-
-        gbc.gridx = 1;
-        JTextArea textArea = new JTextArea(3, 20);
-        JScrollPane scrollPane = new JScrollPane(textArea);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        panel.add(scrollPane, gbc);
-        return textArea;
-    }
-
-    // -- Form Content Panels --
-
-    private JPanel createPersonalInfoPanel() {
-        JPanel panel = createFormSectionPanel();
-        GridBagConstraints gbc = createGbc();
-        int y = 0;
-
-        lastNameField = addTextField(panel, "Last Name:", gbc, y++);
-        firstNameField = addTextField(panel, "First Name:", gbc, y++);
-        middleNameField = addTextField(panel, "Middle Name:", gbc, y++);
-        suffixComboBox = addComboBox(panel, "Suffix:", new String[]{"", "Jr.", "Sr.", "III", "IV"}, gbc, y++);
-        birthdateChooser = addDateChooser(panel, "Birthdate:", gbc, y++);
-        sexComboBox = addComboBox(panel, "Sex:", new String[]{"Male", "Female"}, gbc, y++);
-        return panel;
-    }
-
-    private JPanel createContactInfoPanel() {
-        JPanel panel = createFormSectionPanel();
-        GridBagConstraints gbc = createGbc();
-        int y = 0;
-        mobileNumberField = addTextField(panel, "Mobile Number (+63):", gbc, y++);
-        emailField = addTextField(panel, "Email Address:", gbc, y++);
-        homeAddressArea = addTextArea(panel, "Home Address:", gbc, y++);
-        return panel;
-    }
-
-    private JPanel createFamilyBackgroundPanel() {
-        JPanel panel = createFormSectionPanel();
-        GridBagConstraints gbc = createGbc();
-        int y = 0;
-        guardianNameField = addTextField(panel, "Guardian Name:", gbc, y++);
-        guardianMobileField = addTextField(panel, "Guardian Mobile:", gbc, y++);
-        return panel;
-    }
-
-    private JPanel createEducationalHistoryPanel() {
-        JPanel panel = createFormSectionPanel();
-        GridBagConstraints gbc = createGbc();
-        int y = 0;
-        lastSchoolAttendedField = addTextField(panel, "Last School Attended:", gbc, y++);
-        strandComboBox = addComboBox(panel, "SHS Strand:", new String[]{"STEM", "TVL-ICT", "HUMSS", "ABM", "GAS"}, gbc, y++);
-        return panel;
-    }
-
-
-    private void saveStudentData() {
-        // --- Input Validation ---
-        if (!Validator.isNotNullOrEmpty(lastNameField.getText(), firstNameField.getText())) {
-            Toast.makeText(this, "Last Name and First Name are required.", Toast.Type.WARNING, Toast.LENGTH_LONG);
-            return;
+    private JPanel createFieldRow(JComponent... columns) {
+        JPanel row = new JPanel(new GridLayout(1, columns.length, 16, 0));
+        row.setOpaque(false);
+        for (JComponent column : columns) {
+            row.add(column);
         }
-        if (birthdateChooser.getDate() == null) {
-            Toast.makeText(this, "Birthdate is required.", Toast.Type.WARNING, Toast.LENGTH_LONG);
-            return;
-        }
-        if (!Validator.isValidEmail(emailField.getText())) {
-            Toast.makeText(this, "Please enter a valid email address.", Toast.Type.WARNING, Toast.LENGTH_LONG);
-            return;
-        }
-        if (!Validator.isValidPhilippineMobileNumber(mobileNumberField.getText())) {
-            Toast.makeText(this, "Please enter a valid Philippine mobile number (e.g., 09xxxxxxxxx or +639xxxxxxxxx).", Toast.Type.WARNING, Toast.LENGTH_LONG);
-            return;
-        }
+        row.setAlignmentX(Component.LEFT_ALIGNMENT);
+        return row;
+    }
 
-        proceedButton.setEnabled(false);
-        proceedButton.setText("Saving...");
+    private JPanel createLabeledComponent(String labelText, JComponent component, boolean required) {
+        JPanel container = new JPanel();
+        container.setOpaque(false);
+        container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
 
-        // Create a student object from the form data
-        Student studentToRegister = new Student();
-        studentToRegister.setLastName(lastNameField.getText().trim());
-        studentToRegister.setFirstName(firstNameField.getText().trim());
-        studentToRegister.setMiddleName(middleNameField.getText().trim());
-        studentToRegister.setSuffix((String) suffixComboBox.getSelectedItem());
+        JLabel label = new JLabel(required ? labelText + " *" : labelText);
+        label.setFont(Theme.LABEL_FONT);
+        label.setForeground(Theme.TEXT_SECONDARY_COLOR);
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        studentToRegister.setBirthDate(sdf.format(birthdateChooser.getDate()));
+        component.setAlignmentX(Component.LEFT_ALIGNMENT);
+        container.add(label);
+        container.add(Box.createVerticalStrut(4));
+        container.add(component);
+        return container;
+    }
 
-        studentToRegister.setSex((String) sexComboBox.getSelectedItem());
-        studentToRegister.setMobileNumber(mobileNumberField.getText().trim());
-        studentToRegister.setEmail(emailField.getText().trim());
-        studentToRegister.setHomeAddress(homeAddressArea.getText().trim());
-        studentToRegister.setGuardianName(guardianNameField.getText().trim());
-        studentToRegister.setGuardianMobile(guardianMobileField.getText().trim());
-        studentToRegister.setLastSchoolAttended(lastSchoolAttendedField.getText().trim());
-        studentToRegister.setShsStrand((String) strandComboBox.getSelectedItem());
+    private void registerRequiredField(JTextComponent component) {
+        requiredFields.add(new ValidatorEntry(component, () -> !textOf(component).isEmpty()));
+    }
 
-        if (!"STEM".equals(studentToRegister.getShsStrand()) && !"TVL-ICT".equals(studentToRegister.getShsStrand())) {
-            Toast.makeText(this, "Note: Bridging subjects will be added to your curriculum.", Toast.Type.INFO, Toast.LENGTH_LONG);
-        }
+    private void registerRequiredCombo(JComboBox<?> comboBox) {
+        requiredFields.add(new ValidatorEntry(comboBox, () -> {
+            Object selected = comboBox.getSelectedItem();
+            return selected != null && !selected.toString().trim().isEmpty();
+        }));
+    }
 
-        SwingWorker<Student, Void> worker = new SwingWorker<>() {
-            @Override
-            protected Student doInBackground() throws Exception {
-                return enrollmentService.registerNewStudent(studentToRegister);
+    private void registerRequiredSpinner(JSpinner spinner) {
+        requiredFields.add(new ValidatorEntry(spinner, () -> spinner.getValue() != null));
+    }
+
+    private void registerConditionalField(JTextComponent component, Supplier<Boolean> condition) {
+        requiredFields.add(new ValidatorEntry(component, () -> {
+            if (!condition.get()) {
+                return true;
             }
-
-            @Override
-            protected void done() {
-                try {
-                    Student registeredStudent = get();
-                    Toast.makeText(BioDataScreen.this, "Student data saved! Your ID: " + registeredStudent.getStudentId(), Toast.Type.SUCCESS, Toast.LENGTH_LONG);
-                    MobileFrame frame = (MobileFrame) SwingUtilities.getWindowAncestor(BioDataScreen.this);
-                    if (frame != null) {
-                        frame.showScreen(Screen.PROGRAM_SELECTION, true);
-                    }
-                } catch (InterruptedException | ExecutionException e) {
-                    LOGGER.error("Error saving student data", e.getCause());
-                    Toast.makeText(BioDataScreen.this, "Error saving student data: " + e.getCause().getMessage(), Toast.Type.ERROR, Toast.LENGTH_SHORT);
-                } finally {
-                    proceedButton.setEnabled(true);
-                    proceedButton.setText("Save and Proceed");
-                }
-            }
-        };
-
-        worker.execute();
+            return !textOf(component).isEmpty();
+        }));
     }
 
-    private void clearForm() {
-        lastNameField.setText("");
-        firstNameField.setText("");
-        middleNameField.setText("");
-        mobileNumberField.setText("");
-        emailField.setText("");
-        homeAddressArea.setText("");
-        guardianNameField.setText("");
-        guardianMobileField.setText("");
-        lastSchoolAttendedField.setText("");
-        suffixComboBox.setSelectedIndex(0);
-        sexComboBox.setSelectedIndex(0);
-        strandComboBox.setSelectedIndex(0);
-        birthdateChooser.setDate(null);
-        Toast.makeText(this, "Form cleared.", Toast.Type.INFO, Toast.LENGTH_SHORT);
+    private record ValidatorEntry(JComponent component, Supplier<Boolean> validator) {
     }
 
-    private void navigateBack() {
-        MobileFrame frame = (MobileFrame) SwingUtilities.getWindowAncestor(this);
-        if (frame != null) {
-            frame.showScreen(Screen.DATA_PRIVACY, true);
+    private static class GradientHeaderPanel extends JPanel {
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            GradientPaint paint = new GradientPaint(
+                0, 0, new Color(12, 92, 177),
+                getWidth(), getHeight(), new Color(5, 32, 84)
+            );
+            g2.setPaint(paint);
+            g2.fillRect(0, 0, getWidth(), getHeight());
+            g2.dispose();
         }
+    }
+
+    @Override
+    public void onEnter(NavigationContext context) {
+        toastLabel.setText(" ");
+    }
+
+    @Override
+    public void onLeave() {
+        // Future: persist draft data.
     }
 }
+

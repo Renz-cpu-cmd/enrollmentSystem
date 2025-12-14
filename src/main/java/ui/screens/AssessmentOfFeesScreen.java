@@ -3,7 +3,9 @@ package ui.screens;
 import fixtures.CourseFixtures;
 import model.Course;
 import ui.MobileFrame;
+import ui.NavigationContext;
 import ui.Screen;
+import ui.ScreenView;
 import util.SessionManager;
 
 import javax.swing.*;
@@ -14,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AssessmentOfFeesScreen extends JPanel {
+public class AssessmentOfFeesScreen extends JPanel implements ScreenView {
 
     private final Object[][] data;
 
@@ -99,5 +101,15 @@ public class AssessmentOfFeesScreen extends JPanel {
             }
         }
         SessionManager.getInstance().setAssessedFees(assessedFees);
+    }
+
+    @Override
+    public void onEnter(NavigationContext context) {
+        // No-op: calculations run during construction for now.
+    }
+
+    @Override
+    public void onLeave() {
+        // No-op: nothing to clean up post-assessment.
     }
 }

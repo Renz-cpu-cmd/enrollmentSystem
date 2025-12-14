@@ -6,48 +6,61 @@ import dao.PaymentDAO;
 import dao.StudentDAO;
 import service.EnrollmentService;
 import service.LoginService;
+import service.PaymentService;
 
 public class ApplicationContext {
 
     // DAOs
-    private static final StudentDAO studentDAO = new StudentDAO();
-    private static final CourseDAO courseDAO = new CourseDAO();
-    private static final EnrollmentDAO enrollmentDAO = new EnrollmentDAO();
-    private static final PaymentDAO paymentDAO = new PaymentDAO();
+    private final StudentDAO studentDAO;
+    private final CourseDAO courseDAO;
+    private final EnrollmentDAO enrollmentDAO;
+    private final PaymentDAO paymentDAO;
 
     // Services
-    private static final EnrollmentService enrollmentService = new EnrollmentService(studentDAO);
-    private static final LoginService loginService = new LoginService(studentDAO);
+    private final EnrollmentService enrollmentService;
+    private final LoginService loginService;
+    private final PaymentService paymentService;
 
-    // Private constructor to prevent instantiation
-    private ApplicationContext() {
+    public ApplicationContext() {
+        this.studentDAO = new StudentDAO();
+        this.courseDAO = new CourseDAO();
+        this.enrollmentDAO = new EnrollmentDAO();
+        this.paymentDAO = new PaymentDAO();
+
+        this.enrollmentService = new EnrollmentService(studentDAO);
+        this.loginService = new LoginService(studentDAO);
+        this.paymentService = new PaymentService(paymentDAO);
     }
 
     // --- Getters for Services ---
 
-    public static EnrollmentService getEnrollmentService() {
+    public EnrollmentService getEnrollmentService() {
         return enrollmentService;
     }
 
-    public static LoginService getLoginService() {
+    public LoginService getLoginService() {
         return loginService;
+    }
+
+    public PaymentService getPaymentService() {
+        return paymentService;
     }
 
     // --- Getters for DAOs (optional, but can be useful) ---
 
-    public static StudentDAO getStudentDAO() {
+    public StudentDAO getStudentDAO() {
         return studentDAO;
     }
 
-    public static CourseDAO getCourseDAO() {
+    public CourseDAO getCourseDAO() {
         return courseDAO;
     }
 
-    public static EnrollmentDAO getEnrollmentDAO() {
+    public EnrollmentDAO getEnrollmentDAO() {
         return enrollmentDAO;
     }
 
-    public static PaymentDAO getPaymentDAO() {
+    public PaymentDAO getPaymentDAO() {
         return paymentDAO;
     }
 }

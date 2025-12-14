@@ -15,8 +15,11 @@ public class SessionManager {
 
     private static SessionManager instance;
     private Student currentStudent;
+    private long lastActivityEpochMs;
     private List<String> enrolledSubjects;
     private Map<String, String> assessedFees;
+    private String shsStrand;
+    private static final long DEFAULT_SESSION_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
 
     private SessionManager() {
         // Initialize with empty data to prevent null pointers
@@ -37,6 +40,22 @@ public class SessionManager {
 
     public void setCurrentStudent(Student student) {
         this.currentStudent = student;
+        touch();
+    }
+
+    public boolean isSessionExpired() {
+        long now = System.currentTimeMillis();
+        return currentStudent != null && (now - lastActivityEpochMs) > DEFAULT_SESSION_TIMEOUT_MS;
+    }
+
+    public void ensureNotExpired() {
+        if (isSessionExpired()) {
+            clearSession();
+        }
+    }
+
+    public void touch() {
+        lastActivityEpochMs = System.currentTimeMillis();
     }
 
     public List<String> getEnrolledSubjects() {
@@ -55,17 +74,27 @@ public class SessionManager {
         this.assessedFees = assessedFees;
     }
 
+    public String getShsStrand() {
+        return shsStrand;
+    }
+
+    public void setShsStrand(String shsStrand) {
+        this.shsStrand = shsStrand;
+    }
+
     /**
      * Clears all session data, including student info, subjects, and fees.
      * Should be called after enrollment is complete or on logout.
      */
     public void clearSession() {
         currentStudent = null;
+        lastActivityEpochMs = 0L;
         if (enrolledSubjects != null) {
             enrolledSubjects.clear();
         }
         if (assessedFees != null) {
             assessedFees.clear();
         }
+        shsStrand = null;
     }
 }

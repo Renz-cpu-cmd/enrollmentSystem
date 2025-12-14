@@ -1,4 +1,4 @@
-package ui;
+package ui.components;
 
 import dao.StudentDAO;
 import model.Student;
@@ -152,7 +152,7 @@ public class StudentPanel extends JPanel {
     }
 
     private void loadStudents() {
-        List<Student> students = studentDAO.getAll();
+        List<Student> students = studentDAO.getAllPaged(200, 0);
         tableModel.setRowCount(0);
         for (Student student : students) {
             tableModel.addRow(new Object[]{
