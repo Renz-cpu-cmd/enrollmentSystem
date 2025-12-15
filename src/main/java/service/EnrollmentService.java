@@ -223,6 +223,15 @@ public class EnrollmentService {
         return new String(chars);
     }
 
+    public ServiceResult<Void> processEnrollment(String blockName) {
+        if (isBlank(blockName)) {
+            return ServiceResult.failure("Block selection is required before enrollment.");
+        }
+        LOGGER.info("Processing final enrollment for block {}", blockName);
+        // Placeholder for future transactional logic (fees, COR issuance, etc.)
+        return ServiceResult.success("Enrollment confirmed for " + blockName + ".", null);
+    }
+
     private boolean isPasswordStrong(String password) {
         if (isBlank(password) || password.length() < PASSWORD_MIN_LENGTH) {
             return false;

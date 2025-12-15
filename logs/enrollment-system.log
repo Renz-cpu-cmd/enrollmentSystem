@@ -1794,3 +1794,571 @@ java.lang.Error: Unresolved compilation problem:
 2025-12-14 08:34:42.814 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "main": 4
 2025-12-14 08:34:42.823 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "main" is up to date. No migration necessary.
 2025-12-14 08:34:42.826 [main] INFO  util.DatabaseMigrator - Flyway migration complete. Applied: 0
+2025-12-14 08:45:36.164 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:sqlite:enrollment.db (SQLite 3.39)
+2025-12-14 08:45:36.212 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 5 migrations (execution time 00:00.027s)
+2025-12-14 08:45:36.220 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "main": 4
+2025-12-14 08:45:36.224 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "main" is up to date. No migration necessary.
+2025-12-14 08:45:36.228 [main] INFO  util.DatabaseMigrator - Flyway migration complete. Applied: 0
+2025-12-14 08:53:21.604 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:sqlite:enrollment.db (SQLite 3.39)
+2025-12-14 08:53:21.656 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 5 migrations (execution time 00:00.032s)
+2025-12-14 08:53:21.665 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "main": 4
+2025-12-14 08:53:21.668 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "main" is up to date. No migration necessary.
+2025-12-14 08:53:21.673 [main] INFO  util.DatabaseMigrator - Flyway migration complete. Applied: 0
+2025-12-14 08:59:49.232 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:sqlite:enrollment.db (SQLite 3.39)
+2025-12-14 08:59:49.273 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 5 migrations (execution time 00:00.029s)
+2025-12-14 08:59:49.289 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "main": 4
+2025-12-14 08:59:49.292 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "main" is up to date. No migration necessary.
+2025-12-14 08:59:49.294 [main] INFO  util.DatabaseMigrator - Flyway migration complete. Applied: 0
+2025-12-14 09:03:12.133 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:sqlite:enrollment.db (SQLite 3.39)
+2025-12-14 09:03:12.177 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 5 migrations (execution time 00:00.026s)
+2025-12-14 09:03:12.187 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "main": 4
+2025-12-14 09:03:12.190 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "main" is up to date. No migration necessary.
+2025-12-14 09:03:12.194 [main] INFO  util.DatabaseMigrator - Flyway migration complete. Applied: 0
+2025-12-14 09:04:03.586 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:sqlite:enrollment.db (SQLite 3.39)
+2025-12-14 09:04:03.631 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 5 migrations (execution time 00:00.029s)
+2025-12-14 09:04:03.641 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "main": 4
+2025-12-14 09:04:03.644 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "main" is up to date. No migration necessary.
+2025-12-14 09:04:03.648 [main] INFO  util.DatabaseMigrator - Flyway migration complete. Applied: 0
+2025-12-14 09:05:09.414 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:sqlite:enrollment.db (SQLite 3.39)
+2025-12-14 09:05:09.461 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 5 migrations (execution time 00:00.026s)
+2025-12-14 09:05:09.469 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "main": 4
+2025-12-14 09:05:09.472 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "main" is up to date. No migration necessary.
+2025-12-14 09:05:09.474 [main] INFO  util.DatabaseMigrator - Flyway migration complete. Applied: 0
+2025-12-14 09:06:47.516 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:sqlite:enrollment.db (SQLite 3.39)
+2025-12-14 09:06:47.563 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 5 migrations (execution time 00:00.025s)
+2025-12-14 09:06:47.572 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "main": 4
+2025-12-14 09:06:47.575 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "main" is up to date. No migration necessary.
+2025-12-14 09:06:47.576 [main] INFO  util.DatabaseMigrator - Flyway migration complete. Applied: 0
+2025-12-14 09:10:02.999 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:sqlite:enrollment.db (SQLite 3.39)
+2025-12-14 09:10:03.049 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 5 migrations (execution time 00:00.026s)
+2025-12-14 09:10:03.058 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "main": 4
+2025-12-14 09:10:03.061 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "main" is up to date. No migration necessary.
+2025-12-14 09:10:03.065 [main] INFO  util.DatabaseMigrator - Flyway migration complete. Applied: 0
+2025-12-14 09:10:23.619 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:sqlite:enrollment.db (SQLite 3.39)
+2025-12-14 09:10:23.667 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 5 migrations (execution time 00:00.027s)
+2025-12-14 09:10:23.675 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "main": 4
+2025-12-14 09:10:23.678 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "main" is up to date. No migration necessary.
+2025-12-14 09:10:23.682 [main] INFO  util.DatabaseMigrator - Flyway migration complete. Applied: 0
+2025-12-14 09:11:26.293 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:sqlite:enrollment.db (SQLite 3.39)
+2025-12-14 09:11:26.342 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 5 migrations (execution time 00:00.029s)
+2025-12-14 09:11:26.348 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "main": 4
+2025-12-14 09:11:26.353 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "main" is up to date. No migration necessary.
+2025-12-14 09:11:26.358 [main] INFO  util.DatabaseMigrator - Flyway migration complete. Applied: 0
+2025-12-14 09:16:40.801 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:sqlite:enrollment.db (SQLite 3.39)
+2025-12-14 09:16:40.847 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 5 migrations (execution time 00:00.028s)
+2025-12-14 09:16:40.851 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "main": 4
+2025-12-14 09:16:40.857 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "main" is up to date. No migration necessary.
+2025-12-14 09:16:40.861 [main] INFO  util.DatabaseMigrator - Flyway migration complete. Applied: 0
+2025-12-14 09:17:00.207 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:sqlite:enrollment.db (SQLite 3.39)
+2025-12-14 09:17:00.250 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 5 migrations (execution time 00:00.026s)
+2025-12-14 09:17:00.260 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "main": 4
+2025-12-14 09:17:00.263 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "main" is up to date. No migration necessary.
+2025-12-14 09:17:00.268 [main] INFO  util.DatabaseMigrator - Flyway migration complete. Applied: 0
+2025-12-14 09:22:56.165 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:sqlite:enrollment.db (SQLite 3.39)
+2025-12-14 09:22:56.213 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 5 migrations (execution time 00:00.028s)
+2025-12-14 09:22:56.223 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "main": 4
+2025-12-14 09:22:56.226 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "main" is up to date. No migration necessary.
+2025-12-14 09:22:56.230 [main] INFO  util.DatabaseMigrator - Flyway migration complete. Applied: 0
+2025-12-14 09:24:23.116 [AWT-EventQueue-0] ERROR ui.MainFrame - Could not create screen: IrregularPath
+java.lang.UnsupportedOperationException: Screen not implemented yet: IRREGULAR_PATH
+	at ui.ScreenFactory.create(ScreenFactory.java:48)
+	at ui.MainFrame.showScreen(MainFrame.java:54)
+	at ui.MainFrame.showScreen(MainFrame.java:45)
+	at util.Navigation.to(Navigation.java:25)
+	at ui.screens.ProgramSelectionScreen.lambda$1(ProgramSelectionScreen.java:144)
+	at java.desktop/javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:1972)
+	at java.desktop/javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2314)
+	at java.desktop/javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:407)
+	at java.desktop/javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:262)
+	at java.desktop/javax.swing.plaf.basic.BasicButtonListener.mouseReleased(BasicButtonListener.java:279)
+	at java.desktop/java.awt.Component.processMouseEvent(Component.java:6621)
+	at java.desktop/javax.swing.JComponent.processMouseEvent(JComponent.java:3398)
+	at java.desktop/java.awt.Component.processEvent(Component.java:6386)
+	at java.desktop/java.awt.Container.processEvent(Container.java:2266)
+	at java.desktop/java.awt.Component.dispatchEventImpl(Component.java:4996)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2324)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4828)
+	at java.desktop/java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4948)
+	at java.desktop/java.awt.LightweightDispatcher.processMouseEvent(Container.java:4575)
+	at java.desktop/java.awt.LightweightDispatcher.dispatchEvent(Container.java:4516)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2310)
+	at java.desktop/java.awt.Window.dispatchEventImpl(Window.java:2780)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4828)
+	at java.desktop/java.awt.EventQueue.dispatchEventImpl(EventQueue.java:775)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:720)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:714)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:400)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:87)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:98)
+	at java.desktop/java.awt.EventQueue$5.run(EventQueue.java:747)
+	at java.desktop/java.awt.EventQueue$5.run(EventQueue.java:745)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:400)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:87)
+	at java.desktop/java.awt.EventQueue.dispatchEvent(EventQueue.java:744)
+	at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
+	at java.desktop/java.awt.EventDispatchThread.run(EventDispatchThread.java:90)
+2025-12-14 09:24:38.322 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:sqlite:enrollment.db (SQLite 3.39)
+2025-12-14 09:24:38.371 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 5 migrations (execution time 00:00.029s)
+2025-12-14 09:24:38.374 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "main": 4
+2025-12-14 09:24:38.381 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "main" is up to date. No migration necessary.
+2025-12-14 09:24:38.386 [main] INFO  util.DatabaseMigrator - Flyway migration complete. Applied: 0
+2025-12-14 09:25:22.396 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:sqlite:enrollment.db (SQLite 3.39)
+2025-12-14 09:25:22.441 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 5 migrations (execution time 00:00.026s)
+2025-12-14 09:25:22.444 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "main": 4
+2025-12-14 09:25:22.452 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "main" is up to date. No migration necessary.
+2025-12-14 09:25:22.457 [main] INFO  util.DatabaseMigrator - Flyway migration complete. Applied: 0
+2025-12-14 09:25:49.768 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:sqlite:enrollment.db (SQLite 3.39)
+2025-12-14 09:25:49.814 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 5 migrations (execution time 00:00.027s)
+2025-12-14 09:25:49.821 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "main": 4
+2025-12-14 09:25:49.824 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "main" is up to date. No migration necessary.
+2025-12-14 09:25:49.828 [main] INFO  util.DatabaseMigrator - Flyway migration complete. Applied: 0
+2025-12-14 09:29:48.789 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:sqlite:enrollment.db (SQLite 3.39)
+2025-12-14 09:29:48.836 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 5 migrations (execution time 00:00.029s)
+2025-12-14 09:29:48.845 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "main": 4
+2025-12-14 09:29:48.848 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "main" is up to date. No migration necessary.
+2025-12-14 09:29:48.853 [main] INFO  util.DatabaseMigrator - Flyway migration complete. Applied: 0
+2025-12-14 09:39:46.442 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:sqlite:enrollment.db (SQLite 3.39)
+2025-12-14 09:39:46.493 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 5 migrations (execution time 00:00.030s)
+2025-12-14 09:39:46.501 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "main": 4
+2025-12-14 09:39:46.504 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "main" is up to date. No migration necessary.
+2025-12-14 09:39:46.509 [main] INFO  util.DatabaseMigrator - Flyway migration complete. Applied: 0
+2025-12-14 09:42:07.721 [AWT-EventQueue-0] ERROR util.GlobalExceptionHandler - [bce50631-e6ad-4b88-90ef-1133767e122d] Uncaught exception in thread AWT-EventQueue-0
+java.lang.ClassCastException: class ui.MainFrame cannot be cast to class ui.MobileFrame (ui.MainFrame and ui.MobileFrame are in unnamed module of loader 'app')
+	at ui.screens.DocumentsScreen.navigate(DocumentsScreen.java:136)
+	at ui.screens.DocumentsScreen.lambda$1(DocumentsScreen.java:79)
+	at java.desktop/javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:1972)
+	at java.desktop/javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2314)
+	at java.desktop/javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:407)
+	at java.desktop/javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:262)
+	at java.desktop/javax.swing.plaf.basic.BasicButtonListener.mouseReleased(BasicButtonListener.java:279)
+	at java.desktop/java.awt.Component.processMouseEvent(Component.java:6621)
+	at java.desktop/javax.swing.JComponent.processMouseEvent(JComponent.java:3398)
+	at java.desktop/java.awt.Component.processEvent(Component.java:6386)
+	at java.desktop/java.awt.Container.processEvent(Container.java:2266)
+	at java.desktop/java.awt.Component.dispatchEventImpl(Component.java:4996)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2324)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4828)
+	at java.desktop/java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4948)
+	at java.desktop/java.awt.LightweightDispatcher.processMouseEvent(Container.java:4575)
+	at java.desktop/java.awt.LightweightDispatcher.dispatchEvent(Container.java:4516)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2310)
+	at java.desktop/java.awt.Window.dispatchEventImpl(Window.java:2780)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4828)
+	at java.desktop/java.awt.EventQueue.dispatchEventImpl(EventQueue.java:775)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:720)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:714)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:400)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:87)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:98)
+	at java.desktop/java.awt.EventQueue$5.run(EventQueue.java:747)
+	at java.desktop/java.awt.EventQueue$5.run(EventQueue.java:745)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:400)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:87)
+	at java.desktop/java.awt.EventQueue.dispatchEvent(EventQueue.java:744)
+	at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
+	at java.desktop/java.awt.EventDispatchThread.run(EventDispatchThread.java:90)
+2025-12-14 09:42:13.765 [AWT-EventQueue-0] ERROR util.GlobalExceptionHandler - [613fb69b-f01c-4d9c-bcaa-721529017b2c] Uncaught exception in thread AWT-EventQueue-0
+java.lang.ClassCastException: class ui.MainFrame cannot be cast to class ui.MobileFrame (ui.MainFrame and ui.MobileFrame are in unnamed module of loader 'app')
+	at ui.screens.DocumentsScreen.navigate(DocumentsScreen.java:136)
+	at ui.screens.DocumentsScreen.lambda$1(DocumentsScreen.java:79)
+	at java.desktop/javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:1972)
+	at java.desktop/javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2314)
+	at java.desktop/javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:407)
+	at java.desktop/javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:262)
+	at java.desktop/javax.swing.plaf.basic.BasicButtonListener.mouseReleased(BasicButtonListener.java:279)
+	at java.desktop/java.awt.Component.processMouseEvent(Component.java:6621)
+	at java.desktop/javax.swing.JComponent.processMouseEvent(JComponent.java:3398)
+	at java.desktop/java.awt.Component.processEvent(Component.java:6386)
+	at java.desktop/java.awt.Container.processEvent(Container.java:2266)
+	at java.desktop/java.awt.Component.dispatchEventImpl(Component.java:4996)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2324)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4828)
+	at java.desktop/java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4948)
+	at java.desktop/java.awt.LightweightDispatcher.processMouseEvent(Container.java:4575)
+	at java.desktop/java.awt.LightweightDispatcher.dispatchEvent(Container.java:4516)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2310)
+	at java.desktop/java.awt.Window.dispatchEventImpl(Window.java:2780)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4828)
+	at java.desktop/java.awt.EventQueue.dispatchEventImpl(EventQueue.java:775)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:720)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:714)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:400)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:87)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:98)
+	at java.desktop/java.awt.EventQueue$5.run(EventQueue.java:747)
+	at java.desktop/java.awt.EventQueue$5.run(EventQueue.java:745)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:400)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:87)
+	at java.desktop/java.awt.EventQueue.dispatchEvent(EventQueue.java:744)
+	at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
+	at java.desktop/java.awt.EventDispatchThread.run(EventDispatchThread.java:90)
+2025-12-14 09:42:20.852 [AWT-EventQueue-0] ERROR util.GlobalExceptionHandler - [382eb8dc-4d5d-4976-8ead-56087b396783] Uncaught exception in thread AWT-EventQueue-0
+java.lang.ClassCastException: class ui.MainFrame cannot be cast to class ui.MobileFrame (ui.MainFrame and ui.MobileFrame are in unnamed module of loader 'app')
+	at ui.screens.DocumentsScreen.navigate(DocumentsScreen.java:136)
+	at ui.screens.DocumentsScreen.lambda$1(DocumentsScreen.java:79)
+	at java.desktop/javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:1972)
+	at java.desktop/javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2314)
+	at java.desktop/javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:407)
+	at java.desktop/javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:262)
+	at java.desktop/javax.swing.plaf.basic.BasicButtonListener.mouseReleased(BasicButtonListener.java:279)
+	at java.desktop/java.awt.Component.processMouseEvent(Component.java:6621)
+	at java.desktop/javax.swing.JComponent.processMouseEvent(JComponent.java:3398)
+	at java.desktop/java.awt.Component.processEvent(Component.java:6386)
+	at java.desktop/java.awt.Container.processEvent(Container.java:2266)
+	at java.desktop/java.awt.Component.dispatchEventImpl(Component.java:4996)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2324)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4828)
+	at java.desktop/java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4948)
+	at java.desktop/java.awt.LightweightDispatcher.processMouseEvent(Container.java:4575)
+	at java.desktop/java.awt.LightweightDispatcher.dispatchEvent(Container.java:4516)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2310)
+	at java.desktop/java.awt.Window.dispatchEventImpl(Window.java:2780)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4828)
+	at java.desktop/java.awt.EventQueue.dispatchEventImpl(EventQueue.java:775)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:720)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:714)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:400)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:87)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:98)
+	at java.desktop/java.awt.EventQueue$5.run(EventQueue.java:747)
+	at java.desktop/java.awt.EventQueue$5.run(EventQueue.java:745)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:400)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:87)
+	at java.desktop/java.awt.EventQueue.dispatchEvent(EventQueue.java:744)
+	at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
+	at java.desktop/java.awt.EventDispatchThread.run(EventDispatchThread.java:90)
+2025-12-14 09:43:03.977 [AWT-EventQueue-0] ERROR util.GlobalExceptionHandler - [6ce275ee-fab5-4da6-9067-fa525e87cb8f] Uncaught exception in thread AWT-EventQueue-0
+java.lang.ClassCastException: class ui.MainFrame cannot be cast to class ui.MobileFrame (ui.MainFrame and ui.MobileFrame are in unnamed module of loader 'app')
+	at ui.screens.DocumentsScreen.navigate(DocumentsScreen.java:136)
+	at ui.screens.DocumentsScreen.lambda$1(DocumentsScreen.java:79)
+	at java.desktop/javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:1972)
+	at java.desktop/javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2314)
+	at java.desktop/javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:407)
+	at java.desktop/javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:262)
+	at java.desktop/javax.swing.plaf.basic.BasicButtonListener.mouseReleased(BasicButtonListener.java:279)
+	at java.desktop/java.awt.Component.processMouseEvent(Component.java:6621)
+	at java.desktop/javax.swing.JComponent.processMouseEvent(JComponent.java:3398)
+	at java.desktop/java.awt.Component.processEvent(Component.java:6386)
+	at java.desktop/java.awt.Container.processEvent(Container.java:2266)
+	at java.desktop/java.awt.Component.dispatchEventImpl(Component.java:4996)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2324)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4828)
+	at java.desktop/java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4948)
+	at java.desktop/java.awt.LightweightDispatcher.processMouseEvent(Container.java:4575)
+	at java.desktop/java.awt.LightweightDispatcher.dispatchEvent(Container.java:4516)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2310)
+	at java.desktop/java.awt.Window.dispatchEventImpl(Window.java:2780)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4828)
+	at java.desktop/java.awt.EventQueue.dispatchEventImpl(EventQueue.java:775)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:720)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:714)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:400)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:87)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:98)
+	at java.desktop/java.awt.EventQueue$5.run(EventQueue.java:747)
+	at java.desktop/java.awt.EventQueue$5.run(EventQueue.java:745)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:400)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:87)
+	at java.desktop/java.awt.EventQueue.dispatchEvent(EventQueue.java:744)
+	at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
+	at java.desktop/java.awt.EventDispatchThread.run(EventDispatchThread.java:90)
+2025-12-14 09:43:11.941 [AWT-EventQueue-0] ERROR util.GlobalExceptionHandler - [f792b530-b60a-4597-8b4c-434514ca510e] Uncaught exception in thread AWT-EventQueue-0
+java.lang.ClassCastException: class ui.MainFrame cannot be cast to class ui.MobileFrame (ui.MainFrame and ui.MobileFrame are in unnamed module of loader 'app')
+	at ui.screens.DocumentsScreen.navigate(DocumentsScreen.java:136)
+	at ui.screens.DocumentsScreen.lambda$1(DocumentsScreen.java:79)
+	at java.desktop/javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:1972)
+	at java.desktop/javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2314)
+	at java.desktop/javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:407)
+	at java.desktop/javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:262)
+	at java.desktop/javax.swing.plaf.basic.BasicButtonListener.mouseReleased(BasicButtonListener.java:279)
+	at java.desktop/java.awt.Component.processMouseEvent(Component.java:6621)
+	at java.desktop/javax.swing.JComponent.processMouseEvent(JComponent.java:3398)
+	at java.desktop/java.awt.Component.processEvent(Component.java:6386)
+	at java.desktop/java.awt.Container.processEvent(Container.java:2266)
+	at java.desktop/java.awt.Component.dispatchEventImpl(Component.java:4996)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2324)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4828)
+	at java.desktop/java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4948)
+	at java.desktop/java.awt.LightweightDispatcher.processMouseEvent(Container.java:4575)
+	at java.desktop/java.awt.LightweightDispatcher.dispatchEvent(Container.java:4516)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2310)
+	at java.desktop/java.awt.Window.dispatchEventImpl(Window.java:2780)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4828)
+	at java.desktop/java.awt.EventQueue.dispatchEventImpl(EventQueue.java:775)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:720)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:714)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:400)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:87)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:98)
+	at java.desktop/java.awt.EventQueue$5.run(EventQueue.java:747)
+	at java.desktop/java.awt.EventQueue$5.run(EventQueue.java:745)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:400)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:87)
+	at java.desktop/java.awt.EventQueue.dispatchEvent(EventQueue.java:744)
+	at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
+	at java.desktop/java.awt.EventDispatchThread.run(EventDispatchThread.java:90)
+2025-12-14 09:57:49.717 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:sqlite:enrollment.db (SQLite 3.39)
+2025-12-14 09:57:49.767 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 5 migrations (execution time 00:00.029s)
+2025-12-14 09:57:49.776 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "main": 4
+2025-12-14 09:57:49.778 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "main" is up to date. No migration necessary.
+2025-12-14 09:57:49.784 [main] INFO  util.DatabaseMigrator - Flyway migration complete. Applied: 0
+2025-12-14 10:00:48.910 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:sqlite:enrollment.db (SQLite 3.39)
+2025-12-14 10:00:48.956 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 5 migrations (execution time 00:00.025s)
+2025-12-14 10:00:48.963 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "main": 4
+2025-12-14 10:00:48.966 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "main" is up to date. No migration necessary.
+2025-12-14 10:00:48.970 [main] INFO  util.DatabaseMigrator - Flyway migration complete. Applied: 0
+2025-12-14 10:01:33.888 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:sqlite:enrollment.db (SQLite 3.39)
+2025-12-14 10:01:33.938 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 5 migrations (execution time 00:00.031s)
+2025-12-14 10:01:33.948 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "main": 4
+2025-12-14 10:01:33.951 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "main" is up to date. No migration necessary.
+2025-12-14 10:01:33.956 [main] INFO  util.DatabaseMigrator - Flyway migration complete. Applied: 0
+2025-12-14 10:09:29.594 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:sqlite:enrollment.db (SQLite 3.39)
+2025-12-14 10:09:29.643 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 5 migrations (execution time 00:00.029s)
+2025-12-14 10:09:29.653 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "main": 4
+2025-12-14 10:09:29.655 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "main" is up to date. No migration necessary.
+2025-12-14 10:09:29.660 [main] INFO  util.DatabaseMigrator - Flyway migration complete. Applied: 0
+2025-12-14 10:17:25.417 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:sqlite:enrollment.db (SQLite 3.39)
+2025-12-14 10:17:25.470 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 5 migrations (execution time 00:00.030s)
+2025-12-14 10:17:25.479 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "main": 4
+2025-12-14 10:17:25.481 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "main" is up to date. No migration necessary.
+2025-12-14 10:17:25.486 [main] INFO  util.DatabaseMigrator - Flyway migration complete. Applied: 0
+2025-12-14 10:18:03.297 [AWT-EventQueue-0] INFO  service.EnrollmentService - Processing final enrollment for block Bachelor of Science in Accountancy 1-A
+2025-12-14 10:23:30.831 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:sqlite:enrollment.db (SQLite 3.39)
+2025-12-14 10:23:30.871 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 5 migrations (execution time 00:00.025s)
+2025-12-14 10:23:30.883 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "main": 4
+2025-12-14 10:23:30.887 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "main" is up to date. No migration necessary.
+2025-12-14 10:23:30.891 [main] INFO  util.DatabaseMigrator - Flyway migration complete. Applied: 0
+2025-12-14 10:23:50.641 [AWT-EventQueue-0] INFO  service.EnrollmentService - Processing final enrollment for block Bachelor of Secondary Education major in Psychology 1-A
+2025-12-14 10:37:33.325 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:sqlite:enrollment.db (SQLite 3.39)
+2025-12-14 10:37:33.373 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 5 migrations (execution time 00:00.026s)
+2025-12-14 10:37:33.381 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "main": 4
+2025-12-14 10:37:33.384 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "main" is up to date. No migration necessary.
+2025-12-14 10:37:33.388 [main] INFO  util.DatabaseMigrator - Flyway migration complete. Applied: 0
+2025-12-14 10:37:38.384 [AWT-EventQueue-0] INFO  service.EnrollmentService - Processing final enrollment for block Bachelor of Science in Accountancy 1-A
+2025-12-14 10:38:01.015 [AWT-EventQueue-0] INFO  service.EnrollmentService - Processing final enrollment for block Bachelor of Science in Accountancy 1-A
+2025-12-14 10:39:33.137 [AWT-EventQueue-0] INFO  service.EnrollmentService - Processing final enrollment for block Bachelor of Science in Accountancy 1-A
+2025-12-14 11:02:28.428 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:sqlite:enrollment.db (SQLite 3.39)
+2025-12-14 11:02:28.477 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 5 migrations (execution time 00:00.028s)
+2025-12-14 11:02:28.485 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "main": 4
+2025-12-14 11:02:28.488 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "main" is up to date. No migration necessary.
+2025-12-14 11:02:28.493 [main] INFO  util.DatabaseMigrator - Flyway migration complete. Applied: 0
+2025-12-14 11:02:33.922 [AWT-EventQueue-0] INFO  service.EnrollmentService - Processing final enrollment for block Bachelor of Science in Computer Science 1-A
+2025-12-14 11:03:06.306 [AWT-EventQueue-0] INFO  service.EnrollmentService - Processing final enrollment for block Bachelor of Science in Computer Science 1-A
+2025-12-14 11:05:36.625 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:sqlite:enrollment.db (SQLite 3.39)
+2025-12-14 11:05:36.672 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 5 migrations (execution time 00:00.031s)
+2025-12-14 11:05:36.685 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "main": 4
+2025-12-14 11:05:36.688 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "main" is up to date. No migration necessary.
+2025-12-14 11:05:36.690 [main] INFO  util.DatabaseMigrator - Flyway migration complete. Applied: 0
+2025-12-14 11:05:50.476 [AWT-EventQueue-0] INFO  service.EnrollmentService - Processing final enrollment for block Bachelor of Science in Computer Science 1-A
+2025-12-14 11:06:45.179 [AWT-EventQueue-0] INFO  service.EnrollmentService - Processing final enrollment for block Bachelor of Science in Computer Science 1-A
+2025-12-14 11:42:34.405 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:sqlite:enrollment.db (SQLite 3.39)
+2025-12-14 11:42:34.454 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 5 migrations (execution time 00:00.029s)
+2025-12-14 11:42:34.466 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "main": 4
+2025-12-14 11:42:34.468 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "main" is up to date. No migration necessary.
+2025-12-14 11:42:34.472 [main] INFO  util.DatabaseMigrator - Flyway migration complete. Applied: 0
+2025-12-14 11:42:39.323 [AWT-EventQueue-0] INFO  service.EnrollmentService - Processing final enrollment for block Bachelor of Science in Computer Science 1-A
+2025-12-14 11:43:31.009 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:sqlite:enrollment.db (SQLite 3.39)
+2025-12-14 11:43:31.057 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 5 migrations (execution time 00:00.029s)
+2025-12-14 11:43:31.065 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "main": 4
+2025-12-14 11:43:31.068 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "main" is up to date. No migration necessary.
+2025-12-14 11:43:31.072 [main] INFO  util.DatabaseMigrator - Flyway migration complete. Applied: 0
+2025-12-14 11:43:34.704 [AWT-EventQueue-0] INFO  service.EnrollmentService - Processing final enrollment for block Bachelor of Science in Computer Science 1-A
+2025-12-14 11:44:05.188 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:sqlite:enrollment.db (SQLite 3.39)
+2025-12-14 11:44:05.238 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 5 migrations (execution time 00:00.029s)
+2025-12-14 11:44:05.246 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "main": 4
+2025-12-14 11:44:05.248 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "main" is up to date. No migration necessary.
+2025-12-14 11:44:05.252 [main] INFO  util.DatabaseMigrator - Flyway migration complete. Applied: 0
+2025-12-14 11:44:08.610 [AWT-EventQueue-0] INFO  service.EnrollmentService - Processing final enrollment for block Bachelor of Science in Computer Science 1-A
+2025-12-14 11:45:47.672 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:sqlite:enrollment.db (SQLite 3.39)
+2025-12-14 11:45:47.723 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 5 migrations (execution time 00:00.030s)
+2025-12-14 11:45:47.732 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "main": 4
+2025-12-14 11:45:47.735 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "main" is up to date. No migration necessary.
+2025-12-14 11:45:47.739 [main] INFO  util.DatabaseMigrator - Flyway migration complete. Applied: 0
+2025-12-14 11:45:51.777 [AWT-EventQueue-0] INFO  service.EnrollmentService - Processing final enrollment for block Bachelor of Secondary Education major in Psychology 1-A
+2025-12-14 11:57:49.494 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:sqlite:enrollment.db (SQLite 3.39)
+2025-12-14 11:57:49.544 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 5 migrations (execution time 00:00.028s)
+2025-12-14 11:57:49.550 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "main": 4
+2025-12-14 11:57:49.556 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "main" is up to date. No migration necessary.
+2025-12-14 11:57:49.561 [main] INFO  util.DatabaseMigrator - Flyway migration complete. Applied: 0
+2025-12-14 11:57:54.505 [AWT-EventQueue-0] INFO  service.EnrollmentService - Processing final enrollment for block Bachelor of Science in Accountancy 1-A
+2025-12-14 12:25:10.023 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:sqlite:enrollment.db (SQLite 3.39)
+2025-12-14 12:25:10.075 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 5 migrations (execution time 00:00.028s)
+2025-12-14 12:25:10.082 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "main": 4
+2025-12-14 12:25:10.085 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "main" is up to date. No migration necessary.
+2025-12-14 12:25:10.090 [main] INFO  util.DatabaseMigrator - Flyway migration complete. Applied: 0
+2025-12-14 12:25:13.895 [AWT-EventQueue-0] INFO  service.EnrollmentService - Processing final enrollment for block Bachelor of Science in Information Technology 1-A
+2025-12-14 12:25:16.804 [AWT-EventQueue-0] ERROR ui.MainFrame - Could not create screen: Dashboard
+java.lang.ClassCastException: class javax.swing.JScrollPane cannot be cast to class javax.swing.JPanel (javax.swing.JScrollPane and javax.swing.JPanel are in module java.desktop of loader 'bootstrap')
+	at ui.screens.DashboardScreen.<init>(DashboardScreen.java:75)
+	at ui.ScreenFactory.create(ScreenFactory.java:38)
+	at ui.MainFrame.showScreen(MainFrame.java:54)
+	at ui.MainFrame.showScreen(MainFrame.java:45)
+	at util.Navigation.to(Navigation.java:25)
+	at ui.screens.AssessmentScreen.handleFinalize(AssessmentScreen.java:309)
+	at ui.screens.AssessmentScreen.lambda$2(AssessmentScreen.java:171)
+	at java.desktop/javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:1972)
+	at java.desktop/javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2314)
+	at java.desktop/javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:407)
+	at java.desktop/javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:262)
+	at java.desktop/javax.swing.plaf.basic.BasicButtonListener.mouseReleased(BasicButtonListener.java:279)
+	at java.desktop/java.awt.Component.processMouseEvent(Component.java:6621)
+	at java.desktop/javax.swing.JComponent.processMouseEvent(JComponent.java:3398)
+	at java.desktop/java.awt.Component.processEvent(Component.java:6386)
+	at java.desktop/java.awt.Container.processEvent(Container.java:2266)
+	at java.desktop/java.awt.Component.dispatchEventImpl(Component.java:4996)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2324)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4828)
+	at java.desktop/java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4948)
+	at java.desktop/java.awt.LightweightDispatcher.processMouseEvent(Container.java:4575)
+	at java.desktop/java.awt.LightweightDispatcher.dispatchEvent(Container.java:4516)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2310)
+	at java.desktop/java.awt.Window.dispatchEventImpl(Window.java:2780)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4828)
+	at java.desktop/java.awt.EventQueue.dispatchEventImpl(EventQueue.java:775)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:720)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:714)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:400)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:87)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:98)
+	at java.desktop/java.awt.EventQueue$5.run(EventQueue.java:747)
+	at java.desktop/java.awt.EventQueue$5.run(EventQueue.java:745)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:400)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:87)
+	at java.desktop/java.awt.EventQueue.dispatchEvent(EventQueue.java:744)
+	at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
+	at java.desktop/java.awt.EventDispatchThread.run(EventDispatchThread.java:90)
+2025-12-14 12:25:18.730 [AWT-EventQueue-0] ERROR ui.MainFrame - Could not create screen: Dashboard
+java.lang.ClassCastException: class javax.swing.JScrollPane cannot be cast to class javax.swing.JPanel (javax.swing.JScrollPane and javax.swing.JPanel are in module java.desktop of loader 'bootstrap')
+	at ui.screens.DashboardScreen.<init>(DashboardScreen.java:75)
+	at ui.ScreenFactory.create(ScreenFactory.java:38)
+	at ui.MainFrame.showScreen(MainFrame.java:54)
+	at ui.MainFrame.showScreen(MainFrame.java:45)
+	at util.Navigation.to(Navigation.java:25)
+	at ui.screens.AssessmentScreen.handleFinalize(AssessmentScreen.java:309)
+	at ui.screens.AssessmentScreen.lambda$2(AssessmentScreen.java:171)
+	at java.desktop/javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:1972)
+	at java.desktop/javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2314)
+	at java.desktop/javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:407)
+	at java.desktop/javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:262)
+	at java.desktop/javax.swing.plaf.basic.BasicButtonListener.mouseReleased(BasicButtonListener.java:279)
+	at java.desktop/java.awt.Component.processMouseEvent(Component.java:6621)
+	at java.desktop/javax.swing.JComponent.processMouseEvent(JComponent.java:3398)
+	at java.desktop/java.awt.Component.processEvent(Component.java:6386)
+	at java.desktop/java.awt.Container.processEvent(Container.java:2266)
+	at java.desktop/java.awt.Component.dispatchEventImpl(Component.java:4996)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2324)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4828)
+	at java.desktop/java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4948)
+	at java.desktop/java.awt.LightweightDispatcher.processMouseEvent(Container.java:4575)
+	at java.desktop/java.awt.LightweightDispatcher.dispatchEvent(Container.java:4516)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2310)
+	at java.desktop/java.awt.Window.dispatchEventImpl(Window.java:2780)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4828)
+	at java.desktop/java.awt.EventQueue.dispatchEventImpl(EventQueue.java:775)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:720)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:714)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:400)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:87)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:98)
+	at java.desktop/java.awt.EventQueue$5.run(EventQueue.java:747)
+	at java.desktop/java.awt.EventQueue$5.run(EventQueue.java:745)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:400)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:87)
+	at java.desktop/java.awt.EventQueue.dispatchEvent(EventQueue.java:744)
+	at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
+	at java.desktop/java.awt.EventDispatchThread.run(EventDispatchThread.java:90)
+2025-12-14 12:25:20.897 [AWT-EventQueue-0] ERROR ui.MainFrame - Could not create screen: Dashboard
+java.lang.ClassCastException: class javax.swing.JScrollPane cannot be cast to class javax.swing.JPanel (javax.swing.JScrollPane and javax.swing.JPanel are in module java.desktop of loader 'bootstrap')
+	at ui.screens.DashboardScreen.<init>(DashboardScreen.java:75)
+	at ui.ScreenFactory.create(ScreenFactory.java:38)
+	at ui.MainFrame.showScreen(MainFrame.java:54)
+	at ui.MainFrame.showScreen(MainFrame.java:45)
+	at util.Navigation.to(Navigation.java:25)
+	at ui.screens.AssessmentScreen.handleFinalize(AssessmentScreen.java:309)
+	at ui.screens.AssessmentScreen.lambda$2(AssessmentScreen.java:171)
+	at java.desktop/javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:1972)
+	at java.desktop/javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2314)
+	at java.desktop/javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:407)
+	at java.desktop/javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:262)
+	at java.desktop/javax.swing.plaf.basic.BasicButtonListener.mouseReleased(BasicButtonListener.java:279)
+	at java.desktop/java.awt.Component.processMouseEvent(Component.java:6621)
+	at java.desktop/javax.swing.JComponent.processMouseEvent(JComponent.java:3398)
+	at java.desktop/java.awt.Component.processEvent(Component.java:6386)
+	at java.desktop/java.awt.Container.processEvent(Container.java:2266)
+	at java.desktop/java.awt.Component.dispatchEventImpl(Component.java:4996)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2324)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4828)
+	at java.desktop/java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4948)
+	at java.desktop/java.awt.LightweightDispatcher.processMouseEvent(Container.java:4575)
+	at java.desktop/java.awt.LightweightDispatcher.dispatchEvent(Container.java:4516)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2310)
+	at java.desktop/java.awt.Window.dispatchEventImpl(Window.java:2780)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4828)
+	at java.desktop/java.awt.EventQueue.dispatchEventImpl(EventQueue.java:775)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:720)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:714)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:400)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:87)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:98)
+	at java.desktop/java.awt.EventQueue$5.run(EventQueue.java:747)
+	at java.desktop/java.awt.EventQueue$5.run(EventQueue.java:745)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:400)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:87)
+	at java.desktop/java.awt.EventQueue.dispatchEvent(EventQueue.java:744)
+	at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
+	at java.desktop/java.awt.EventDispatchThread.run(EventDispatchThread.java:90)
+2025-12-14 12:25:56.425 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:sqlite:enrollment.db (SQLite 3.39)
+2025-12-14 12:25:56.475 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 5 migrations (execution time 00:00.029s)
+2025-12-14 12:25:56.484 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "main": 4
+2025-12-14 12:25:56.487 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "main" is up to date. No migration necessary.
+2025-12-14 12:25:56.492 [main] INFO  util.DatabaseMigrator - Flyway migration complete. Applied: 0
+2025-12-14 12:25:59.411 [AWT-EventQueue-0] INFO  service.EnrollmentService - Processing final enrollment for block Bachelor of Science in Computer Science 1-A
+2025-12-14 13:34:42.487 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:sqlite:enrollment.db (SQLite 3.39)
+2025-12-14 13:34:42.537 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 5 migrations (execution time 00:00.029s)
+2025-12-14 13:34:42.544 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "main": 4
+2025-12-14 13:34:42.546 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "main" is up to date. No migration necessary.
+2025-12-14 13:34:42.547 [main] INFO  util.DatabaseMigrator - Flyway migration complete. Applied: 0
+2025-12-14 13:34:46.273 [AWT-EventQueue-0] INFO  service.EnrollmentService - Processing final enrollment for block Bachelor of Science in Computer Science 1-A
+2025-12-14 13:40:32.642 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:sqlite:enrollment.db (SQLite 3.39)
+2025-12-14 13:40:32.703 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 5 migrations (execution time 00:00.033s)
+2025-12-14 13:40:32.713 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "main": 4
+2025-12-14 13:40:32.716 [main] INFO  o.f.core.internal.command.DbMigrate - Schema "main" is up to date. No migration necessary.
+2025-12-14 13:40:32.722 [main] INFO  util.DatabaseMigrator - Flyway migration complete. Applied: 0
+2025-12-14 13:40:36.683 [AWT-EventQueue-0] INFO  service.EnrollmentService - Processing final enrollment for block Bachelor of Science in Computer Science 1-A
+2025-12-14 13:40:56.634 [AWT-EventQueue-0] INFO  service.EnrollmentService - Processing final enrollment for block Bachelor of Science in Computer Science 1-A

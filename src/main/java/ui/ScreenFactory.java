@@ -42,7 +42,7 @@ public class ScreenFactory {
 			case BIO_DATA -> new BioDataScreen(applicationContext.getEnrollmentService());
 			case DOCUMENTS -> new DocumentsScreen();
 			case PROGRAM_SELECTION -> new ProgramSelectionScreen();
-			case BLOCK_SECTIONING -> new BlockSectioningScreen();
+			case BLOCK_SECTIONING -> new BlockSectioningScreen(applicationContext.getEnrollmentService());
 			case ASSESSMENT -> new AssessmentScreen();
 			case DIGITAL_COR -> new DigitalCORScreen();
 			default -> throw new UnsupportedOperationException("Screen not implemented yet: " + screen);

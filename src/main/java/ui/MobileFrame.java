@@ -1,6 +1,8 @@
 package ui;
 
 import context.ApplicationContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ui.theme.FloatingActionButton;
 import ui.theme.IconCreator;
 import ui.theme.Theme;
@@ -14,17 +16,21 @@ import java.util.EnumMap;
 import java.util.Map;
 
 public class MobileFrame extends JFrame {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MobileFrame.class);
     private final JLayeredPane layeredPane;
     private final FloatingActionButton aiButton;
+    private final ApplicationContext applicationContext;
+    private final ScreenFactory screenFactory;
     private final CardLayout cardLayout;
     private final JPanel screenContainer;
-    private final Map<Screen, JPanel> registeredPanels = new EnumMap<>(Screen.class);
-    private final NavigationController navigationController;
+    private final Map<Screen, ScreenView> screenCache = new EnumMap<>(Screen.class);
+    private ScreenView currentScreen;
+    private Screen currentScreenKey;
 
     public MobileFrame(ApplicationContext applicationContext) {
-        ScreenFactory screenFactory = new ScreenFactory(applicationContext);
-        this.navigationController = new NavigationController(screenFactory);
-        this.navigationController.addNavigationListener(this::handleNavigationEvent);
+        this.applicationContext = applicationContext;
+        this.screenFactory = new ScreenFactory(applicationContext);
         setTitle("Enrollment System");
         setSize(Theme.MOBILE_WIDTH, Theme.MOBILE_HEIGHT);
         setPreferredSize(new Dimension(Theme.MOBILE_WIDTH, Theme.MOBILE_HEIGHT));
@@ -56,7 +62,7 @@ public class MobileFrame extends JFrame {
         aiButton = new FloatingActionButton(IconCreator.AI_ASSISTANT_ICON);
         layeredPane.add(aiButton, JLayeredPane.PALETTE_LAYER);
         if (GeminiClient.isAvailable()) {
-            aiButton.addActionListener(e -> navigationController.navigateTo(Screen.AI_ASSISTANT));
+            aiButton.addActionListener(e -> showScreen(Screen.AI_ASSISTANT, true));
         } else {
             aiButton.setVisible(false);
         }
@@ -88,21 +94,37 @@ public class MobileFrame extends JFrame {
     }
 
     public void showScreen(Screen screen, NavigationContext context) {
-        navigationController.navigateTo(screen, context);
-    }
+        NavigationContext safeContext = context != null ? context : new NavigationContext();
 
-    public NavigationController getNavigationController() {
-        return navigationController;
-    }
-
-    private void handleNavigationEvent(NavigationController.NavigationEvent event) {
-        Screen screen = event.getScreen();
-        ScreenView view = event.getScreenView();
-        JPanel panel = view.getPanel();
-        if (!registeredPanels.containsKey(screen)) {
-            screenContainer.add(panel, screen.name());
-            registeredPanels.put(screen, panel);
+        ScreenView nextView = screenCache.get(screen);
+        if (nextView == null) {
+            try {
+                nextView = screenFactory.create(screen);
+                screenCache.put(screen, nextView);
+                JPanel panel = nextView.getPanel();
+                screenContainer.add(panel, screen.name());
+            } catch (RuntimeException ex) {
+                LOGGER.error("Could not create screen: {}", screen.getName(), ex);
+                return;
+            }
         }
+
+        if (currentScreen != null) {
+            try {
+                currentScreen.onLeave();
+            } catch (Exception ex) {
+                LOGGER.warn("Error during onLeave for screen {}", currentScreenKey, ex);
+            }
+        }
+
+        currentScreen = nextView;
+        currentScreenKey = screen;
         cardLayout.show(screenContainer, screen.name());
+
+        try {
+            currentScreen.onEnter(safeContext);
+        } catch (Exception ex) {
+            LOGGER.warn("Error during onEnter for screen {}", screen, ex);
+        }
     }
 }

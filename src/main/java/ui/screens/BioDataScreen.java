@@ -10,6 +10,7 @@ import service.EnrollmentService.ServiceResult;
 import ui.NavigationContext;
 import ui.Screen;
 import ui.ScreenView;
+import ui.components.WizardHeader;
 import ui.theme.Theme;
 import util.Navigation;
 import util.SessionManager;
@@ -72,7 +73,7 @@ public class BioDataScreen extends JPanel implements ScreenView {
         setBackground(new Color(244, 247, 254));
         setBorder(new EmptyBorder(24, 24, 24, 24));
 
-        add(createHeroHeader(), BorderLayout.NORTH);
+        add(new WizardHeader(1), BorderLayout.NORTH);
 
         JPanel content = new JPanel();
         content.setOpaque(false);
@@ -97,87 +98,6 @@ public class BioDataScreen extends JPanel implements ScreenView {
         add(buildFooter(), BorderLayout.SOUTH);
     }
 
-    private JComponent createHeroHeader() {
-        GradientHeaderPanel header = new GradientHeaderPanel();
-        header.setLayout(new BorderLayout());
-        header.setBorder(new EmptyBorder(24, 32, 16, 32));
-
-        JPanel textRow = new JPanel(new BorderLayout());
-        textRow.setOpaque(false);
-
-        JPanel textBlock = new JPanel();
-        textBlock.setOpaque(false);
-        textBlock.setLayout(new BoxLayout(textBlock, BoxLayout.Y_AXIS));
-
-        JLabel title = new JLabel("New Student Enrollment");
-        title.putClientProperty(FlatClientProperties.STYLE, "font:+6; font:bold; foreground:#FFFFFF;");
-        JLabel subtitle = new JLabel("Academic Year 2025-2026");
-        subtitle.putClientProperty(FlatClientProperties.STYLE, "font:+1; foreground:rgba(255,255,255,0.85);");
-        textBlock.add(title);
-        textBlock.add(Box.createVerticalStrut(4));
-        textBlock.add(subtitle);
-
-        JLabel watermark = new JLabel("UNE");
-        watermark.putClientProperty(FlatClientProperties.STYLE,
-            "font:+12; font:bold; foreground:rgba(255,255,255,0.25);");
-
-        textRow.add(textBlock, BorderLayout.WEST);
-        textRow.add(watermark, BorderLayout.EAST);
-
-        JPanel stepperWrapper = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        stepperWrapper.setOpaque(false);
-        stepperWrapper.setBorder(new EmptyBorder(24, 0, 0, 0));
-        stepperWrapper.add(buildStepper());
-
-        header.add(textRow, BorderLayout.CENTER);
-        header.add(stepperWrapper, BorderLayout.SOUTH);
-        return header;
-    }
-
-    private JComponent buildStepper() {
-        JPanel stepper = new JPanel();
-        stepper.setOpaque(false);
-        stepper.setLayout(new BoxLayout(stepper, BoxLayout.X_AXIS));
-
-        stepper.add(createStepPill(1, "Bio-Data", true));
-        stepper.add(createStepSeparator());
-        stepper.add(createStepPill(2, "Documents", false));
-        stepper.add(createStepSeparator());
-        stepper.add(createStepPill(3, "Program", false));
-        stepper.add(createStepSeparator());
-        stepper.add(createStepPill(4, "Schedule", false));
-        stepper.setAlignmentX(Component.LEFT_ALIGNMENT);
-        return stepper;
-    }
-
-    private Component createStepSeparator() {
-        JLabel separator = new JLabel("->");
-        separator.setBorder(new EmptyBorder(0, 12, 0, 12));
-        separator.setForeground(new Color(210, 224, 247));
-        separator.setFont(Theme.BODY_FONT);
-        return separator;
-    }
-
-    private JPanel createStepPill(int stepNumber, String label, boolean active) {
-        JPanel container = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 4));
-        container.setOpaque(false);
-
-        JLabel index = new JLabel(String.format("%02d", stepNumber));
-        index.putClientProperty(FlatClientProperties.STYLE,
-            active
-                ? "font:+2; font:bold; foreground:#FFFFFF;"
-                : "font:+1; foreground:#B7C6E6;");
-
-        JLabel text = new JLabel(label);
-        text.putClientProperty(FlatClientProperties.STYLE,
-            active
-                ? "font:+2; font:bold; foreground:#FFFFFF;"
-                : "font:+1; foreground:#CFDAF4;");
-
-        container.add(index);
-        container.add(text);
-        return container;
-    }
 
     private JComponent createSectionCard(String title, JComponent bodyContent) {
         JPanel wrapper = new JPanel(new BorderLayout());
@@ -550,21 +470,6 @@ public class BioDataScreen extends JPanel implements ScreenView {
     private record ValidatorEntry(JComponent component, Supplier<Boolean> validator) {
     }
 
-    private static class GradientHeaderPanel extends JPanel {
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            Graphics2D g2 = (Graphics2D) g.create();
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            GradientPaint paint = new GradientPaint(
-                0, 0, new Color(12, 92, 177),
-                getWidth(), getHeight(), new Color(5, 32, 84)
-            );
-            g2.setPaint(paint);
-            g2.fillRect(0, 0, getWidth(), getHeight());
-            g2.dispose();
-        }
-    }
 
     @Override
     public void onEnter(NavigationContext context) {

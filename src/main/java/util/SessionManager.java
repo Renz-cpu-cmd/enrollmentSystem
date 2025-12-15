@@ -20,6 +20,24 @@ public class SessionManager {
     private Map<String, String> assessedFees;
     private String shsStrand;
     private static final long DEFAULT_SESSION_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
+    private String selectedProgramCode;
+    private String selectedProgramName;
+
+    // --- Dark mode preference ---
+    private boolean darkMode = false;
+    /**
+     * Returns true if dark mode is enabled for the session.
+     */
+    public boolean getDarkMode() {
+        return darkMode;
+    }
+
+    /**
+     * Sets the dark mode preference for the session.
+     */
+    public void setDarkMode(boolean darkMode) {
+        this.darkMode = darkMode;
+    }
 
     private SessionManager() {
         // Initialize with empty data to prevent null pointers
@@ -82,6 +100,22 @@ public class SessionManager {
         this.shsStrand = shsStrand;
     }
 
+    public String getSelectedProgramCode() {
+        return selectedProgramCode;
+    }
+
+    public void setSelectedProgramCode(String selectedProgramCode) {
+        this.selectedProgramCode = selectedProgramCode;
+    }
+
+    public String getSelectedProgramName() {
+        return selectedProgramName;
+    }
+
+    public void setSelectedProgramName(String selectedProgramName) {
+        this.selectedProgramName = selectedProgramName;
+    }
+
     /**
      * Clears all session data, including student info, subjects, and fees.
      * Should be called after enrollment is complete or on logout.
@@ -96,5 +130,7 @@ public class SessionManager {
             assessedFees.clear();
         }
         shsStrand = null;
+        selectedProgramCode = null;
+        selectedProgramName = null;
     }
 }

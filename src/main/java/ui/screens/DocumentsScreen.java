@@ -1,176 +1,135 @@
 package ui.screens;
 
+import com.formdev.flatlaf.FlatClientProperties;
+import com.formdev.flatlaf.ui.FlatDropShadowBorder;
+import com.formdev.flatlaf.ui.FlatRoundBorder;
 import ui.MobileFrame;
 import ui.NavigationContext;
 import ui.Screen;
 import ui.ScreenView;
-import ui.theme.ProgressStepper;
-import ui.theme.RoundedButton;
+import ui.components.WizardHeader;
 import ui.theme.Theme;
 
 import javax.swing.*;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DocumentsScreen extends JPanel implements ScreenView {
 
-    private final RoundedButton nextButton;
+    private final JButton nextButton;
+    private final List<DocumentCard> documentCards = new ArrayList<>();
+
+    private static final List<DocumentRequirement> REQUIREMENTS = List.of(
+        new DocumentRequirement("Form 138 (Report Card)", "Grade 12 report card, signed by school registrar.", "PDF"),
+        new DocumentRequirement("PSA Birth Certificate", "Original PSA issued copy.", "PDF"),
+        new DocumentRequirement("Good Moral Certificate", "Signed by guidance counselor (current school).", "PDF"),
+        new DocumentRequirement("2x2 ID Photo", "White background, formal attire, no filters.", "IMG")
+    );
 
     public DocumentsScreen() {
         setLayout(new BorderLayout());
-        setBackground(Theme.BACKGROUND_COLOR);
-        setBorder(Theme.PADDING_BORDER);
+        setBackground(new Color(244, 247, 254));
+        setBorder(new EmptyBorder(24, 24, 24, 24));
 
-        add(createHeaderPanel(), BorderLayout.NORTH);
+        add(new WizardHeader(2), BorderLayout.NORTH);
         add(createDocumentScrollPane(), BorderLayout.CENTER);
-        nextButton = RoundedButton.primary("Next");
+        nextButton = createPrimaryButton("Next: Program Selection");
+        nextButton.setEnabled(false);
         add(createFooterPanel(), BorderLayout.SOUTH);
     }
 
-    private JPanel createHeaderPanel() {
-        JPanel header = new JPanel();
-        header.setOpaque(false);
-        header.setLayout(new BoxLayout(header, BoxLayout.Y_AXIS));
-        header.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-        ProgressStepper stepper = new ProgressStepper(ProgressStepper.STEPS);
-        stepper.setCurrentStep(1);
-        stepper.setAlignmentX(Component.CENTER_ALIGNMENT);
-        header.add(stepper);
-
-        header.add(Box.createVerticalStrut(10));
-
-        JLabel title = new JLabel("Document Submission", SwingConstants.CENTER);
-        title.setFont(Theme.HEADING_FONT);
-        title.setForeground(Theme.TEXT_PRIMARY_COLOR);
-        title.setAlignmentX(Component.CENTER_ALIGNMENT);
-        header.add(title);
-
-        JTextArea subtitle = new JTextArea("Upload the required credentials to validate your enrollment. Originals will be verified on campus.");
-        subtitle.setForeground(Theme.TEXT_SECONDARY_COLOR);
-        subtitle.setFont(Theme.BODY_FONT);
-        subtitle.setOpaque(false);
-        subtitle.setEditable(false);
-        subtitle.setFocusable(false);
-        subtitle.setLineWrap(true);
-        subtitle.setWrapStyleWord(true);
-        subtitle.setBorder(BorderFactory.createEmptyBorder(6, 20, 0, 20));
-        subtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
-        header.add(subtitle);
-        return header;
-    }
 
     private JScrollPane createDocumentScrollPane() {
-        JPanel mainPanel = new JPanel(new GridBagLayout());
-        mainPanel.setOpaque(false);
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
+        JPanel content = new JPanel();
+        content.setOpaque(false);
+        content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
+        content.setBorder(new EmptyBorder(24, 8, 24, 8));
 
-        String[][] documents = {
-            {"Form 138 (Report Card)", "Grade 12 Report Card (Original)", "true"},
-            {"PSA Birth Certificate", "Original copy from Philippine Statistics Authority", "true"},
-            {"Medical Certificate", "CBC, Urinalysis, and X-Ray results", "true"},
-            {"2x2 ID Photo", "White background, formal attire, with name tag", "true"}
-        };
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.weightx = 1.0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.anchor = GridBagConstraints.NORTH;
-        gbc.insets = new Insets(0, 0, 15, 0);
-
-        int row = 0;
-        for (String[] doc : documents) {
-            gbc.gridy = row++;
-            boolean required = Boolean.parseBoolean(doc[2]);
-            mainPanel.add(createDocCard(doc[0], doc[1], required), gbc);
+        for (DocumentRequirement requirement : REQUIREMENTS) {
+            DocumentCard card = new DocumentCard(requirement);
+            documentCards.add(card);
+            content.add(card);
+            content.add(Box.createVerticalStrut(16));
         }
 
-        gbc.gridy = row;
-        gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.BOTH;
-        JPanel filler = new JPanel();
-        filler.setOpaque(false);
-        mainPanel.add(filler, gbc);
-
-        JScrollPane scrollPane = new JScrollPane(mainPanel);
-        scrollPane.setPreferredSize(new Dimension(0, 0));
-        scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.setBorder(null);
+        JScrollPane scrollPane = new JScrollPane(content);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
         scrollPane.getViewport().setOpaque(false);
         scrollPane.setOpaque(false);
-        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(18);
         return scrollPane;
-    }
-
-    private JPanel createDocCard(String title, String subtitle, boolean isRequired) {
-        JPanel card = new JPanel(new BorderLayout());
-        card.setBackground(Color.WHITE);
-        card.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(0, 0, 0, 30), 1, true),
-            BorderFactory.createEmptyBorder(16, 18, 16, 18)));
-
-        JPanel textPanel = new JPanel();
-        textPanel.setOpaque(false);
-        textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
-
-        JPanel titleRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        titleRow.setOpaque(false);
-
-        JLabel titleLabel = new JLabel(title);
-        titleLabel.setFont(Theme.SUBHEADING_FONT);
-        titleLabel.setForeground(Theme.TEXT_PRIMARY_COLOR);
-        titleRow.add(titleLabel);
-
-        if (isRequired) {
-            JLabel badge = new JLabel("Required");
-            badge.setFont(Theme.LABEL_FONT);
-            badge.setForeground(Color.WHITE);
-            badge.setOpaque(true);
-            badge.setBackground(Theme.PRIMARY_COLOR);
-            badge.setBorder(BorderFactory.createEmptyBorder(2, 8, 2, 8));
-            titleRow.add(Box.createHorizontalStrut(8));
-            titleRow.add(badge);
-        }
-
-        JLabel subtitleLabel = new JLabel(subtitle);
-        subtitleLabel.setFont(Theme.BODY_FONT);
-        subtitleLabel.setForeground(Theme.TEXT_SECONDARY_COLOR);
-        subtitleLabel.setBorder(BorderFactory.createEmptyBorder(6, 0, 0, 0));
-
-        textPanel.add(titleRow);
-        textPanel.add(subtitleLabel);
-
-        RoundedButton uploadButton = RoundedButton.primary("Upload");
-        uploadButton.setPreferredSize(new Dimension(120, 40));
-
-        JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-        actionPanel.setOpaque(false);
-        actionPanel.add(uploadButton);
-
-        card.add(textPanel, BorderLayout.CENTER);
-        card.add(actionPanel, BorderLayout.EAST);
-        return card;
     }
 
     private JPanel createFooterPanel() {
         JPanel footer = new JPanel(new BorderLayout());
         footer.setOpaque(false);
-        footer.setBorder(BorderFactory.createEmptyBorder(10, 15, 20, 15));
+        footer.setBorder(new EmptyBorder(24, 0, 0, 0));
 
-        RoundedButton backButton = RoundedButton.subtle("Back");
-        nextButton.setPreferredSize(new Dimension(160, 44));
+        JLabel note = new JLabel("All required documents must be uploaded before proceeding.");
+        note.setFont(Theme.BODY_FONT);
+        note.setForeground(new Color(120, 126, 140));
+        footer.add(note, BorderLayout.WEST);
 
-        JPanel buttonRow = new JPanel(new GridLayout(1, 2, 12, 0));
-        buttonRow.setOpaque(false);
-        buttonRow.add(backButton);
-        buttonRow.add(nextButton);
-
+        JButton backButton = createSecondaryButton("Back");
         backButton.addActionListener(e -> navigate(Screen.BIO_DATA));
         nextButton.addActionListener(e -> navigate(Screen.PROGRAM_SELECTION));
 
-        footer.add(buttonRow, BorderLayout.CENTER);
+        JPanel buttonRow = new JPanel(new FlowLayout(FlowLayout.RIGHT, 12, 0));
+        buttonRow.setOpaque(false);
+        buttonRow.add(backButton);
+        buttonRow.add(nextButton);
+        footer.add(buttonRow, BorderLayout.EAST);
         return footer;
+    }
+
+    private JButton createPrimaryButton(String text) {
+        JButton button = new JButton(text);
+        button.putClientProperty(FlatClientProperties.STYLE,
+            "arc:16; background:#0C5CB1; foreground:#FFFFFF; font:+1;" +
+                "hoverBackground:#0f6ed8; pressedBackground:#0a4f8d; focusWidth:2; innerFocusWidth:1;");
+        button.setBorder(new EmptyBorder(12, 32, 12, 32));
+        return button;
+    }
+
+    private JButton createSecondaryButton(String text) {
+        JButton button = new JButton(text);
+        button.putClientProperty(FlatClientProperties.STYLE,
+            "arc:16; background:#ffffff; foreground:#0C5CB1;" +
+                "borderColor:#0C5CB1; focusWidth:1; font:+1;");
+        button.setBorder(new EmptyBorder(12, 32, 12, 32));
+        return button;
+    }
+
+    private void handleUpload(DocumentCard card) {
+        JFileChooser chooser = new JFileChooser();
+        int result = chooser.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = chooser.getSelectedFile();
+            card.showUploading();
+            simulateUpload(card, selectedFile.getName());
+        }
+    }
+
+    private void simulateUpload(DocumentCard card, String fileName) {
+        Timer timer = new Timer(40, null);
+        timer.addActionListener(e -> {
+            int value = card.incrementProgress(2);
+            if (value >= 100) {
+                timer.stop();
+                card.markUploaded(fileName);
+                updateNextButtonState();
+            }
+        });
+        timer.start();
+    }
+
+    private void updateNextButtonState() {
+        boolean allUploaded = documentCards.stream().allMatch(DocumentCard::isUploaded);
+        nextButton.setEnabled(allUploaded);
     }
 
     private void navigate(Screen target) {
@@ -182,11 +141,151 @@ public class DocumentsScreen extends JPanel implements ScreenView {
 
     @Override
     public void onEnter(NavigationContext context) {
-        // Future: auto-load upload progress.
+        updateNextButtonState();
     }
 
     @Override
     public void onLeave() {
-        // No teardown required yet.
+        // Future: persist upload metadata.
     }
+
+    private record DocumentRequirement(String name, String description, String iconText) {}
+
+    private class DocumentCard extends JPanel {
+
+        private final JLabel statusLabel;
+        private final JButton uploadButton;
+        private final JProgressBar progressBar;
+        private final StatusBadge statusBadge;
+        private boolean uploaded;
+
+        DocumentCard(DocumentRequirement requirement) {
+            setLayout(new BorderLayout(18, 0));
+            setOpaque(false);
+
+            JPanel card = new JPanel(new BorderLayout(18, 0));
+            card.setBackground(Color.WHITE);
+            card.setBorder(new CompoundBorder(
+                new FlatDropShadowBorder(),
+                new CompoundBorder(new FlatRoundBorder(), new EmptyBorder(20, 24, 20, 24))
+            ));
+
+            JPanel left = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+            left.setOpaque(false);
+            JLabel icon = new JLabel(requirement.iconText(), SwingConstants.CENTER);
+            icon.setPreferredSize(new Dimension(72, 72));
+            icon.setFont(Theme.HEADING_FONT);
+            icon.setForeground(new Color(12, 92, 177));
+            icon.setOpaque(true);
+            icon.setBackground(new Color(244, 247, 254));
+            icon.setBorder(new CompoundBorder(new FlatRoundBorder(), new EmptyBorder(12, 12, 12, 12)));
+            left.add(icon);
+
+            JPanel info = new JPanel();
+            info.setOpaque(false);
+            info.setLayout(new BoxLayout(info, BoxLayout.Y_AXIS));
+            info.setBorder(new EmptyBorder(0, 12, 0, 0));
+
+            JLabel nameLabel = new JLabel(requirement.name());
+            nameLabel.setFont(Theme.SUBHEADER_FONT);
+            nameLabel.setForeground(Theme.TEXT_HEADER);
+            JLabel descriptionLabel = new JLabel(requirement.description());
+            descriptionLabel.setFont(Theme.BODY_FONT);
+            descriptionLabel.setForeground(Theme.TEXT_SECONDARY_COLOR);
+
+            statusLabel = new JLabel();
+            statusLabel.setFont(Theme.BODY_FONT);
+            statusBadge = new StatusBadge();
+            statusBadge.setPreferredSize(new Dimension(18, 18));
+            statusBadge.setVisible(false);
+
+            progressBar = new JProgressBar(0, 100);
+            progressBar.setVisible(false);
+            progressBar.setStringPainted(true);
+
+            JPanel statusRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
+            statusRow.setOpaque(false);
+            statusRow.add(statusBadge);
+            statusRow.add(statusLabel);
+
+            info.add(nameLabel);
+            info.add(Box.createVerticalStrut(4));
+            info.add(descriptionLabel);
+            info.add(Box.createVerticalStrut(12));
+            info.add(statusRow);
+            info.add(Box.createVerticalStrut(8));
+            info.add(progressBar);
+
+            JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+            actionPanel.setOpaque(false);
+            uploadButton = createPrimaryButton("Upload");
+            uploadButton.addActionListener(e -> handleUpload(this));
+            actionPanel.add(uploadButton);
+
+            card.add(left, BorderLayout.WEST);
+            card.add(info, BorderLayout.CENTER);
+            card.add(actionPanel, BorderLayout.EAST);
+
+            setLayout(new BorderLayout());
+            add(card, BorderLayout.CENTER);
+
+            setStatus("Pending upload", new Color(196, 126, 32), false);
+        }
+
+        void showUploading() {
+            uploaded = false;
+            progressBar.setVisible(true);
+            progressBar.setValue(0);
+            progressBar.setString("Scanning...");
+            uploadButton.setEnabled(false);
+            uploadButton.setText("Uploading...");
+            setStatus("Scanning document for compliance...", new Color(196, 126, 32), false);
+        }
+
+        int incrementProgress(int delta) {
+            if (!progressBar.isVisible()) {
+                return 100;
+            }
+            int next = Math.min(100, progressBar.getValue() + delta);
+            progressBar.setValue(next);
+            progressBar.setString(next + "%");
+            return next;
+        }
+
+        void markUploaded(String fileName) {
+            uploaded = true;
+            progressBar.setVisible(false);
+            uploadButton.setEnabled(true);
+            uploadButton.setText("Replace");
+            setStatus("Uploaded - " + fileName, new Color(32, 158, 95), true);
+        }
+
+        boolean isUploaded() {
+            return uploaded;
+        }
+
+        private void setStatus(String text, Color color, boolean showBadge) {
+            statusLabel.setText(text);
+            statusLabel.setForeground(color);
+            statusBadge.setVisible(showBadge);
+        }
+    }
+
+    private static class StatusBadge extends JComponent {
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(new Color(32, 158, 95));
+            g2.fillOval(0, 0, getWidth(), getHeight());
+            g2.setStroke(new BasicStroke(2f));
+            g2.setColor(Color.WHITE);
+            int w = getWidth();
+            int h = getHeight();
+            g2.drawLine(w * 3 / 10, h * 5 / 10, w * 5 / 10, h * 7 / 10);
+            g2.drawLine(w * 5 / 10, h * 7 / 10, w * 8 / 10, h * 3 / 10);
+            g2.dispose();
+        }
+    }
+
 }

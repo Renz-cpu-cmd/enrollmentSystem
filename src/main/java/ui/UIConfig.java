@@ -20,6 +20,8 @@ import java.util.Set;
  */
 public final class UIConfig {
 
+    public static final boolean IS_DEBUG_MODE = true;
+
     private static final Color ACCENT_PRIMARY = new Color(12, 92, 177); // Enterprise blue
     private static final Color ACCENT_PRIMARY_HOVER = ACCENT_PRIMARY.brighter();
     private static final Color ACCENT_PRIMARY_PRESSED = ACCENT_PRIMARY.darker();

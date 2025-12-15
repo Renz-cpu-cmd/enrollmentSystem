@@ -79,7 +79,7 @@ public class SplashScreen extends JPanel implements ScreenView {
         bar.setPreferredSize(new Dimension(0, 12));
         bar.setMaximumSize(new Dimension(Integer.MAX_VALUE, 12));
         bar.putClientProperty(FlatClientProperties.STYLE,
-            "arc:999; trackArc:999; trackWidth:6;" +
+            "arc:999; trackWidth:6;" +
                 "foreground:#0C5CB1;" +
                 "track:#E3E8EF;");
         return bar;
