@@ -4,21 +4,20 @@ import java.math.BigDecimal;
 
 public class Payment {
     private int id;
-    private int enrollmentId;
+    private int assessmentId;
     private BigDecimal amount;
     private String paymentMethod;
-    private String transactionId;
-    private String status;
+    private String referenceNo;
+    private String paymentDate;
     private String createdAt;
 
     public Payment() {}
 
-    public Payment(int enrollmentId, BigDecimal amount, String paymentMethod, String transactionId, String status) {
-        this.enrollmentId = enrollmentId;
+    public Payment(int assessmentId, BigDecimal amount, String paymentMethod, String referenceNo) {
+        this.assessmentId = assessmentId;
         this.amount = amount;
         this.paymentMethod = paymentMethod;
-        this.transactionId = transactionId;
-        this.status = status;
+        this.referenceNo = referenceNo;
     }
 
     public int getId() {
@@ -29,12 +28,12 @@ public class Payment {
         this.id = id;
     }
 
-    public int getEnrollmentId() {
-        return enrollmentId;
+    public int getAssessmentId() {
+        return assessmentId;
     }
 
-    public void setEnrollmentId(int enrollmentId) {
-        this.enrollmentId = enrollmentId;
+    public void setAssessmentId(int assessmentId) {
+        this.assessmentId = assessmentId;
     }
 
     public BigDecimal getAmount() {
@@ -53,20 +52,20 @@ public class Payment {
         this.paymentMethod = paymentMethod;
     }
 
-    public String getTransactionId() {
-        return transactionId;
+    public String getReferenceNo() {
+        return referenceNo;
     }
 
-    public void setTransactionId(String transactionId) {
-        this.transactionId = transactionId;
+    public void setReferenceNo(String referenceNo) {
+        this.referenceNo = referenceNo;
     }
 
-    public String getStatus() {
-        return status;
+    public String getPaymentDate() {
+        return paymentDate;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setPaymentDate(String paymentDate) {
+        this.paymentDate = paymentDate;
     }
 
     public String getCreatedAt() {

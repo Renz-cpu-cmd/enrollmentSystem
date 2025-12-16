@@ -7,6 +7,7 @@ import util.Config;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Objects;
 
 public class DatabaseManager {
 
@@ -51,6 +52,42 @@ public class DatabaseManager {
             return DriverManager.getConnection(URL);
         }
         return dataSource.getConnection();
+    }
+
+    /**
+     * Executes the provided callback within a single transaction boundary.
+     * A connection is acquired, set to manual commit, and released after commit/rollback.
+     */
+    public static <T> T runInTransaction(TransactionCallback<T> callback) throws SQLException {
+        Objects.requireNonNull(callback, "callback");
+
+        try (Connection conn = getConnection()) {
+            boolean originalAutoCommit = conn.getAutoCommit();
+            conn.setAutoCommit(false);
+            try {
+                T result = callback.doInTransaction(conn);
+                conn.commit();
+                return result;
+            } catch (Exception ex) {
+                try {
+                    conn.rollback();
+                } catch (SQLException rollbackEx) {
+                    rollbackEx.addSuppressed(ex);
+                    throw rollbackEx;
+                }
+                if (ex instanceof SQLException sqlEx) {
+                    throw sqlEx;
+                }
+                throw new SQLException("Transactional work failed", ex);
+            } finally {
+                conn.setAutoCommit(originalAutoCommit);
+            }
+        }
+    }
+
+    @FunctionalInterface
+    public interface TransactionCallback<T> {
+        T doInTransaction(Connection connection) throws Exception;
     }
 
     public static void closeDataSource() {

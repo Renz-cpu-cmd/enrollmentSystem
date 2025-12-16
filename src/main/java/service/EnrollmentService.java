@@ -1,16 +1,29 @@
 package service;
 
+import dao.AssessmentDAO;
+import dao.BlockDAO;
+import dao.EnrollmentDAO;
 import dao.StudentDAO;
+import model.Assessment;
+import model.AssessmentFee;
+import model.Block;
+import model.Enrollment;
+import model.Schedule;
 import model.Student;
 import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import dao.DatabaseManager;
+import util.SessionManager;
 import util.Validator;
 
+import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class EnrollmentService {
@@ -18,6 +31,11 @@ public class EnrollmentService {
     private static final Logger LOGGER = LoggerFactory.getLogger(EnrollmentService.class);
 
     private final StudentDAO studentDAO;
+    private final BlockDAO blockDAO;
+    private final EnrollmentDAO enrollmentDAO;
+    private final AssessmentDAO assessmentDAO;
+
+    private static final String DEFAULT_TERM = "2025-2026";
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
     private static final int PASSWORD_MIN_LENGTH = 12;
     private static final String UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -26,8 +44,11 @@ public class EnrollmentService {
     private static final String SPECIAL = "!@#$%^&*()-_=+[]{}|;:,.<>?";
     private static final String PASSWORD_POOL = UPPER + LOWER + DIGITS + SPECIAL;
 
-    public EnrollmentService(StudentDAO studentDAO) {
+    public EnrollmentService(StudentDAO studentDAO, BlockDAO blockDAO, EnrollmentDAO enrollmentDAO, AssessmentDAO assessmentDAO) {
         this.studentDAO = studentDAO;
+        this.blockDAO = blockDAO;
+        this.enrollmentDAO = enrollmentDAO;
+        this.assessmentDAO = assessmentDAO;
     }
 
     /**
@@ -223,13 +244,132 @@ public class EnrollmentService {
         return new String(chars);
     }
 
-    public ServiceResult<Void> processEnrollment(String blockName) {
-        if (isBlank(blockName)) {
+    /**
+     * Creates an enrollment for an already-registered student (returning/continuing flow).
+     * Delegates to the same pipeline used by the freshman flow but keeps the API explicit.
+     */
+    public ServiceResult<Void> createEnrollmentForExisting(String blockCode) {
+        return processEnrollment(blockCode);
+    }
+
+    public ServiceResult<Void> processEnrollment(String blockCode) {
+        if (isBlank(blockCode)) {
             return ServiceResult.failure("Block selection is required before enrollment.");
         }
-        LOGGER.info("Processing final enrollment for block {}", blockName);
-        // Placeholder for future transactional logic (fees, COR issuance, etc.)
-        return ServiceResult.success("Enrollment confirmed for " + blockName + ".", null);
+
+        var currentStudent = SessionManager.getInstance().getCurrentStudent();
+        if (currentStudent == null || currentStudent.getId() <= 0) {
+            return ServiceResult.failure("No active student session. Please login again.");
+        }
+
+        try {
+            return DatabaseManager.runInTransaction(conn -> doProcessEnrollment(blockCode, currentStudent.getId(), conn));
+        } catch (SQLException ex) {
+            LOGGER.error("Enrollment failed for block {}", blockCode, ex);
+            return ServiceResult.failure("Unable to process enrollment right now.");
+        }
+    }
+
+    private ServiceResult<Void> doProcessEnrollment(String blockCode, int studentId, Connection conn) throws SQLException {
+        // Already enrolled?
+        if (enrollmentDAO.findActiveByStudent(studentId).isPresent()) {
+            return ServiceResult.failure("You already have an active enrollment.");
+        }
+
+        Block block = blockDAO.findByCode(blockCode, conn).orElseGet(() -> {
+            Block b = new Block();
+            b.setBlockCode(blockCode);
+            b.setCapacity(40);
+            b.setActive(true);
+            try {
+                return blockDAO.save(b, conn);
+            } catch (SQLException ex) {
+                LOGGER.error("Failed to create mock block {}", blockCode, ex);
+                return b;
+            }
+        });
+
+        if (block.getSchedules() == null || block.getSchedules().isEmpty()) {
+            seedSchedulesForBlock(block, conn);
+        }
+
+        double totalUnits = calculateTotalUnits(block);
+        if (totalUnits <= 0) {
+            totalUnits = 18.0; // fallback when mock blocks have no schedules persisted
+        }
+
+        BigDecimal tuition = BigDecimal.valueOf(totalUnits * 1500.0);
+        BigDecimal misc = BigDecimal.valueOf(2500.0);
+        BigDecimal lab = BigDecimal.valueOf(1000.0);
+        BigDecimal other = BigDecimal.ZERO;
+        BigDecimal totalDue = tuition.add(misc).add(lab).add(other);
+
+        Enrollment enrollment = new Enrollment(studentId, block.getId(), DEFAULT_TERM, "ENROLLED");
+        enrollmentDAO.create(enrollment, conn);
+
+        Assessment assessment = new Assessment();
+        assessment.setEnrollmentId(enrollment.getId());
+        assessment.setTotalUnits(totalUnits);
+        assessment.setTuitionFee(tuition);
+        assessment.setMiscFee(misc);
+        assessment.setLabFee(lab);
+        assessment.setOtherFee(other);
+        assessment.setTotalDue(totalDue);
+        assessment.setCurrency("PHP");
+        assessment.setStatus("PENDING");
+        assessmentDAO.saveAssessment(assessment, conn);
+
+        List<AssessmentFee> fees = new ArrayList<>();
+        fees.add(new AssessmentFee(assessment.getId(), "TUITION", "Tuition Fee", tuition, 1));
+        fees.add(new AssessmentFee(assessment.getId(), "MISC", "Miscellaneous Fees", misc, 2));
+        fees.add(new AssessmentFee(assessment.getId(), "LAB", "Laboratory Fees", lab, 3));
+        assessmentDAO.saveFees(fees, conn);
+
+        LOGGER.info("Enrollment completed: student {} -> block {} (enrollment #{})", studentId, blockCode, enrollment.getId());
+        return ServiceResult.success("Enrollment confirmed for " + blockCode + ".", null);
+    }
+
+    private double calculateTotalUnits(Block block) {
+        return block.getSchedules().stream()
+            .mapToDouble(s -> s.getUnits())
+            .sum();
+    }
+
+    /**
+     * Fallback: if a block has no schedules (e.g., mock block created on the fly), seed a minimal set so
+     * downstream UI (Dashboard) can display a timetable and assessment can compute units from real rows.
+     */
+    private void seedSchedulesForBlock(Block block, Connection conn) throws SQLException {
+        if (block == null || block.getId() == null) {
+            return;
+        }
+
+        String[][] templates = new String[][]{
+                {"DSA", "Data Structures", "Mon/Wed", "08:00", "09:30", "CL-1", "Prof. A", "3"},
+                {"OOP", "Object Oriented Prog", "Tue/Thu", "10:00", "11:30", "CL-2", "Prof. B", "3"},
+                {"ETH", "Ethics & Values", "Fri", "13:00", "15:00", "LEC-1", "Prof. C", "3"}
+        };
+
+        String sql = "INSERT INTO schedules (block_id, course_code, subject, day_pattern, time_start, time_end, room, instructor, units) " +
+                "VALUES (?,?,?,?,?,?,?,?,?)";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            for (String[] t : templates) {
+                double units = Double.parseDouble(t[7]);
+                ps.setInt(1, block.getId());
+                ps.setString(2, block.getBlockCode() + "-" + t[0]);
+                ps.setString(3, t[1]);
+                ps.setString(4, t[2]);
+                ps.setString(5, t[3]);
+                ps.setString(6, t[4]);
+                ps.setString(7, t[5]);
+                ps.setString(8, t[6]);
+                ps.setDouble(9, units);
+                ps.executeUpdate();
+
+                Schedule sched = new Schedule(null, block.getId(), null, block.getBlockCode() + "-" + t[0], t[1], t[2], t[3], t[4], t[5], t[6], units);
+                block.addSchedule(sched);
+            }
+        }
     }
 
     private boolean isPasswordStrong(String password) {

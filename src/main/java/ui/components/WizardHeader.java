@@ -1,11 +1,15 @@
 package ui.components;
 
 import com.formdev.flatlaf.FlatClientProperties;
+import ui.Screen;
 import ui.theme.Theme;
+import util.Navigation;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  * Gradient hero header with step tracker reused across enrollment wizard screens.
@@ -36,14 +40,16 @@ public class WizardHeader extends JPanel {
         JLabel titleLabel = new JLabel(TITLE);
         titleLabel.putClientProperty(FlatClientProperties.STYLE, "font:+6; font:bold; foreground:#FFFFFF;");
         JLabel subtitleLabel = new JLabel(SUBTITLE);
-        subtitleLabel.putClientProperty(FlatClientProperties.STYLE, "font:+1; foreground:rgba(255,255,255,0.85);");
+        // Use hex ARGB; avoid decimal alpha values.
+        subtitleLabel.putClientProperty(FlatClientProperties.STYLE, "font:+1; foreground:#D9FFFFFF;");
         textBlock.add(titleLabel);
         textBlock.add(Box.createVerticalStrut(4));
         textBlock.add(subtitleLabel);
 
         JLabel watermarkLabel = new JLabel(WATERMARK);
+        // Use hex ARGB; avoid decimal alpha values.
         watermarkLabel.putClientProperty(FlatClientProperties.STYLE,
-            "font:+12; font:bold; foreground:rgba(255,255,255,0.25);");
+            "font:+12; font:bold; foreground:#40FFFFFF;");
 
         textRow.add(textBlock, BorderLayout.WEST);
         textRow.add(watermarkLabel, BorderLayout.EAST);
@@ -55,6 +61,10 @@ public class WizardHeader extends JPanel {
         add(textRow, BorderLayout.CENTER);
         add(stepperWrapper, BorderLayout.SOUTH);
         updateStepper();
+    }
+
+    public WizardHeader(Screen activeScreen) {
+        this(stepFromScreen(activeScreen));
     }
 
     public void setActiveStep(int activeStep) {
@@ -111,9 +121,49 @@ public class WizardHeader extends JPanel {
                 ? "font:+2; font:bold; foreground:#FFFFFF;"
                 : "font:+1; foreground:#CFDAF4;");
 
+        Screen target = screenForStep(stepNumber);
+        if (target != null) {
+            makeInteractive(container, target);
+            makeInteractive(index, target);
+            makeInteractive(text, target);
+        }
+
         container.add(index);
         container.add(text);
         return container;
+    }
+
+    private void makeInteractive(Component component, Screen target) {
+        component.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        component.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                Navigation.to(target);
+            }
+        });
+    }
+
+    private Screen screenForStep(int stepNumber) {
+        return switch (stepNumber) {
+            case 1 -> Screen.BIO_DATA;
+            case 2 -> Screen.DOCUMENTS;
+            case 3 -> Screen.PROGRAM_SELECTION;
+            case 4 -> Screen.BLOCK_SECTIONING;
+            default -> null;
+        };
+    }
+
+    private static int stepFromScreen(Screen screen) {
+        if (screen == null) {
+            return 1;
+        }
+        return switch (screen) {
+            case BIO_DATA -> 1;
+            case DOCUMENTS -> 2;
+            case PROGRAM_SELECTION -> 3;
+            case BLOCK_SECTIONING -> 4;
+            default -> 1;
+        };
     }
 
     private int normalizeStep(int step) {

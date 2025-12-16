@@ -3,22 +3,33 @@ package ui.screens;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.ui.FlatDropShadowBorder;
 import com.formdev.flatlaf.ui.FlatRoundBorder;
+import ui.MainFrame;
 import ui.MobileFrame;
 import ui.NavigationContext;
 import ui.Screen;
 import ui.ScreenView;
 import ui.components.WizardHeader;
 import ui.theme.Theme;
+import util.Navigation;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.MatteBorder;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DocumentsScreen extends JPanel implements ScreenView {
+
+    private static final Color UNI_BLUE = new Color(0x0C5CB1);
+    private static final Color GOLD = new Color(0xDAA520);
+    private static final Color SLATE = new Color(0x64748B);
+    private static final Color CARD_BG = Color.WHITE;
+    private static final Color CARD_HOVER_BG = new Color(0xF8FAFC);
+    private static final Color BORDER_MUTED = new Color(0xE2E8F0);
 
     private final JButton nextButton;
     private final List<DocumentCard> documentCards = new ArrayList<>();
@@ -90,7 +101,8 @@ public class DocumentsScreen extends JPanel implements ScreenView {
         JButton button = new JButton(text);
         button.putClientProperty(FlatClientProperties.STYLE,
             "arc:16; background:#0C5CB1; foreground:#FFFFFF; font:+1;" +
-                "hoverBackground:#0f6ed8; pressedBackground:#0a4f8d; focusWidth:2; innerFocusWidth:1;");
+                "hoverBackground:#0f6ed8; pressedBackground:#0a4f8d; focusWidth:2; innerFocusWidth:1;" +
+                "shadowColor:#0C5CB1; shadowWidth:6; shadowOpacity:25;");
         button.setBorder(new EmptyBorder(12, 32, 12, 32));
         return button;
     }
@@ -133,10 +145,16 @@ public class DocumentsScreen extends JPanel implements ScreenView {
     }
 
     private void navigate(Screen target) {
-        MobileFrame frame = (MobileFrame) SwingUtilities.getWindowAncestor(this);
-        if (frame != null) {
-            frame.showScreen(target, true);
+        Window window = SwingUtilities.getWindowAncestor(this);
+        if (window instanceof MobileFrame mobileFrame) {
+            mobileFrame.showScreen(target, true);
+            return;
         }
+        if (window instanceof MainFrame mainFrame) {
+            mainFrame.showScreen(target);
+            return;
+        }
+        Navigation.to(this, target);
     }
 
     @Override
@@ -164,21 +182,27 @@ public class DocumentsScreen extends JPanel implements ScreenView {
             setOpaque(false);
 
             JPanel card = new JPanel(new BorderLayout(18, 0));
-            card.setBackground(Color.WHITE);
-            card.setBorder(new CompoundBorder(
-                new FlatDropShadowBorder(),
-                new CompoundBorder(new FlatRoundBorder(), new EmptyBorder(20, 24, 20, 24))
-            ));
+            card.setBackground(CARD_BG);
+            card.setBorder(buildCardBorder(BORDER_MUTED));
+            card.addMouseListener(new java.awt.event.MouseAdapter() {
+                @Override
+                public void mouseEntered(java.awt.event.MouseEvent e) {
+                    card.setBackground(CARD_HOVER_BG);
+                    card.setBorder(buildCardBorder(UNI_BLUE));
+                }
+
+                @Override
+                public void mouseExited(java.awt.event.MouseEvent e) {
+                    card.setBackground(CARD_BG);
+                    card.setBorder(buildCardBorder(BORDER_MUTED));
+                }
+            });
 
             JPanel left = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
             left.setOpaque(false);
-            JLabel icon = new JLabel(requirement.iconText(), SwingConstants.CENTER);
+            FileTypeIcon icon = new FileTypeIcon(requirement.iconText());
             icon.setPreferredSize(new Dimension(72, 72));
-            icon.setFont(Theme.HEADING_FONT);
-            icon.setForeground(new Color(12, 92, 177));
-            icon.setOpaque(true);
-            icon.setBackground(new Color(244, 247, 254));
-            icon.setBorder(new CompoundBorder(new FlatRoundBorder(), new EmptyBorder(12, 12, 12, 12)));
+            icon.setOpaque(false);
             left.add(icon);
 
             JPanel info = new JPanel();
@@ -187,11 +211,11 @@ public class DocumentsScreen extends JPanel implements ScreenView {
             info.setBorder(new EmptyBorder(0, 12, 0, 0));
 
             JLabel nameLabel = new JLabel(requirement.name());
-            nameLabel.setFont(Theme.SUBHEADER_FONT);
-            nameLabel.setForeground(Theme.TEXT_HEADER);
+            nameLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
+            nameLabel.setForeground(UNI_BLUE);
             JLabel descriptionLabel = new JLabel(requirement.description());
-            descriptionLabel.setFont(Theme.BODY_FONT);
-            descriptionLabel.setForeground(Theme.TEXT_SECONDARY_COLOR);
+            descriptionLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+            descriptionLabel.setForeground(SLATE);
 
             statusLabel = new JLabel();
             statusLabel.setFont(Theme.BODY_FONT);
@@ -202,6 +226,13 @@ public class DocumentsScreen extends JPanel implements ScreenView {
             progressBar = new JProgressBar(0, 100);
             progressBar.setVisible(false);
             progressBar.setStringPainted(true);
+            progressBar.setMaximumSize(new Dimension(Integer.MAX_VALUE, 8));
+            progressBar.setPreferredSize(new Dimension(200, 8));
+            progressBar.putClientProperty(FlatClientProperties.STYLE,
+                "arc:999; trackArc:999; trackThickness:6; trackWidth:6;" +
+                    "foreground:#0C5CB1; background:#E2E8F0;" +
+                    "selectionForeground:#0C5CB1;" +
+                    "font:12");
 
             JPanel statusRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
             statusRow.setOpaque(false);
@@ -236,7 +267,7 @@ public class DocumentsScreen extends JPanel implements ScreenView {
             uploaded = false;
             progressBar.setVisible(true);
             progressBar.setValue(0);
-            progressBar.setString("Scanning...");
+            progressBar.setString("Scanning for viruses...");
             uploadButton.setEnabled(false);
             uploadButton.setText("Uploading...");
             setStatus("Scanning document for compliance...", new Color(196, 126, 32), false);
@@ -248,7 +279,8 @@ public class DocumentsScreen extends JPanel implements ScreenView {
             }
             int next = Math.min(100, progressBar.getValue() + delta);
             progressBar.setValue(next);
-            progressBar.setString(next + "%");
+            progressBar.setString(statusForProgress(next));
+            setStatus(statusForProgress(next), new Color(196, 126, 32), next >= 100);
             return next;
         }
 
@@ -257,7 +289,10 @@ public class DocumentsScreen extends JPanel implements ScreenView {
             progressBar.setVisible(false);
             uploadButton.setEnabled(true);
             uploadButton.setText("Replace");
-            setStatus("Uploaded - " + fileName, new Color(32, 158, 95), true);
+            uploadButton.putClientProperty(FlatClientProperties.STYLE,
+                "arc:14; background:#ffffff; foreground:#0C5CB1; borderColor:#0C5CB1;" +
+                    "hoverBackground:#F8FAFC; focusWidth:1; font:+1;");
+            setStatus("Verified & Secure. (" + fileName + ")", new Color(32, 158, 95), true);
         }
 
         boolean isUploaded() {
@@ -269,6 +304,27 @@ public class DocumentsScreen extends JPanel implements ScreenView {
             statusLabel.setForeground(color);
             statusBadge.setVisible(showBadge);
         }
+
+        private CompoundBorder buildCardBorder(Color lineColor) {
+            return new CompoundBorder(
+                new FlatDropShadowBorder(),
+                new CompoundBorder(
+                    new MatteBorder(4, 0, 0, 0, GOLD),
+                    new CompoundBorder(new LineBorder(lineColor, 1, true), new EmptyBorder(20, 24, 20, 24))
+                )
+            );
+        }
+
+        private String statusForProgress(int value) {
+            if (value < 30) {
+                return "Scanning for viruses...";
+            } else if (value < 70) {
+                return "Verifying file format...";
+            } else if (value < 100) {
+                return "Encrypting...";
+            }
+            return "Verified & Secure.";
+        }
     }
 
     private static class StatusBadge extends JComponent {
@@ -276,14 +332,64 @@ public class DocumentsScreen extends JPanel implements ScreenView {
         protected void paintComponent(Graphics g) {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(new Color(32, 158, 95));
-            g2.fillOval(0, 0, getWidth(), getHeight());
-            g2.setStroke(new BasicStroke(2f));
-            g2.setColor(Color.WHITE);
             int w = getWidth();
             int h = getHeight();
-            g2.drawLine(w * 3 / 10, h * 5 / 10, w * 5 / 10, h * 7 / 10);
-            g2.drawLine(w * 5 / 10, h * 7 / 10, w * 8 / 10, h * 3 / 10);
+            g2.setColor(new Color(32, 158, 95));
+            g2.fillOval(0, 0, w, h);
+            g2.setStroke(new BasicStroke(2.2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            g2.setColor(Color.WHITE);
+            g2.drawLine(w * 3 / 10, h * 6 / 10, w * 5 / 10, h * 8 / 10);
+            g2.drawLine(w * 5 / 10, h * 8 / 10, w * 8 / 10, h * 3 / 10);
+            g2.dispose();
+        }
+    }
+
+    private static class FileTypeIcon extends JComponent {
+        private final String label;
+
+        FileTypeIcon(String label) {
+            this.label = label;
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            int w = getWidth();
+            int h = getHeight();
+
+            int pad = 10;
+            int docW = w - pad * 2;
+            int docH = h - pad * 2;
+            int x = pad;
+            int y = pad;
+
+            g2.setColor(Color.WHITE);
+            g2.fillRoundRect(x, y, docW, docH, 8, 8);
+            g2.setColor(UNI_BLUE);
+            g2.setStroke(new BasicStroke(2f));
+            g2.drawRoundRect(x, y, docW, docH, 8, 8);
+
+            Polygon fold = new Polygon();
+            fold.addPoint(x + docW - 14, y);
+            fold.addPoint(x + docW, y);
+            fold.addPoint(x + docW, y + 14);
+            g2.setColor(new Color(0xE2E8F0));
+            g2.fillPolygon(fold);
+            g2.setColor(UNI_BLUE);
+            g2.drawPolygon(fold);
+
+            g2.setColor(new Color(0x94A3B8));
+            int lineY = y + 18;
+            for (int i = 0; i < 3; i++) {
+                g2.drawLine(x + 8, lineY + i * 8, x + docW - 8, lineY + i * 8);
+            }
+
+            g2.setFont(new Font("Segoe UI", Font.BOLD, 14));
+            FontMetrics fm = g2.getFontMetrics();
+            int textWidth = fm.stringWidth(label);
+            g2.setColor(UNI_BLUE);
+            g2.drawString(label, x + (docW - textWidth) / 2, y + docH - 10);
             g2.dispose();
         }
     }

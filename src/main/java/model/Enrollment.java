@@ -1,54 +1,61 @@
 package model;
 
 public class Enrollment {
-    private int id;
-    private int studentId;
-    private int courseId;
-    private String academicYear;
+    private Integer id;
+    private Integer studentId;
+    private Integer blockId;
     private String term;
     private String status;
     private String createdAt;
 
     public Enrollment() {}
 
-    public Enrollment(int studentId, int courseId, String academicYear, String term, String status) {
+    public Enrollment(Integer studentId, Integer blockId, String term, String status) {
         this.studentId = studentId;
-        this.courseId = courseId;
-        this.academicYear = academicYear;
+        this.blockId = blockId;
         this.term = term;
         this.status = status;
     }
 
-    public int getId() {
+    /** Legacy-friendly constructor where courseId maps to blockId. Academic year is stored in term. */
+    public Enrollment(Integer studentId, Integer courseId, String academicYear, String term, String status) {
+        this.studentId = studentId;
+        this.blockId = courseId; // courseId kept for backward compatibility
+        this.term = academicYear != null ? academicYear : term;
+        this.status = status;
+    }
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public int getStudentId() {
+    public Integer getStudentId() {
         return studentId;
     }
 
-    public void setStudentId(int studentId) {
+    public void setStudentId(Integer studentId) {
         this.studentId = studentId;
     }
 
-    public int getCourseId() {
-        return courseId;
+    public Integer getBlockId() {
+        return blockId;
     }
 
-    public void setCourseId(int courseId) {
-        this.courseId = courseId;
+    public void setBlockId(Integer blockId) {
+        this.blockId = blockId;
     }
 
-    public String getAcademicYear() {
-        return academicYear;
+    /** Backward compatible accessor; maps to blockId. */
+    public Integer getCourseId() {
+        return blockId;
     }
 
-    public void setAcademicYear(String academicYear) {
-        this.academicYear = academicYear;
+    public void setCourseId(Integer courseId) {
+        this.blockId = courseId;
     }
 
     public String getTerm() {
@@ -73,5 +80,12 @@ public class Enrollment {
 
     public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
+    }
+
+    /**
+     * Academic year helper; term currently carries the academic year/term label.
+     */
+    public String getAcademicYear() {
+        return term;
     }
 }

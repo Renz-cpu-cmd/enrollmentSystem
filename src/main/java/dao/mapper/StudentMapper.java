@@ -1,6 +1,7 @@
 package dao.mapper;
 
 import model.Student;
+import model.Student.StudentType;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -32,6 +33,12 @@ public final class StudentMapper {
         student.setProgram(rs.getString("program"));
         student.setYearLevel(rs.getInt("year_level"));
         student.setBlockSection(rs.getString("block_section"));
+        String type = rs.getString("student_type");
+        try {
+            student.setStudentType(type != null ? StudentType.valueOf(type.toUpperCase()) : StudentType.REGULAR);
+        } catch (IllegalArgumentException ex) {
+            student.setStudentType(StudentType.REGULAR);
+        }
         return student;
     }
 }

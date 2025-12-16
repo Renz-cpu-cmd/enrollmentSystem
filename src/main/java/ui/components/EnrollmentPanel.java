@@ -161,7 +161,7 @@ public class EnrollmentPanel extends JPanel {
         tableModel.setRowCount(0);
         for (Enrollment enrollment : enrollments) {
             Student student = studentMap.get(enrollment.getStudentId());
-            Course course = courseMap.get(enrollment.getCourseId());
+                Course course = courseMap.get(enrollment.getCourseId());
             tableModel.addRow(new Object[]{
                     enrollment.getId(),
                     student != null ? student : "N/A",
@@ -182,11 +182,11 @@ public class EnrollmentPanel extends JPanel {
         }
 
         Enrollment enrollment = new Enrollment(
-                selectedStudent.getId(),
-                selectedCourse.getId(),
-                academicYearField.getText(),
-                termField.getText(),
-                (String) statusComboBox.getSelectedItem()
+            selectedStudent.getId(),
+            selectedCourse.getId(),
+            academicYearField.getText(),
+            termField.getText(),
+            (String) statusComboBox.getSelectedItem()
         );
         if (enrollmentDAO.add(enrollment)) {
             loadEnrollments();
@@ -212,11 +212,11 @@ public class EnrollmentPanel extends JPanel {
         }
 
         Enrollment enrollment = new Enrollment(
-                selectedStudent.getId(),
-                selectedCourse.getId(),
-                academicYearField.getText(),
-                termField.getText(),
-                (String) statusComboBox.getSelectedItem()
+            selectedStudent.getId(),
+            selectedCourse.getId(),
+            academicYearField.getText(),
+            termField.getText(),
+            (String) statusComboBox.getSelectedItem()
         );
         enrollment.setId((int) tableModel.getValueAt(enrollmentTable.convertRowIndexToModel(selectedRow), 0));
         if (enrollmentDAO.update(enrollment)) {

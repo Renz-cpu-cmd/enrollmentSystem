@@ -27,4 +27,21 @@ public final class Navigation {
             System.err.println("Navigation error: Parent is not MainFrame");
         }
     }
+
+    /**
+     * Navigate when you do not have a component reference (e.g., application startup).
+     */
+    public static void to(Screen targetScreen) {
+        if (targetScreen == null) {
+            System.err.println("Navigation error: missing target screen");
+            return;
+        }
+        for (Window window : Window.getWindows()) {
+            if (window instanceof MainFrame mainFrame) {
+                mainFrame.showScreen(targetScreen);
+                return;
+            }
+        }
+        System.err.println("Navigation error: MainFrame not found");
+    }
 }

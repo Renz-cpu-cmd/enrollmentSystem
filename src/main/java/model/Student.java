@@ -3,6 +3,8 @@ package model;
 import java.util.Objects;
 
 public class Student {
+    public enum StudentType { REGULAR, IRREGULAR, FRESHMAN }
+
     private int id;
     private String studentId;
     private String firstName;
@@ -31,6 +33,7 @@ public class Student {
     private String college;
     private String program;
     private String blockSection;
+    private StudentType studentType = StudentType.REGULAR;
 
     public Student() {}
 
@@ -254,6 +257,14 @@ public class Student {
 
     public void setBlockSection(String blockSection) {
         this.blockSection = blockSection;
+    }
+
+    public StudentType getStudentType() {
+        return studentType == null ? StudentType.REGULAR : studentType;
+    }
+
+    public void setStudentType(StudentType studentType) {
+        this.studentType = studentType;
     }
 
     @Override

@@ -12,14 +12,12 @@ public enum Screen {
     DOCUMENTS("Documents", DocumentsScreen.class),
     PROGRAM_SELECTION("ProgramSelection", ProgramSelectionScreen.class),
     BLOCK_SECTIONING("BlockSectioning", BlockSectioningScreen.class),
+    RETURNING_BLOCK_SCHEDULE("ReturningBlockSchedule", ReturningBlockScheduleScreen.class),
     STUDENT_LOGIN("StudentLogin", StudentLoginScreen.class),
     DASHBOARD("Dashboard", DashboardScreen.class),
-    REGULAR_PATH("RegularPath", RegularPathScreen.class),
-    REGULAR_SCHEDULE("RegularSchedule", RegularScheduleScreen.class),
-    IRREGULAR_SCHEDULE("IrregularSchedule", IrregularScheduleScreen.class),
-    IRREGULAR_PATH("IrregularPath", IrregularPathScreen.class),
     ASSESSMENT("Assessment", AssessmentScreen.class),
-    DIGITAL_COR("DigitalCOR", DigitalCORScreen.class),
+    PAYMENT("Payment", PaymentScreen.class),
+    COR("COR", CORScreen.class),
     AI_ASSISTANT("AIAssistant", ui.screens.AIAssistantScreen.class);
 
     private final String name;

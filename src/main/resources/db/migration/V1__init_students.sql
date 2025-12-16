@@ -1,9 +1,7 @@
--- SQLite schema with basic integrity constraints.
--- Apply via your migration tool or sqlite3 before running the app.
-
-CREATE TABLE IF NOT EXISTS students (
+DROP TABLE IF EXISTS students;
+CREATE TABLE students (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    student_id TEXT NOT NULL UNIQUE,
+    student_id TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
     last_name TEXT NOT NULL,
     first_name TEXT NOT NULL,
@@ -11,8 +9,8 @@ CREATE TABLE IF NOT EXISTS students (
     suffix TEXT,
     birth_date TEXT,
     sex TEXT,
-    mobile_number TEXT NOT NULL,
-    email TEXT NOT NULL UNIQUE,
+    mobile_number TEXT,
+    email TEXT,
     home_address TEXT,
     guardian_name TEXT,
     guardian_mobile TEXT,
@@ -22,10 +20,6 @@ CREATE TABLE IF NOT EXISTS students (
     program TEXT,
     year_level INTEGER DEFAULT 1,
     block_section TEXT,
-    created_at TEXT DEFAULT (datetime('now')),
-    CHECK (length(password) >= 60),
-    CHECK (mobile_number LIKE '09_________' OR mobile_number LIKE '+639_________')
+    student_type TEXT DEFAULT 'REGULAR',
+    created_at TEXT DEFAULT (datetime('now'))
 );
-
-CREATE INDEX IF NOT EXISTS idx_students_student_id ON students(student_id);
-CREATE INDEX IF NOT EXISTS idx_students_email ON students(email);

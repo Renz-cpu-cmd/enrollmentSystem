@@ -18,6 +18,7 @@ import util.SessionManager;
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.MatteBorder;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.util.ArrayList;
@@ -29,13 +30,18 @@ import java.util.function.Supplier;
 
 public class BioDataScreen extends JPanel implements ScreenView {
 
+    private static final Color UNI_BLUE = new Color(0x0C5CB1);
+    private static final Color SLATE = new Color(0x64748B);
+    private static final Color GOLD = new Color(0xDAA520);
+    private static final Color FIELD_BORDER = new Color(0xCBD5E1);
+
     private final EnrollmentService enrollmentService;
     private final List<ValidatorEntry> requiredFields = new ArrayList<>();
 
     private JTextField lastNameField;
     private JTextField firstNameField;
     private JTextField middleNameField;
-    private JTextField extensionField;
+    private JComboBox<String> extensionCombo;
     private JTextField placeOfBirthField;
     private JTextField citizenshipField;
     private JTextField religionField;
@@ -78,14 +84,16 @@ public class BioDataScreen extends JPanel implements ScreenView {
         JPanel content = new JPanel();
         content.setOpaque(false);
         content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
+        content.setMaximumSize(new Dimension(900, Integer.MAX_VALUE));
+        content.setAlignmentX(Component.CENTER_ALIGNMENT);
         content.add(Box.createVerticalStrut(24));
-        content.add(createSectionCard("Section A: Personal Information", buildPersonalInformationSection()));
+        content.add(centerWrap(createSectionCard("Section A: Personal Information", buildPersonalInformationSection())));
         content.add(Box.createVerticalStrut(16));
-        content.add(createSectionCard("Section B: Contact Details", buildContactSection()));
+        content.add(centerWrap(createSectionCard("Section B: Contact Details", buildContactSection())));
         content.add(Box.createVerticalStrut(16));
-        content.add(createSectionCard("Section C: Permanent Address", buildAddressSection()));
+        content.add(centerWrap(createSectionCard("Section C: Permanent Address", buildAddressSection())));
         content.add(Box.createVerticalStrut(16));
-        content.add(createSectionCard("Section D: Guardian Information", buildGuardianSection()));
+        content.add(centerWrap(createSectionCard("Section D: Guardian Information", buildGuardianSection())));
         content.add(Box.createVerticalStrut(8));
 
         JScrollPane scrollPane = new JScrollPane(content);
@@ -98,6 +106,16 @@ public class BioDataScreen extends JPanel implements ScreenView {
         add(buildFooter(), BorderLayout.SOUTH);
     }
 
+    private JComponent centerWrap(JComponent comp) {
+        JPanel wrapper = new JPanel();
+        wrapper.setOpaque(false);
+        wrapper.setLayout(new BoxLayout(wrapper, BoxLayout.X_AXIS));
+        wrapper.add(Box.createHorizontalGlue());
+        wrapper.add(comp);
+        wrapper.add(Box.createHorizontalGlue());
+        return wrapper;
+    }
+
 
     private JComponent createSectionCard(String title, JComponent bodyContent) {
         JPanel wrapper = new JPanel(new BorderLayout());
@@ -106,12 +124,15 @@ public class BioDataScreen extends JPanel implements ScreenView {
         card.setBackground(Color.WHITE);
         card.setBorder(new CompoundBorder(
             new FlatDropShadowBorder(),
-            new CompoundBorder(new FlatRoundBorder(), new EmptyBorder(24, 28, 24, 28))
+            new CompoundBorder(
+                new MatteBorder(4, 0, 0, 0, GOLD),
+                new CompoundBorder(new FlatRoundBorder(), new EmptyBorder(30, 30, 30, 30))
+            )
         ));
 
         JLabel heading = new JLabel(title);
-        heading.setFont(Theme.SUBHEADER_FONT);
-        heading.setForeground(Theme.TEXT_HEADER);
+        heading.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        heading.setForeground(UNI_BLUE);
         card.add(heading, BorderLayout.NORTH);
         card.add(bodyContent, BorderLayout.CENTER);
 
@@ -123,19 +144,19 @@ public class BioDataScreen extends JPanel implements ScreenView {
     private JComponent buildPersonalInformationSection() {
         JPanel body = createSectionBody();
 
-        lastNameField = createTextField(true);
-        firstNameField = createTextField(true);
-        middleNameField = createTextField(false);
-        extensionField = createTextField(false);
+        lastNameField = createTextField(true, "e.g. Dela Cruz");
+        firstNameField = createTextField(true, "e.g. Juan");
+        middleNameField = createTextField(false, "Optional");
+        extensionCombo = createExtensionCombo();
         body.add(createFieldRow(
             createLabeledComponent("Last Name", lastNameField, true),
             createLabeledComponent("First Name", firstNameField, true),
             createLabeledComponent("Middle Name", middleNameField, false),
-            createLabeledComponent("Extension", extensionField, false)
+            createLabeledComponent("Extension", extensionCombo, false)
         ));
 
-        placeOfBirthField = createTextField(true);
-        citizenshipField = createTextField(true);
+        placeOfBirthField = createTextField(true, "City, Country");
+        citizenshipField = createTextField(true, "e.g. Filipino");
         body.add(Box.createVerticalStrut(12));
         body.add(createFieldRow(
             createLabeledComponent("Date of Birth", createBirthDatePicker(), true),
@@ -143,7 +164,7 @@ public class BioDataScreen extends JPanel implements ScreenView {
             createLabeledComponent("Citizenship", citizenshipField, true)
         ));
 
-        religionField = createTextField(true);
+        religionField = createTextField(true, "e.g. Catholic");
         genderCombo = createComboBox(new String[]{"", "Male", "Female", "Prefer not to say"}, true);
         civilStatusCombo = createComboBox(new String[]{"", "Single", "Married", "Widowed", "Separated"}, true);
         body.add(Box.createVerticalStrut(12));
@@ -159,15 +180,14 @@ public class BioDataScreen extends JPanel implements ScreenView {
     private JComponent buildContactSection() {
         JPanel body = createSectionBody();
 
-        mobileField = createTextField(true);
-        mobileField.setText("+63");
-        emailField = createTextField(true);
+        mobileField = createTextField(true, "0912 345 6789");
+        emailField = createTextField(true, "name@example.com");
         body.add(createFieldRow(
             createLabeledComponent("Mobile Number", mobileField, true),
             createLabeledComponent("Email Address", emailField, true)
         ));
 
-        facebookField = createTextField(false);
+        facebookField = createTextField(false, "facebook.com/username");
         body.add(Box.createVerticalStrut(12));
         body.add(createFieldRow(
             createLabeledComponent("Facebook Profile", facebookField, false)
@@ -179,15 +199,15 @@ public class BioDataScreen extends JPanel implements ScreenView {
     private JComponent buildAddressSection() {
         JPanel body = createSectionBody();
 
-        streetField = createTextField(true);
-        barangayField = createTextField(true);
+        streetField = createTextField(true, "123 Mabini St.");
+        barangayField = createTextField(true, "Barangay 123");
         body.add(createFieldRow(
             createLabeledComponent("Street / House No.", streetField, true),
             createLabeledComponent("Barangay", barangayField, true)
         ));
 
-        cityField = createTextField(true);
-        provinceField = createTextField(true);
+        cityField = createTextField(true, "Quezon City");
+        provinceField = createTextField(true, "Rizal");
         body.add(Box.createVerticalStrut(12));
         body.add(createFieldRow(
             createLabeledComponent("City / Municipality", cityField, true),
@@ -200,12 +220,12 @@ public class BioDataScreen extends JPanel implements ScreenView {
     private JComponent buildGuardianSection() {
         JPanel body = createSectionBody();
 
-        guardianNameField = createTextField(true);
-        guardianRelationshipField = createTextField(true);
-        guardianContactField = createTextField(true);
-        guardianOccupationField = createTextField(true);
-        guardianCompanyField = createTextField(true);
-        guardianOfficePhoneField = createTextField(true);
+        guardianNameField = createTextField(true, "Full name");
+        guardianRelationshipField = createTextField(true, "Mother");
+        guardianContactField = createTextField(true, "0917 123 4567");
+        guardianOccupationField = createTextField(true, "Engineer");
+        guardianCompanyField = createTextField(true, "ABC Corp");
+        guardianOfficePhoneField = createTextField(true, "02 1234 5678");
 
         body.add(createFieldRow(
             createLabeledComponent("Guardian Name", guardianNameField, true),
@@ -249,9 +269,9 @@ public class BioDataScreen extends JPanel implements ScreenView {
         panel.add(label);
         panel.add(Box.createVerticalStrut(12));
 
-        emergencyNameField = createTextField(false);
-        emergencyContactField = createTextField(false);
-        emergencyRelationshipField = createTextField(false);
+        emergencyNameField = createTextField(false, "Contact Person");
+        emergencyContactField = createTextField(false, "0917 987 6543");
+        emergencyRelationshipField = createTextField(false, "Colleague");
 
         registerConditionalField(emergencyNameField, this::isEmergencyPanelRequired);
         registerConditionalField(emergencyContactField, this::isEmergencyPanelRequired);
@@ -301,9 +321,13 @@ public class BioDataScreen extends JPanel implements ScreenView {
 
         JButton nextButton = new JButton("Next: Documents");
         nextButton.setFont(Theme.SUBHEADER_FONT);
-        nextButton.setBackground(Theme.PRIMARY);
         nextButton.setForeground(Color.WHITE);
         nextButton.setBorder(new EmptyBorder(12, 32, 12, 32));
+        nextButton.putClientProperty(FlatClientProperties.STYLE,
+            "arc:16; background:#0C5CB1; foreground:#FFFFFF;" +
+                "hoverBackground:#0f6ed8; pressedBackground:#0a4f8d;" +
+                "shadowColor:#0C5CB1; shadowWidth:8; shadowOpacity:30;" +
+                "focusWidth:2; innerFocusWidth:1;");
         nextButton.addActionListener(e -> handleEnrollmentSubmission());
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
@@ -333,7 +357,13 @@ public class BioDataScreen extends JPanel implements ScreenView {
 
         if (result.isSuccess()) {
             EnrollmentResult data = result.getData();
+            if (data != null && data.getStudent() != null) {
+                SessionManager.getInstance().setCurrentStudent(data.getStudent());
+            }
             StringBuilder message = new StringBuilder("Student registered successfully.");
+            if (data != null && data.getStudent() != null && data.getStudent().getStudentId() != null) {
+                message.append("\nStudent ID: ").append(data.getStudent().getStudentId());
+            }
             if (data != null && data.hasGeneratedPassword()) {
                 message.append("\nGenerated password: ").append(data.getGeneratedPassword());
             }
@@ -344,7 +374,7 @@ public class BioDataScreen extends JPanel implements ScreenView {
                 JOptionPane.INFORMATION_MESSAGE
             );
             SessionManager.getInstance().setShsStrand("HUMSS");
-            Navigation.to(this, Screen.PROGRAM_SELECTION);
+            Navigation.to(this, Screen.DOCUMENTS);
         } else {
             JOptionPane.showMessageDialog(
                 this,
@@ -381,12 +411,14 @@ public class BioDataScreen extends JPanel implements ScreenView {
         return component == null ? null : component.getText().trim();
     }
 
-    private JTextField createTextField(boolean required) {
+    private JTextField createTextField(boolean required, String placeholder) {
         JTextField field = new JTextField();
         field.setFont(Theme.BODY_FONT);
-        field.setMaximumSize(new Dimension(Integer.MAX_VALUE, 42));
+        field.setMaximumSize(new Dimension(Integer.MAX_VALUE, 46));
         field.setAlignmentX(Component.LEFT_ALIGNMENT);
-        field.putClientProperty(FlatClientProperties.STYLE, "arc:16; focusWidth:1");
+        field.putClientProperty(FlatClientProperties.STYLE,
+            "arc:10; focusWidth:1; borderColor:#CBD5E1; focusColor:#0C5CB1");
+        field.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, placeholder);
         if (required) {
             registerRequiredField(field);
         }
@@ -396,23 +428,34 @@ public class BioDataScreen extends JPanel implements ScreenView {
     private JComboBox<String> createComboBox(String[] options, boolean required) {
         JComboBox<String> comboBox = new JComboBox<>(options);
         comboBox.setFont(Theme.BODY_FONT);
-        comboBox.setMaximumSize(new Dimension(Integer.MAX_VALUE, 42));
+        comboBox.setMaximumSize(new Dimension(Integer.MAX_VALUE, 46));
         comboBox.setAlignmentX(Component.LEFT_ALIGNMENT);
-        comboBox.putClientProperty(FlatClientProperties.STYLE, "buttonType:roundRect; focusWidth:1");
+        comboBox.putClientProperty(FlatClientProperties.STYLE,
+            "buttonType:roundRect; arc:10; focusWidth:1; borderColor:#CBD5E1; focusColor:#0C5CB1");
         if (required) {
             registerRequiredCombo(comboBox);
         }
         return comboBox;
     }
 
+    private JComboBox<String> createExtensionCombo() {
+        String[] options = {"", "Jr.", "Sr.", "II", "III", "IV", "V"};
+        JComboBox<String> comboBox = createComboBox(options, false);
+        comboBox.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Suffix");
+        return comboBox;
+    }
+
     private JComponent createBirthDatePicker() {
         birthDateSpinner = new JSpinner(new SpinnerDateModel(new Date(), null, new Date(), Calendar.DAY_OF_MONTH));
         birthDateSpinner.setFont(Theme.BODY_FONT);
-        JSpinner.DateEditor editor = new JSpinner.DateEditor(birthDateSpinner, "yyyy-MM-dd");
+        JSpinner.DateEditor editor = new JSpinner.DateEditor(birthDateSpinner, "MMMM d, yyyy");
         editor.getTextField().setEditable(false);
         editor.getTextField().setBorder(new EmptyBorder(0, 8, 0, 8));
+        editor.getTextField().putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Select date");
+        editor.getTextField().putClientProperty(FlatClientProperties.TEXT_FIELD_TRAILING_ICON, CalendarHintIcon.get());
         birthDateSpinner.setEditor(editor);
-        birthDateSpinner.putClientProperty(FlatClientProperties.STYLE, "focusWidth:1");
+        birthDateSpinner.putClientProperty(FlatClientProperties.STYLE,
+            "arc:10; focusWidth:1; borderColor:#CBD5E1; focusColor:#0C5CB1");
         registerRequiredSpinner(birthDateSpinner);
         return birthDateSpinner;
     }
@@ -433,8 +476,8 @@ public class BioDataScreen extends JPanel implements ScreenView {
         container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
 
         JLabel label = new JLabel(required ? labelText + " *" : labelText);
-        label.setFont(Theme.LABEL_FONT);
-        label.setForeground(Theme.TEXT_SECONDARY_COLOR);
+        label.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        label.setForeground(SLATE);
 
         component.setAlignmentX(Component.LEFT_ALIGNMENT);
         container.add(label);
@@ -465,6 +508,45 @@ public class BioDataScreen extends JPanel implements ScreenView {
             }
             return !textOf(component).isEmpty();
         }));
+    }
+
+    private static final class CalendarHintIcon implements Icon {
+        private static final int SIZE = 14;
+        private static final Icon INSTANCE = new CalendarHintIcon();
+
+        static Icon get() {
+            return INSTANCE;
+        }
+
+        @Override
+        public void paintIcon(Component c, Graphics g, int x, int y) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.translate(x, y);
+
+            g2.setColor(FIELD_BORDER);
+            g2.drawRoundRect(0, 1, SIZE - 1, SIZE - 2, 3, 3);
+
+            g2.setColor(GOLD);
+            g2.fillRoundRect(1, 2, SIZE - 3, 4, 2, 2);
+
+            g2.setColor(UNI_BLUE);
+            g2.fillRect(3, 6, 1, 1);
+            g2.fillRect(6, 6, 1, 1);
+            g2.fillRect(9, 6, 1, 1);
+
+            g2.dispose();
+        }
+
+        @Override
+        public int getIconWidth() {
+            return SIZE;
+        }
+
+        @Override
+        public int getIconHeight() {
+            return SIZE;
+        }
     }
 
     private record ValidatorEntry(JComponent component, Supplier<Boolean> validator) {

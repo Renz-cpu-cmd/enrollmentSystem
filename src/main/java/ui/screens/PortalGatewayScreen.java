@@ -13,6 +13,7 @@ import util.Navigation;
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,6 +21,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class PortalGatewayScreen extends JPanel implements ScreenView {
+
+    private static final Color NAVY = new Color(0x0C5CB1);
+    private static final Color SLATE = new Color(0x64748B);
+    private static final Color CARD_BORDER = new Color(0xE2E8F0);
+    private static final Color CARD_HOVER_BG = new Color(0xF8FAFC);
+    private static final Color GOLD_BAR = new Color(0xDAA520);
 
     public PortalGatewayScreen() {
         setLayout(new GridBagLayout());
@@ -47,12 +54,12 @@ public class PortalGatewayScreen extends JPanel implements ScreenView {
         header.setLayout(new BoxLayout(header, BoxLayout.Y_AXIS));
 
         JLabel title = new JLabel("Enrollment Gateway");
-        title.setForeground(Theme.TEXT_PRIMARY_COLOR);
+        title.setForeground(NAVY);
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
-        title.setFont(title.getFont().deriveFont(Font.BOLD, 28f));
+        title.setFont(new Font("Segoe UI", Font.BOLD, 32));
 
         JLabel subtitle = new JLabel("Choose how you want to continue");
-        subtitle.setForeground(new Color(110, 117, 130));
+        subtitle.setForeground(SLATE);
         subtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         header.add(title);
@@ -94,29 +101,37 @@ public class PortalGatewayScreen extends JPanel implements ScreenView {
         card.setBackground(Color.WHITE);
         card.setBorder(new CompoundBorder(
             new FlatDropShadowBorder(),
-            new CompoundBorder(new FlatRoundBorder(), new EmptyBorder(24, 24, 24, 24))
+            new CompoundBorder(new MatteBorder(1, 1, 1, 1, CARD_BORDER), new EmptyBorder(24, 24, 24, 24))
         ));
         card.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        card.setPreferredSize(new Dimension(280, 280));
+        card.setPreferredSize(new Dimension(300, 320));
 
         JLabel iconLabel = new JLabel(icon);
         iconLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        iconLabel.setBorder(new EmptyBorder(0, 0, 16, 0));
+        iconLabel.setBorder(new EmptyBorder(0, 0, 20, 0));
 
         JLabel titleLabel = new JLabel(title);
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         titleLabel.setForeground(Theme.TEXT_PRIMARY_COLOR);
         titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD, 18f));
 
-        JLabel descLabel = new JLabel("<html><div style='text-align:center;width:180px;'>" + description + "</div></html>");
+        JLabel descLabel = new JLabel("<html><div style='text-align:center;width:240px;'>" + description + "</div></html>");
         descLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        descLabel.setForeground(new Color(110, 117, 130));
+        descLabel.setForeground(SLATE);
         descLabel.setFont(descLabel.getFont().deriveFont(Font.PLAIN, 13f));
         descLabel.setBorder(new EmptyBorder(12, 0, 0, 0));
+
+        JPanel goldBar = new JPanel();
+        goldBar.setPreferredSize(new Dimension(Integer.MAX_VALUE, 4));
+        goldBar.setMaximumSize(new Dimension(Integer.MAX_VALUE, 4));
+        goldBar.setBackground(GOLD_BAR);
+        goldBar.setVisible(false);
 
         card.add(iconLabel);
         card.add(titleLabel);
         card.add(descLabel);
+        card.add(Box.createVerticalGlue());
+        card.add(goldBar);
 
         card.addMouseListener(new MouseAdapter() {
             @Override
@@ -128,14 +143,16 @@ public class PortalGatewayScreen extends JPanel implements ScreenView {
 
             @Override
             public void mouseEntered(MouseEvent e) {
-                card.putClientProperty(FlatClientProperties.STYLE, "background:#F6F9FF");
-                card.setBackground(new Color(246, 249, 255));
+                card.putClientProperty(FlatClientProperties.STYLE, "background:#F8FAFC");
+                card.setBackground(CARD_HOVER_BG);
+                goldBar.setVisible(true);
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
                 card.putClientProperty(FlatClientProperties.STYLE, null);
                 card.setBackground(Color.WHITE);
+                goldBar.setVisible(false);
             }
         });
 

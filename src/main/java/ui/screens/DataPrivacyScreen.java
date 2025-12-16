@@ -11,9 +11,15 @@ import util.Navigation;
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.MatteBorder;
 import java.awt.*;
 
 public class DataPrivacyScreen extends JPanel implements ScreenView {
+
+    private static final Color UNI_BLUE = new Color(0x0C5CB1);
+    private static final Color SLATE = new Color(0x64748B);
+    private static final Color GOLD = new Color(0xDAA520);
+    private static final Color TEXT_BG = new Color(0xF8FAFC);
 
     private final JCheckBox consentCheckBox;
     private final JButton continueButton;
@@ -38,7 +44,10 @@ public class DataPrivacyScreen extends JPanel implements ScreenView {
         card.setBackground(Color.WHITE);
         card.setBorder(new CompoundBorder(
             new FlatDropShadowBorder(),
-            new CompoundBorder(new FlatRoundBorder(), new EmptyBorder(28, 36, 28, 36))
+            new CompoundBorder(
+                new MatteBorder(4, 0, 0, 0, GOLD),
+                new CompoundBorder(new FlatRoundBorder(), new EmptyBorder(28, 36, 28, 36))
+            )
         ));
         card.setPreferredSize(new Dimension(720, 520));
 
@@ -55,11 +64,13 @@ public class DataPrivacyScreen extends JPanel implements ScreenView {
 
         JLabel title = new JLabel("Data Privacy Statement");
         title.setAlignmentX(Component.LEFT_ALIGNMENT);
-        title.putClientProperty(FlatClientProperties.STYLE, "font:+4; font:bold; foreground:#0F172A;");
+        title.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        title.setForeground(UNI_BLUE);
 
         JLabel subtitle = new JLabel("Republic Act No. 10173 — Data Privacy Act of 2012");
         subtitle.setAlignmentX(Component.LEFT_ALIGNMENT);
-        subtitle.putClientProperty(FlatClientProperties.STYLE, "foreground:#6E7582; font:+0;");
+        subtitle.setFont(new Font("Segoe UI", Font.ITALIC, 12));
+        subtitle.setForeground(SLATE);
 
         header.add(title);
         header.add(Box.createVerticalStrut(4));
@@ -76,7 +87,8 @@ public class DataPrivacyScreen extends JPanel implements ScreenView {
         legalPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 
         JScrollPane scrollPane = new JScrollPane(legalPane);
-        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(229, 234, 242), 1, true));
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        scrollPane.getViewport().setBackground(TEXT_BG);
         scrollPane.getVerticalScrollBar().setUnitIncrement(18);
         scrollPane.setPreferredSize(new Dimension(0, 360));
         return scrollPane;
@@ -100,9 +112,8 @@ public class DataPrivacyScreen extends JPanel implements ScreenView {
 
         JButton declineButton = new JButton("Decline");
         declineButton.putClientProperty(FlatClientProperties.STYLE,
-            "borderWidth:0; foreground:#6E7582; background:null;" +
-                "hoverForeground:#0C5CB1;" +
-                "underline:true;");
+            "borderWidth:0; background:null; foreground:#64748B;" +
+                "hoverForeground:#e11d48; underline:true;");
         declineButton.addActionListener(e -> {
             consentCheckBox.setSelected(false);
             continueButton.setEnabled(false);
@@ -116,6 +127,7 @@ public class DataPrivacyScreen extends JPanel implements ScreenView {
     private JCheckBox createConsentCheck() {
         JCheckBox box = new JCheckBox("I have read and understand the Data Privacy Statement.");
         box.setOpaque(false);
+        box.setIconTextGap(10);
         box.putClientProperty(FlatClientProperties.STYLE, "font:+0; foreground:#0F172A;");
         return box;
     }
@@ -126,6 +138,7 @@ public class DataPrivacyScreen extends JPanel implements ScreenView {
         button.putClientProperty(FlatClientProperties.STYLE,
             "arc:16; background:#0C5CB1; foreground:#FFFFFF;" +
                 "hoverBackground:#0f6ed8; pressedBackground:#0a4f8d;" +
+                "shadowColor:#0C5CB1; shadowWidth:8; shadowOpacity:30;" +
                 "focusWidth:2; innerFocusWidth:1; font:+0;");
         button.addActionListener(e -> Navigation.to(this, Screen.BIO_DATA));
         return button;
@@ -133,7 +146,7 @@ public class DataPrivacyScreen extends JPanel implements ScreenView {
 
     private String buildLegalHtml() {
         return "<html><body style='font-family: " + UIManager.getFont("Label.font").getFamily() +
-            ", sans-serif; font-size:12px; color:#333333; line-height:1.6;'>" +
+            ", sans-serif; font-size:12px; color:#333333; line-height:1.6; background-color:#F8FAFC; padding:16px;'>" +
             "<p>To comply with Republic Act No. 10173 (Data Privacy Act of 2012) and " +
             "Commission on Higher Education (CHED) / Department of Education (DepEd) " +
             "guidelines, the University of Nueva Esperanza (the \"University\") provides " +

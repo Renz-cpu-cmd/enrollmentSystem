@@ -1,39 +1,89 @@
 package service;
 
+import dao.AssessmentDAO;
+import dao.DatabaseManager;
+import dao.EnrollmentDAO;
 import dao.PaymentDAO;
+import model.Assessment;
 import model.Payment;
-import util.TransactionManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 public class PaymentService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(PaymentService.class);
+    private static final Set<String> ALLOWED_METHODS = Set.of("CASH", "CARD", "ONLINE");
+
     private final PaymentDAO paymentDAO;
+    private final AssessmentDAO assessmentDAO;
+    private final EnrollmentDAO enrollmentDAO;
 
-    public PaymentService(PaymentDAO paymentDAO) {
+    public PaymentService(PaymentDAO paymentDAO, AssessmentDAO assessmentDAO, EnrollmentDAO enrollmentDAO) {
         this.paymentDAO = paymentDAO;
+        this.assessmentDAO = assessmentDAO;
+        this.enrollmentDAO = enrollmentDAO;
     }
 
-    public Payment recordPayment(Payment payment) {
-        validatePayment(payment);
-        boolean saved = TransactionManager.executeInTransaction(conn -> paymentDAO.addWithConnection(payment, conn));
-        if (!saved) {
-            throw new IllegalStateException("Could not save payment.");
+    public PaymentResult processPayment(int assessmentId, double amount, String method) {
+        if (assessmentId <= 0) {
+            return PaymentResult.failure("Invalid assessment.");
         }
-        return payment;
-    }
-
-    public boolean updatePayment(Payment payment) {
-        validatePayment(payment);
-        return TransactionManager.executeInTransaction(conn -> paymentDAO.updateWithConnection(payment, conn));
-    }
-
-    public boolean deletePayment(int id) {
-        if (id <= 0) {
-            throw new IllegalArgumentException("Payment id must be positive.");
+        BigDecimal paymentAmount = BigDecimal.valueOf(amount);
+        if (paymentAmount.compareTo(BigDecimal.ZERO) <= 0) {
+            return PaymentResult.failure("Payment amount must be greater than zero.");
         }
-        return TransactionManager.executeInTransaction(conn -> paymentDAO.deleteWithConnection(id, conn));
+        String normalizedMethod = normalizeMethod(method);
+        if (!ALLOWED_METHODS.contains(normalizedMethod)) {
+            return PaymentResult.failure("Payment method must be CASH, CARD, or ONLINE.");
+        }
+
+        try {
+            return DatabaseManager.runInTransaction(conn -> {
+                Optional<Assessment> assessmentOpt = assessmentDAO.findById(assessmentId, conn);
+                if (assessmentOpt.isEmpty()) {
+                    return PaymentResult.failure("Assessment not found.");
+                }
+                Assessment assessment = assessmentOpt.get();
+
+                Payment payment = new Payment(assessmentId, paymentAmount, normalizedMethod, generateReference());
+                payment.setPaymentDate(currentTimestamp());
+                boolean inserted = paymentDAO.addWithConnection(payment, conn);
+                if (!inserted) {
+                    return PaymentResult.failure("Unable to record payment.");
+                }
+
+                BigDecimal totalPaid = paymentDAO.sumPaymentsByAssessment(assessmentId, conn);
+                BigDecimal totalDue = Optional.ofNullable(assessment.getTotalDue()).orElse(BigDecimal.ZERO);
+                String newStatus = totalPaid.compareTo(totalDue) >= 0 ? "PAID" : "PARTIAL";
+                assessmentDAO.updateStatus(assessmentId, newStatus, conn);
+
+                if ("PAID".equals(newStatus)) {
+                    enrollmentDAO.updateStatus(assessment.getEnrollmentId(), "OFFICIALLY_ENROLLED", conn);
+                }
+
+                return PaymentResult.success(newStatus, payment.getReferenceNo(), totalPaid);
+            });
+        } catch (SQLException ex) {
+            LOGGER.error("Payment processing failed for assessment {}", assessmentId, ex);
+            return PaymentResult.failure("Unable to process payment right now.");
+        }
+    }
+
+    public BigDecimal getTotalPaid(int assessmentId) {
+        try {
+            return paymentDAO.sumPaymentsByAssessment(assessmentId, null);
+        } catch (SQLException e) {
+            LOGGER.error("Failed to compute total paid for assessment {}", assessmentId, e);
+            return BigDecimal.ZERO;
+        }
     }
 
     public List<Payment> listPayments(int limit, int offset) {
@@ -44,26 +94,26 @@ public class PaymentService {
         return paymentDAO.countAll();
     }
 
-    private void validatePayment(Payment payment) {
-        if (payment == null) {
-            throw new IllegalArgumentException("Payment cannot be null.");
-        }
-        if (payment.getEnrollmentId() <= 0) {
-            throw new IllegalArgumentException("Enrollment id must be positive.");
-        }
-        BigDecimal amount = payment.getAmount();
-        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("Payment amount must be greater than zero.");
-        }
-        if (isBlank(payment.getPaymentMethod())) {
-            throw new IllegalArgumentException("Payment method is required.");
-        }
-        if (isBlank(payment.getStatus())) {
-            throw new IllegalArgumentException("Payment status is required.");
-        }
+    private String normalizeMethod(String method) {
+        return method == null ? "" : method.trim().toUpperCase();
     }
 
-    private boolean isBlank(String value) {
-        return value == null || value.trim().isEmpty();
+    private String generateReference() {
+        String ts = DateTimeFormatter.ofPattern("yyyyMMddHHmmss").format(LocalDateTime.now());
+        return "PAY-" + ts;
+    }
+
+    private String currentTimestamp() {
+        return DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now());
+    }
+
+    public record PaymentResult(boolean success, String message, String assessmentStatus, String referenceNo, BigDecimal totalPaid) {
+        public static PaymentResult success(String assessmentStatus, String referenceNo, BigDecimal totalPaid) {
+            return new PaymentResult(true, "Payment recorded.", assessmentStatus, referenceNo, totalPaid);
+        }
+
+        public static PaymentResult failure(String message) {
+            return new PaymentResult(false, message, null, null, BigDecimal.ZERO);
+        }
     }
 }

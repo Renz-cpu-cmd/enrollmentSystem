@@ -18,10 +18,14 @@ public final class DatabaseMigrator {
         String url = Config.getEnvOrProperty("db.url", "jdbc:sqlite:enrollment.db");
 
         Flyway flyway = Flyway.configure()
-                .dataSource(url, null, null) // SQLite uses file-based auth
-                .locations("classpath:db/migration")
-                .baselineOnMigrate(true)
-                .load();
+            .dataSource(url, null, null) // SQLite uses file-based auth
+            .locations("classpath:db/migration")
+            .baselineOnMigrate(true)
+            .cleanDisabled(false) // allow cleaning in dev mode
+            .load();
+
+        System.out.println("🧹 WIPING OLD DATABASE...");
+        flyway.clean();
 
         var result = flyway.migrate();
         LOGGER.info("Flyway migration complete. Applied: {}", result.migrationsExecuted);

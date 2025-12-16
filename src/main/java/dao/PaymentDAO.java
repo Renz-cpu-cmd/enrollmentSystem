@@ -4,6 +4,7 @@ import model.Payment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,24 +23,29 @@ public class PaymentDAO implements DataAccessObject<Payment, Integer> {
     }
 
     public boolean addWithConnection(Payment payment, Connection connection) {
-        String sql = "INSERT INTO payments (enrollment_id, amount, payment_method, transaction_id, status) VALUES (?, ?, ?, ?, ?)";
-        try {
-            Connection conn = connection != null ? connection : DatabaseManager.getConnection();
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, payment.getEnrollmentId());
-                pstmt.setBigDecimal(2, payment.getAmount());
-                pstmt.setString(3, payment.getPaymentMethod());
-                pstmt.setString(4, payment.getTransactionId());
-                pstmt.setString(5, payment.getStatus());
-                return pstmt.executeUpdate() > 0;
-            } finally {
-                if (connection == null) {
-                    conn.close();
+        String sql = "INSERT INTO payments (assessment_id, amount, payment_method, reference_no, payment_date) VALUES (?, ?, ?, ?, COALESCE(?, datetime('now')))";
+        Connection conn = connection != null ? connection : getConnectionQuietly();
+        boolean shouldClose = connection == null;
+        try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            pstmt.setInt(1, payment.getAssessmentId());
+            pstmt.setBigDecimal(2, payment.getAmount());
+            pstmt.setString(3, payment.getPaymentMethod());
+            pstmt.setString(4, payment.getReferenceNo());
+            pstmt.setString(5, payment.getPaymentDate());
+            boolean inserted = pstmt.executeUpdate() > 0;
+            if (inserted) {
+                try (ResultSet rs = pstmt.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        payment.setId(rs.getInt(1));
+                    }
                 }
             }
+            return inserted;
         } catch (SQLException e) {
-            LOGGER.error("Error adding payment for enrollment id: " + payment.getEnrollmentId(), e);
+            LOGGER.error("Error adding payment for assessment id: {}", payment.getAssessmentId(), e);
             return false;
+        } finally {
+            closeIfNeeded(conn, shouldClose);
         }
     }
 
@@ -49,25 +55,22 @@ public class PaymentDAO implements DataAccessObject<Payment, Integer> {
     }
 
     public boolean updateWithConnection(Payment payment, Connection connection) {
-        String sql = "UPDATE payments SET enrollment_id = ?, amount = ?, payment_method = ?, transaction_id = ?, status = ? WHERE id = ?";
-        try {
-            Connection conn = connection != null ? connection : DatabaseManager.getConnection();
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, payment.getEnrollmentId());
-                pstmt.setBigDecimal(2, payment.getAmount());
-                pstmt.setString(3, payment.getPaymentMethod());
-                pstmt.setString(4, payment.getTransactionId());
-                pstmt.setString(5, payment.getStatus());
-                pstmt.setInt(6, payment.getId());
-                return pstmt.executeUpdate() > 0;
-            } finally {
-                if (connection == null) {
-                    conn.close();
-                }
-            }
+        String sql = "UPDATE payments SET assessment_id = ?, amount = ?, payment_method = ?, reference_no = ?, payment_date = ? WHERE id = ?";
+        Connection conn = connection != null ? connection : getConnectionQuietly();
+        boolean shouldClose = connection == null;
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, payment.getAssessmentId());
+            pstmt.setBigDecimal(2, payment.getAmount());
+            pstmt.setString(3, payment.getPaymentMethod());
+            pstmt.setString(4, payment.getReferenceNo());
+            pstmt.setString(5, payment.getPaymentDate());
+            pstmt.setInt(6, payment.getId());
+            return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            LOGGER.error("Error updating payment with id: " + payment.getId(), e);
+            LOGGER.error("Error updating payment with id: {}", payment.getId(), e);
             return false;
+        } finally {
+            closeIfNeeded(conn, shouldClose);
         }
     }
 
@@ -78,19 +81,16 @@ public class PaymentDAO implements DataAccessObject<Payment, Integer> {
 
     public boolean deleteWithConnection(Integer id, Connection connection) {
         String sql = "DELETE FROM payments WHERE id = ?";
-        try {
-            Connection conn = connection != null ? connection : DatabaseManager.getConnection();
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, id);
-                return pstmt.executeUpdate() > 0;
-            } finally {
-                if (connection == null) {
-                    conn.close();
-                }
-            }
+        Connection conn = connection != null ? connection : getConnectionQuietly();
+        boolean shouldClose = connection == null;
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            LOGGER.error("Error deleting payment with id: " + id, e);
+            LOGGER.error("Error deleting payment with id: {}", id, e);
             return false;
+        } finally {
+            closeIfNeeded(conn, shouldClose);
         }
     }
 
@@ -106,7 +106,7 @@ public class PaymentDAO implements DataAccessObject<Payment, Integer> {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Error retrieving payment with id: " + id, e);
+            LOGGER.error("Error retrieving payment with id: {}", id, e);
         }
         return null;
     }
@@ -118,7 +118,7 @@ public class PaymentDAO implements DataAccessObject<Payment, Integer> {
 
     public List<Payment> getAllPaged(int limit, int offset) {
         List<Payment> payments = new ArrayList<>();
-        String sql = "SELECT id, enrollment_id, amount, payment_method, transaction_id, status, created_at " +
+        String sql = "SELECT id, assessment_id, amount, payment_method, reference_no, payment_date, created_at " +
                 "FROM payments ORDER BY id LIMIT ? OFFSET ?";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -149,15 +149,67 @@ public class PaymentDAO implements DataAccessObject<Payment, Integer> {
         return 0;
     }
 
+    public BigDecimal sumPaymentsByAssessment(int assessmentId, Connection connection) throws SQLException {
+        String sql = "SELECT COALESCE(SUM(amount), 0) AS total_paid FROM payments WHERE assessment_id = ?";
+        Connection conn = connection != null ? connection : getConnectionQuietly();
+        boolean shouldClose = connection == null;
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, assessmentId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getBigDecimal("total_paid");
+                }
+            }
+            return BigDecimal.ZERO;
+        } finally {
+            closeIfNeeded(conn, shouldClose);
+        }
+    }
+
+    public Payment findLatestForAssessment(int assessmentId) {
+        String sql = "SELECT * FROM payments WHERE assessment_id = ? ORDER BY payment_date DESC, id DESC LIMIT 1";
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, assessmentId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return extractPaymentFromResultSet(rs);
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Error retrieving latest payment for assessment {}", assessmentId, e);
+        }
+        return null;
+    }
+
     private Payment extractPaymentFromResultSet(ResultSet rs) throws SQLException {
         Payment payment = new Payment();
         payment.setId(rs.getInt("id"));
-        payment.setEnrollmentId(rs.getInt("enrollment_id"));
+        payment.setAssessmentId(rs.getInt("assessment_id"));
         payment.setAmount(rs.getBigDecimal("amount"));
         payment.setPaymentMethod(rs.getString("payment_method"));
-        payment.setTransactionId(rs.getString("transaction_id"));
-        payment.setStatus(rs.getString("status"));
+        payment.setReferenceNo(rs.getString("reference_no"));
+        payment.setPaymentDate(rs.getString("payment_date"));
         payment.setCreatedAt(rs.getString("created_at"));
         return payment;
+    }
+
+    private Connection getConnectionQuietly() {
+        try {
+            return DatabaseManager.getConnection();
+        } catch (SQLException e) {
+            throw new IllegalStateException("Unable to acquire connection", e);
+        }
+    }
+
+    private void closeIfNeeded(Connection conn, boolean shouldClose) {
+        if (!shouldClose || conn == null) {
+            return;
+        }
+        try {
+            conn.close();
+        } catch (SQLException e) {
+            LOGGER.warn("Unable to close connection", e);
+        }
     }
 }

@@ -1,5 +1,7 @@
 package context;
 
+import dao.AssessmentDAO;
+import dao.BlockDAO;
 import dao.CourseDAO;
 import dao.EnrollmentDAO;
 import dao.PaymentDAO;
@@ -12,9 +14,11 @@ public class ApplicationContext {
 
     // DAOs
     private final StudentDAO studentDAO;
+    private final BlockDAO blockDAO;
     private final CourseDAO courseDAO;
     private final EnrollmentDAO enrollmentDAO;
     private final PaymentDAO paymentDAO;
+    private final AssessmentDAO assessmentDAO;
 
     // Services
     private final EnrollmentService enrollmentService;
@@ -23,13 +27,15 @@ public class ApplicationContext {
 
     public ApplicationContext() {
         this.studentDAO = new StudentDAO();
+        this.blockDAO = new BlockDAO();
         this.courseDAO = new CourseDAO();
         this.enrollmentDAO = new EnrollmentDAO();
         this.paymentDAO = new PaymentDAO();
+        this.assessmentDAO = new AssessmentDAO();
 
-        this.enrollmentService = new EnrollmentService(studentDAO);
+        this.enrollmentService = new EnrollmentService(studentDAO, blockDAO, enrollmentDAO, assessmentDAO);
         this.loginService = new LoginService(studentDAO);
-        this.paymentService = new PaymentService(paymentDAO);
+        this.paymentService = new PaymentService(paymentDAO, assessmentDAO, enrollmentDAO);
     }
 
     // --- Getters for Services ---
@@ -52,6 +58,10 @@ public class ApplicationContext {
         return studentDAO;
     }
 
+    public BlockDAO getBlockDAO() {
+        return blockDAO;
+    }
+
     public CourseDAO getCourseDAO() {
         return courseDAO;
     }
@@ -62,5 +72,9 @@ public class ApplicationContext {
 
     public PaymentDAO getPaymentDAO() {
         return paymentDAO;
+    }
+
+    public AssessmentDAO getAssessmentDAO() {
+        return assessmentDAO;
     }
 }
