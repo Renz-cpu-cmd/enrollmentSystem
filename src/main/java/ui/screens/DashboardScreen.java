@@ -14,6 +14,7 @@ import model.Student;
 import ui.NavigationContext;
 import ui.Screen;
 import ui.ScreenView;
+import ui.screens.AIAssistantScreen;
 import util.Navigation;
 import util.SessionManager;
 
@@ -213,6 +214,10 @@ public class DashboardScreen extends JPanel implements ScreenView {
         notificationButton = new BadgeButton("🔔");
         notificationButton.setToolTipText("Recent notices");
         notificationButton.addActionListener(e -> toggleNotificationSheet());
+        JButton aiButton = createGhostButton("Ask AI", () -> {
+            Window owner = SwingUtilities.getWindowAncestor(this);
+            AIAssistantScreen.openFloating(owner);
+        });
         signOutButton = createGhostButton("Sign out", () -> {
             SessionManager.getInstance().clearSession();
             showSnackbar("Signed out", true);
@@ -226,6 +231,7 @@ public class DashboardScreen extends JPanel implements ScreenView {
         right.add(compactToggle);
         right.add(focusToggle);
         right.add(notificationButton);
+        right.add(aiButton);
         right.add(signOutButton);
         right.add(mainActionButton);
 
