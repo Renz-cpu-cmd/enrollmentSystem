@@ -1,5 +1,12 @@
 package dao;
 
+/**
+ * Data Access Object for `Enrollment` entities.
+ *
+ * <p>Implements `DataAccessObject<Enrollment, Integer>` to provide a uniform
+ * CRUD surface for services while keeping SQL concerns localized.</p>
+ */
+
 import model.Enrollment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

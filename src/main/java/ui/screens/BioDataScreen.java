@@ -1,5 +1,12 @@
 package ui.screens;
 
+/**
+ * Student bio-data capture form screen.
+ *
+ * <p>Extends `JPanel` and implements `ScreenView` to participate in the
+ * standard screen lifecycle.</p>
+ */
+
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.ui.FlatDropShadowBorder;
 import com.formdev.flatlaf.ui.FlatRoundBorder;

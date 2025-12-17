@@ -1,5 +1,12 @@
 package dao;
 
+/**
+ * Data Access Object for `Assessment` and related `AssessmentFee` records.
+ *
+ * <p>Encapsulates SQL operations and keeps the service layer independent of
+ * persistence details.</p>
+ */
+
 import model.Assessment;
 import model.AssessmentFee;
 import org.slf4j.Logger;

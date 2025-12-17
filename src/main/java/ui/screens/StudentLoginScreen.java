@@ -1,5 +1,13 @@
 package ui.screens;
 
+/**
+ * Login screen for students.
+ *
+ * <p>Demonstrates inheritance by extending `JPanel` and polymorphism by
+ * implementing `ScreenView`, allowing the navigation system to treat all
+ * screens uniformly.</p>
+ */
+
 import com.formdev.flatlaf.FlatClientProperties;
 import dao.StudentDAO;
 import model.Student;

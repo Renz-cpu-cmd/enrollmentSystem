@@ -1,5 +1,14 @@
 package service;
 
+/**
+ * Orchestrates enrollment flows and student registration.
+ *
+ * <p>Acts as a service-layer façade over DAOs, applying validation, password
+ * policy, IDs generation, and transaction coordination. Demonstrates
+ * polymorphism by relying on DAO interfaces rather than concrete storage
+ * details.</p>
+ */
+
 import dao.AssessmentDAO;
 import dao.BlockDAO;
 import dao.EnrollmentDAO;

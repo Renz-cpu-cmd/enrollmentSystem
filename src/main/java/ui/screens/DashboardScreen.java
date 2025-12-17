@@ -1,5 +1,12 @@
 package ui.screens;
 
+/**
+ * Main student dashboard screen.
+ *
+ * <p>Extends `JPanel` and implements `ScreenView` so it can be routed by the
+ * navigation framework. Hosts summary widgets, charts, and quick actions.</p>
+ */
+
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.ui.FlatDropShadowBorder;
 import dao.AssessmentDAO;

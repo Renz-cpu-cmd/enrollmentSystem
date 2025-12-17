@@ -1,5 +1,12 @@
 package ui.screens;
 
+/**
+ * Data privacy notice/consent screen.
+ *
+ * <p>Extends `JPanel` and implements `ScreenView` for consistent navigation
+ * and event handling across screens.</p>
+ */
+
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.ui.FlatDropShadowBorder;
 import com.formdev.flatlaf.ui.FlatRoundBorder;

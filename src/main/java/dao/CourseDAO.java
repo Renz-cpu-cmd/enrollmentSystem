@@ -9,8 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Data Access Object for the Course model.
- * Implements the DataAccessObject interface to provide standard CRUD operations.
+ * Data Access Object for the `Course` model.
+ *
+ * <p>Implements the `DataAccessObject<Course, Integer>` contract, enabling
+ * polymorphic handling of DAOs across the application. Encapsulates SQL and
+ * connection/transaction patterns behind a simple CRUD API.</p>
  */
 public class CourseDAO implements DataAccessObject<Course, Integer> {
 

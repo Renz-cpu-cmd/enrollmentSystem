@@ -1,5 +1,12 @@
 package ui.screens;
 
+/**
+ * Block sectioning screen used in the enrollment flow.
+ *
+ * <p>Extends `JPanel` and implements `ScreenView` so it can be routed and
+ * styled consistently with other screens.</p>
+ */
+
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.ui.FlatDropShadowBorder;
 import dao.BlockDAO;

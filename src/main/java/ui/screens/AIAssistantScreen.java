@@ -1,5 +1,12 @@
 package ui.screens;
 
+/**
+ * Optional AI assistant chat panel screen.
+ *
+ * <p>Extends `JPanel` and implements `ScreenView` to integrate seamlessly with
+ * navigation; functionality depends on environment variables for Vertex AI.</p>
+ */
+
 import com.google.cloud.vertexai.VertexAI;
 import com.google.cloud.vertexai.generativeai.ChatSession;
 import com.google.cloud.vertexai.generativeai.GenerativeModel;

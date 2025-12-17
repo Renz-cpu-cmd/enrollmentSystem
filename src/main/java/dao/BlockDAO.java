@@ -1,5 +1,12 @@
 package dao;
 
+/**
+ * Data Access Object for `Block` and its schedules.
+ *
+ * <p>Coordinates reads/writes for block sections, keeping transaction patterns
+ * and SQL localized to the DAO layer.</p>
+ */
+
 import model.Block;
 import model.Schedule;
 import model.Section;

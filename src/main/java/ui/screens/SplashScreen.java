@@ -1,5 +1,12 @@
 package ui.screens;
 
+/**
+ * Splash screen shown on app startup.
+ *
+ * <p>Extends `JPanel` and implements `ScreenView` so it can be presented via
+ * the same routing mechanism as other screens.</p>
+ */
+
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.ui.FlatDropShadowBorder;
 import ui.NavigationContext;

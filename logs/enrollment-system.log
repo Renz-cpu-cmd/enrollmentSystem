@@ -4027,3 +4027,42 @@ Caused by: java.lang.NullPointerException: Cannot invoke "java.lang.Integer.intV
 2025-12-17 03:20:53.005 [main] INFO  o.f.core.internal.command.DbMigrate - Migrating schema "main" to version "8 - create payments"
 2025-12-17 03:20:53.027 [main] INFO  o.f.core.internal.command.DbMigrate - Successfully applied 8 migrations to schema "main", now at version v8 (execution time 00:00.022s)
 2025-12-17 03:20:53.027 [main] INFO  util.DatabaseMigrator - Flyway migration complete. Applied: 8
+2025-12-17 03:25:11.585 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:sqlite:enrollment.db (SQLite 3.39)
+2025-12-17 03:25:11.621 [main] INFO  o.f.c.i.command.clean.CleanExecutor - Successfully dropped pre-schema database level objects (execution time 00:00.001s)
+2025-12-17 03:25:11.639 [main] INFO  o.f.c.i.command.clean.CleanExecutor - Successfully cleaned schema "main" (execution time 00:00.016s)
+2025-12-17 03:25:11.650 [main] INFO  o.f.c.i.command.clean.CleanExecutor - Successfully cleaned schema "main" (execution time 00:00.009s)
+2025-12-17 03:25:11.651 [main] INFO  o.f.c.i.command.clean.CleanExecutor - Successfully dropped post-schema database level objects (execution time 00:00.000s)
+2025-12-17 03:25:11.677 [main] INFO  o.f.c.i.s.JdbcTableSchemaHistory - Schema history table "main"."flyway_schema_history" does not exist yet
+2025-12-17 03:25:11.681 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 8 migrations (execution time 00:00.019s)
+2025-12-17 03:25:11.684 [main] INFO  o.f.c.i.s.JdbcTableSchemaHistory - Creating Schema History table "main"."flyway_schema_history" ...
+2025-12-17 03:25:11.715 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "main": << Empty Schema >>
+2025-12-17 03:25:11.722 [main] INFO  o.f.core.internal.command.DbMigrate - Migrating schema "main" to version "1 - init students"
+2025-12-17 03:25:11.747 [main] INFO  o.f.core.internal.command.DbMigrate - Migrating schema "main" to version "2 - init payments"
+2025-12-17 03:25:11.765 [main] INFO  o.f.core.internal.command.DbMigrate - Migrating schema "main" to version "3 - messages and seed courses"
+2025-12-17 03:25:11.781 [main] INFO  o.f.core.internal.command.DbMigrate - Migrating schema "main" to version "4 - student lookup indexes"
+2025-12-17 03:25:11.798 [main] INFO  o.f.core.internal.command.DbMigrate - Migrating schema "main" to version "5 - create academic structure"
+2025-12-17 03:25:11.819 [main] INFO  o.f.core.internal.command.DbMigrate - Migrating schema "main" to version "6 - seed demo data"
+2025-12-17 03:25:11.835 [main] INFO  o.f.core.internal.command.DbMigrate - Migrating schema "main" to version "7 - create enrollments"
+2025-12-17 03:25:11.852 [main] INFO  o.f.core.internal.command.DbMigrate - Migrating schema "main" to version "8 - create payments"
+2025-12-17 03:25:11.873 [main] INFO  o.f.core.internal.command.DbMigrate - Successfully applied 8 migrations to schema "main", now at version v8 (execution time 00:00.019s)
+2025-12-17 03:25:11.874 [main] INFO  util.DatabaseMigrator - Flyway migration complete. Applied: 8
+2025-12-17 03:25:28.482 [AWT-EventQueue-0] INFO  ui.screens.StudentLoginScreen - Login attempt studentId=2023-0001 found=true auth=true pwdHashPrefix=$2a$10$z wd=C:\Users\Asus\OneDrive\Documents\Java college vibe code\enrollmentSystem inputLen=11 seededCheck=true
+2025-12-17 03:29:40.575 [main] INFO  org.flywaydb.core.FlywayExecutor - Database: jdbc:sqlite:enrollment.db (SQLite 3.39)
+2025-12-17 03:29:40.613 [main] INFO  o.f.c.i.command.clean.CleanExecutor - Successfully dropped pre-schema database level objects (execution time 00:00.001s)
+2025-12-17 03:29:40.630 [main] INFO  o.f.c.i.command.clean.CleanExecutor - Successfully cleaned schema "main" (execution time 00:00.017s)
+2025-12-17 03:29:40.641 [main] INFO  o.f.c.i.command.clean.CleanExecutor - Successfully cleaned schema "main" (execution time 00:00.010s)
+2025-12-17 03:29:40.643 [main] INFO  o.f.c.i.command.clean.CleanExecutor - Successfully dropped post-schema database level objects (execution time 00:00.000s)
+2025-12-17 03:29:40.674 [main] INFO  o.f.c.i.s.JdbcTableSchemaHistory - Schema history table "main"."flyway_schema_history" does not exist yet
+2025-12-17 03:29:40.677 [main] INFO  o.f.core.internal.command.DbValidate - Successfully validated 8 migrations (execution time 00:00.019s)
+2025-12-17 03:29:40.679 [main] INFO  o.f.c.i.s.JdbcTableSchemaHistory - Creating Schema History table "main"."flyway_schema_history" ...
+2025-12-17 03:29:40.710 [main] INFO  o.f.core.internal.command.DbMigrate - Current version of schema "main": << Empty Schema >>
+2025-12-17 03:29:40.719 [main] INFO  o.f.core.internal.command.DbMigrate - Migrating schema "main" to version "1 - init students"
+2025-12-17 03:29:40.743 [main] INFO  o.f.core.internal.command.DbMigrate - Migrating schema "main" to version "2 - init payments"
+2025-12-17 03:29:40.759 [main] INFO  o.f.core.internal.command.DbMigrate - Migrating schema "main" to version "3 - messages and seed courses"
+2025-12-17 03:29:40.777 [main] INFO  o.f.core.internal.command.DbMigrate - Migrating schema "main" to version "4 - student lookup indexes"
+2025-12-17 03:29:40.793 [main] INFO  o.f.core.internal.command.DbMigrate - Migrating schema "main" to version "5 - create academic structure"
+2025-12-17 03:29:40.814 [main] INFO  o.f.core.internal.command.DbMigrate - Migrating schema "main" to version "6 - seed demo data"
+2025-12-17 03:29:40.830 [main] INFO  o.f.core.internal.command.DbMigrate - Migrating schema "main" to version "7 - create enrollments"
+2025-12-17 03:29:40.849 [main] INFO  o.f.core.internal.command.DbMigrate - Migrating schema "main" to version "8 - create payments"
+2025-12-17 03:29:40.869 [main] INFO  o.f.core.internal.command.DbMigrate - Successfully applied 8 migrations to schema "main", now at version v8 (execution time 00:00.020s)
+2025-12-17 03:29:40.870 [main] INFO  util.DatabaseMigrator - Flyway migration complete. Applied: 8

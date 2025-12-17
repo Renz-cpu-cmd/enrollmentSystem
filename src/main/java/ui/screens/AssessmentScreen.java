@@ -1,5 +1,12 @@
 package ui.screens;
 
+/**
+ * Assessment details, fees breakdown, and related actions.
+ *
+ * <p>Extends `JPanel` and implements `ScreenView` to participate in the
+ * unified navigation model for screens.</p>
+ */
+
 import com.formdev.flatlaf.ui.FlatDropShadowBorder;
 import dao.AssessmentDAO;
 import dao.EnrollmentDAO;

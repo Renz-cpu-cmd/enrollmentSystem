@@ -1,5 +1,12 @@
 package ui.screens;
 
+/**
+ * Payment entry and review screen.
+ *
+ * <p>Extends `JPanel` and implements `ScreenView` so it can be displayed by
+ * the app shell consistently with other screens.</p>
+ */
+
 import com.formdev.flatlaf.ui.FlatDropShadowBorder;
 import com.formdev.flatlaf.ui.FlatRoundBorder;
 import dao.AssessmentDAO;

@@ -1,5 +1,12 @@
 package dao;
 
+/**
+ * Data Access Object for user/system `Message` entities.
+ *
+ * <p>Provides persistence utilities for messaging features while keeping the
+ * higher layers (UI/services) decoupled from SQL.</p>
+ */
+
 import model.Message;
 
 import java.sql.Connection;

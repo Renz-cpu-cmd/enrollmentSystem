@@ -1,5 +1,12 @@
 package ui.screens;
 
+/**
+ * Portal gateway/entry screen offering navigation to key flows.
+ *
+ * <p>Extends `JPanel` and implements `ScreenView` for consistent routing and
+ * lifecycle management.</p>
+ */
+
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.ui.FlatDropShadowBorder;
 import com.formdev.flatlaf.ui.FlatRoundBorder;
@@ -53,7 +60,7 @@ public class PortalGatewayScreen extends JPanel implements ScreenView {
         header.setOpaque(false);
         header.setLayout(new BoxLayout(header, BoxLayout.Y_AXIS));
 
-        JLabel title = new JLabel("Enrollment Gateway");
+        JLabel title = new JLabel("Welcome Boi");
         title.setForeground(NAVY);
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
         title.setFont(new Font("Segoe UI", Font.BOLD, 32));

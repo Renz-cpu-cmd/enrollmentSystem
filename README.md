@@ -1,17 +1,21 @@
 # Enrollment Desktop App (Swing)
 
-Java 17 Swing desktop app using SQLite (HikariCP). Not Spring Boot.
+Java 17 Swing desktop app using SQLite (HikariCP). This is not Spring Boot.
 
 ## Build & Run
-- Build shaded jar: `mvn package`
-- Run from repo root: `java -jar target/demo-0.0.1-SNAPSHOT-shaded.jar`
+- Build a runnable JAR:
+	- `mvn clean package`
+- Run from the repo root (so SQLite path resolves):
+	- If a shaded jar is created: `java -jar target/demo-0.0.1-SNAPSHOT-shaded.jar`
+	- Otherwise: `java -jar target/demo-0.0.1-SNAPSHOT.jar`
+	- Tip: list target to confirm the exact JAR name: `dir target` (Windows)
 
 ## Database migrations (Flyway)
-- Migrations live in `src/main/resources/db/migration` (V1 students, V2 courses/enrollments/payments, V3 messages + seed courses, V4 student lookup indexes).
-- App auto-runs Flyway at startup using `db.url` from `config.properties` or environment.
-- Manual/CI run example (SQLite):
-	- `mvn -Dflyway.url=jdbc:sqlite:enrollment.db -Dflyway.driver=org.sqlite.JDBC -Dflyway.locations=filesystem:src/main/resources/db/migration flyway:migrate`
-	- Override `flyway.url` in CI to point at your deployment database.
+- Migrations live in `src/main/resources/db/migration`.
+- The app runs Flyway at startup (via `DatabaseMigrator.runMigrations()` in `Main`).
+- Manual/CI example (SQLite):
+  - `mvn -Dflyway.url=jdbc:sqlite:enrollment.db -Dflyway.driver=org.sqlite.JDBC -Dflyway.locations=filesystem:src/main/resources/db/migration flyway:migrate`
+  - Override `-Dflyway.url` in CI to target your environment.
 
 ## Schema snapshot
 - students(id, student_id unique, email unique, password hash, profile fields)
@@ -29,3 +33,11 @@ If Maven is not installed system-wide:
 ## Database choices
 - Default: SQLite (file URL like `jdbc:sqlite:enrollment.db`) uses direct connections (no pool).
 - Postgres/MySQL: set `db.url`, `db.username`, `db.password`; HikariCP pooling is enabled automatically for non-SQLite URLs.
+
+## Environment variables (optional)
+- Override configuration in `src/main/resources/config.properties` by setting env vars:
+	- `DB_URL`, `DB_USERNAME`, `DB_PASSWORD` (map to `db.url`, etc.)
+- Vertex AI (optional assistant features):
+	- `PROJECT_ID`, `LOCATION`, `MODEL_NAME` (for UI Assistant)
+	- `GEMINI_PROJECT_ID`, `GEMINI_LOCATION` (for `GeminiClient`)
+	- If not set, the assistant UI is disabled gracefully.

@@ -1,5 +1,12 @@
 package service;
 
+/**
+ * Handles student authentication and session lifecycle.
+ *
+ * <p>Owns lockout policy and interacts with `StudentDAO` and `SessionManager`.
+ * Keeps UI code free of security/credential concerns.</p>
+ */
+
 import dao.StudentDAO;
 import model.Student;
 import org.mindrot.jbcrypt.BCrypt;

@@ -1,5 +1,12 @@
 package ui.screens;
 
+/**
+ * Documents screen for uploads and status of requirements.
+ *
+ * <p>Extends `JPanel` and implements `ScreenView`, fitting into the unified
+ * screen lifecycle used by the app shell.</p>
+ */
+
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.ui.FlatDropShadowBorder;
 import com.formdev.flatlaf.ui.FlatRoundBorder;

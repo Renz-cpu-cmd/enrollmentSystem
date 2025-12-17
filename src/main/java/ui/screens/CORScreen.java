@@ -1,5 +1,12 @@
 package ui.screens;
 
+/**
+ * Certificate of Registration (COR) screen for printing/export.
+ *
+ * <p>Extends `JPanel` and implements `ScreenView` to align with the app’s
+ * screen routing framework.</p>
+ */
+
 import com.formdev.flatlaf.ui.FlatDropShadowBorder;
 import dao.AssessmentDAO;
 import dao.BlockDAO;

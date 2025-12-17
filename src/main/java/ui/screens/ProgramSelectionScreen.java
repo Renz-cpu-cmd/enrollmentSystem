@@ -1,5 +1,12 @@
 package ui.screens;
 
+/**
+ * Program selection screen for choosing academic program/track.
+ *
+ * <p>Extends `JPanel` and implements `ScreenView` to integrate with router
+ * logic in the application frame.</p>
+ */
+
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.extras.components.FlatTextField;
 import com.formdev.flatlaf.icons.FlatSearchIcon;

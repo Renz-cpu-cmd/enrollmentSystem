@@ -1,5 +1,15 @@
 package dao;
 
+/**
+ * Data Access Object for `Student` records.
+ *
+ * <p>Implements repository-style CRUD and lookup operations and centralizes
+ * SQL access via `DatabaseManager`. This class demonstrates polymorphism by
+ * adhering to the `StudentRepository` contract, allowing callers to treat
+ * different repository implementations uniformly. It also participates in the
+ * layered architecture (UI → service → DAO → DB).</p>
+ */
+
 import dao.mapper.StudentMapper;
 import dao.repository.StudentRepository;
 import dao.DatabaseManager;

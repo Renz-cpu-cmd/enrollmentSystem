@@ -1,5 +1,12 @@
 package ui.screens;
 
+/**
+ * Returning student block selection and schedule preview screen.
+ *
+ * <p>Extends `JPanel` and implements `ScreenView` to align with the
+ * application’s screen routing model.</p>
+ */
+
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.ui.FlatDropShadowBorder;
 import dao.BlockDAO;

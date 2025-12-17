@@ -1,5 +1,12 @@
 package service;
 
+/**
+ * Coordinates payment processing and lookups for enrollments.
+ *
+ * <p>Provides business logic over `PaymentDAO` and related data, keeping
+ * payment workflows out of UI classes.</p>
+ */
+
 import dao.AssessmentDAO;
 import dao.DatabaseManager;
 import dao.EnrollmentDAO;

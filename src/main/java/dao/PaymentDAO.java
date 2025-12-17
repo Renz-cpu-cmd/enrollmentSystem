@@ -1,5 +1,12 @@
 package dao;
 
+/**
+ * Data Access Object for `Payment` records.
+ *
+ * <p>Provides CRUD and query methods behind the common DAO interface so
+ * services can depend on abstractions and swap implementations if needed.</p>
+ */
+
 import model.Payment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
